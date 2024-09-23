@@ -7,7 +7,7 @@ function App() {
       <div
         spellCheck={false}
         id="appjs"
-        className=" font-OpenSans text-base overflow-hidden font-medium bg-white  "
+        className=" font-body text-base overflow-hidden font-medium bg-white  "
       >
         <Routes>
           {publicRoutes.map((el, idx) => {

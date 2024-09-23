@@ -9,6 +9,9 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      fontFamily: {
+        body: ["Nunito"],
+      },
       colors: {
         "primary-color": "#EA6A12",
         background: "hsl(var(--background))",
