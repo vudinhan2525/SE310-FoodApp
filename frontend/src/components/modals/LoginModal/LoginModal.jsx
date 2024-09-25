@@ -23,7 +23,7 @@ export default function LoginModal() {
     <div
       spellCheck={false}
       onMouseDown={(e) => handleTurnOffModal(e)}
-      className=" modal fixed bg-black/50 top-0 bottom-0 left-0 right-0 z-[51]"
+      className=" modal z-[100] fixed bg-black/50 top-0 bottom-0 left-0 right-0 "
     >
       <div className="fixed px-8 py-8 rounded-2xl top-[50%] translate-y-[-50%] left-[50%] translate-x-[-50%] bg-white w-[500px] ">
         {method === "signin" && <LogIn setMethod={setMethod} />}
@@ -62,15 +62,14 @@ export default function LoginModal() {
         >
           <FaXmark className="text-xl" />
         </div>
-        {method === "forgotPassword" ||
-          (method === "register" && (
-            <div
-              onClick={() => setMethod("signin")}
-              className="bg-[#F5F6F6]  hover:bg-gray-300 transition-all flex items-center justify-center w-[45px] h-[45px] absolute rounded-full top-[25px] left-[30px] cursor-pointer"
-            >
-              <FaChevronLeft className="text-xl" />
-            </div>
-          ))}
+        {(method === "forgotPassword" || method === "register") && (
+          <div
+            onClick={() => setMethod("signin")}
+            className="bg-[#F5F6F6]  hover:bg-gray-300 transition-all flex items-center justify-center w-[45px] h-[45px] absolute rounded-full top-[25px] left-[30px] cursor-pointer"
+          >
+            <FaChevronLeft className="text-xl" />
+          </div>
+        )}
       </div>
     </div>
   );
