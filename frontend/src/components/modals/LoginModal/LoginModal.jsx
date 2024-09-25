@@ -1,6 +1,5 @@
 import { useContext, useState } from "react";
-import { AuthContext } from "../authProvider/AuthProvider";
-import { Link } from "react-router-dom";
+import { AuthContext } from "../../authProvider/AuthProvider.jsx";
 import LogIn from "./LogIn.jsx";
 import { FaXmark, FaChevronLeft } from "react-icons/fa6";
 import {
@@ -9,6 +8,8 @@ import {
   InstagramIcons,
   TwiterIcons,
 } from "@/utils/IconSVG/icon";
+import ForgotPassword from "./ForgotPassword.jsx";
+import Register from "./Register.jsx";
 
 export default function LoginModal() {
   const { setShowLoginModal } = useContext(AuthContext);
@@ -26,10 +27,11 @@ export default function LoginModal() {
     >
       <div className="fixed px-8 py-8 rounded-2xl top-[50%] translate-y-[-50%] left-[50%] translate-x-[-50%] bg-white w-[500px] ">
         {method === "signin" && <LogIn setMethod={setMethod} />}
-        {/* {method === "forgotPassword" && (
+        {method === "forgotPassword" && (
           <ForgotPassword setMethod={setMethod} />
-        )} */}
-        <p className="text-center mt-4">Or sign in with social platforms</p>
+        )}
+        {method === "register" && <Register />}
+        <p className="text-center mt-2">Or sign in with social platforms</p>
         <div className="flex justify-center mt-2 gap-4">
           <div className=" dark:border-[0px] border-[1px] cursor-pointer p-1 border-gray-300 shadow-sm rounded-full ">
             <FacebookIcons height="35px" width="35px" />
@@ -44,17 +46,15 @@ export default function LoginModal() {
             <TwiterIcons height="35px" width="35px" />
           </div>
         </div>
-        <div className="bg-gray-200 h-[1px] w-full mt-5"></div>
+        <div className="bg-gray-200 h-[1px] w-full mt-3"></div>
         <div className="flex justify-center pt-3 gap-2">
           <div>You dont have an account?</div>
-          <Link
-            target="_blank"
-            to="/register"
-            onClick={() => setShowLoginModal(false)}
+          <div
+            onClick={() => setMethod("register")}
             className="text-[#EF2950] font-semibold underline cursor-pointer"
           >
             Sign Up
-          </Link>
+          </div>
         </div>
         <div
           onClick={() => setShowLoginModal(false)}
@@ -62,14 +62,15 @@ export default function LoginModal() {
         >
           <FaXmark className="text-xl" />
         </div>
-        {method === "forgotPassword" && (
-          <div
-            onClick={() => setMethod("signin")}
-            className="bg-[#F5F6F6]  hover:bg-gray-300 transition-all flex items-center justify-center w-[45px] h-[45px] absolute rounded-full top-[25px] left-[30px] cursor-pointer"
-          >
-            <FaChevronLeft className="text-xl" />
-          </div>
-        )}
+        {method === "forgotPassword" ||
+          (method === "register" && (
+            <div
+              onClick={() => setMethod("signin")}
+              className="bg-[#F5F6F6]  hover:bg-gray-300 transition-all flex items-center justify-center w-[45px] h-[45px] absolute rounded-full top-[25px] left-[30px] cursor-pointer"
+            >
+              <FaChevronLeft className="text-xl" />
+            </div>
+          ))}
       </div>
     </div>
   );

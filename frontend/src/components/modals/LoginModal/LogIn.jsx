@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import axios from "axios";
-import { AuthContext } from "../AuthProvider/AuthProvider";
-import { FaUser, FaKey } from "react-icons/fa6";
+import { AuthContext } from "../../AuthProvider/AuthProvider";
+import { FaUser, FaKey, FaCircleNotch } from "react-icons/fa6";
 function LogIn({ setMethod }) {
   const { login, setShowLoginModal } = useContext(AuthContext);
   const [email, setEmail] = useState("");
@@ -34,7 +34,7 @@ function LogIn({ setMethod }) {
               setShowError(false);
               setEmail(e.target.value);
             }}
-            className={`dark:bg-[#3A3B3C] dark:border-[0px] w-full bg-[#F1EFF1] outline-none px-12 border-[1px] border-[#F1EFF1] font-semibold py-3 rounded-full ${
+            className={` w-full bg-[#F1EFF1] outline-none px-12 border-[1px] border-[#F1EFF1] font-semibold py-3 rounded-full ${
               (showErrorEmail || showError) && "border-red-400 bg-red-100"
             }`}
           ></input>
@@ -86,11 +86,7 @@ function LogIn({ setMethod }) {
             loading ? "opacity-70" : "hover:opacity-80"
           }`}
         >
-          {loading ? (
-            <div>{/* <FontAwesomeIcon icon={faCircleNotch} spin /> */}</div>
-          ) : (
-            <p>Login</p>
-          )}
+          {loading ? <div>{<FaCircleNotch />}</div> : <p>Login</p>}
         </button>
       </form>
     </>
