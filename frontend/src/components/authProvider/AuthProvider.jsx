@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 const AuthContext = createContext();
 function AuthProvider({ children }) {
-  const [isLoggedIn, setIsLoggedIn] = useState();
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [userData, setUserData] = useState({});
@@ -14,6 +14,7 @@ function AuthProvider({ children }) {
   };
   const ckLogged = async () => {
     // check login
+    
     setLoading(false);
   };
   useEffect(() => {
