@@ -14,6 +14,8 @@ export default {
       },
       colors: {
         "primary-color": "#EA6A12",
+        "theme-color":"#FFECB3",
+        "light-them-color":"#FFF3E0",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
