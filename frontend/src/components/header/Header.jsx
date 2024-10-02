@@ -7,7 +7,7 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const { setShowLoginModal, isLoggedIn } = useContext(AuthContext);
   return (
-    <div className="flex fixed bg-white/95 z-[99] left-0 right-0 top-0 items-center px-24 justify-between">
+    <div className="flex fixed bg-white/95 z-[99] left-0 right-0 top-0 items-center px-24 justify-between ">
       <Link
         to={"/"}
         style={{
