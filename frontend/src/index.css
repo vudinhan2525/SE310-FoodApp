@@ -65,3 +65,12 @@
     @apply bg-background text-foreground;
   }
 }
+.bg-banner-ct {
+  background: rgb(255, 255, 255);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.9103974841889881) 0%,
+    rgba(245, 245, 247, 0.9019941228444502) 62%,
+    rgba(255, 255, 255, 0.17370280631783963) 100%
+  );
+}
