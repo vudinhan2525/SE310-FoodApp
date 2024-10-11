@@ -11,25 +11,26 @@ export default function RatingLayout(props) {
         const list=[];
         for(let i=0;i<Math.floor(props.rating);i++)
         {
-          list.push(<FaStar fill={color}/>);
+          list.push(<FaStar className={`${props.style}`} fill={color}/>);
         }
         if((props.rating)-Math.floor(props.rating)>=0.5)
         {
-          list.push(<FaStarHalfStroke fill={color} />);
+          list.push(<FaStarHalfStroke className={`${props.style}`} fill={color} />);
         }
         for(let i=0;i<(5-list.length);i++)
         {
-            list.push(<FaRegStar fill={color}/>)
+            list.push(<FaRegStar className={`${props.style}`} fill={color}/>)
         }
         return list;
   
       }
   return (
-    <div className=' h-full flex items-center'>
+    <div className={`h-full flex items-center `}>
         <div className='flex h-full  mr-1 items-center'>
             {star()} 
         </div>
-        <div className='text-[#EA6A12] '>({props.rating})</div>
+        {props.no?(<p></p>):( <div className='text-[#EA6A12] '>({props.rating})</div>)}
+       
     </div>
   )
 }
