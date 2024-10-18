@@ -1,3 +1,4 @@
+import authApi from "@/apis/authApi";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaCircleNotch, FaEnvelope, FaKey, FaUser } from "react-icons/fa6";
@@ -10,7 +11,19 @@ export default function Register() {
     formState: { errors },
     watch,
   } = useForm();
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = async (data) => {
+    const response = await authApi.register({
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      password: data.password,
+      passwordConfirm: data.passwordConfirm,
+    });
+    console.log(response);
+    // if (response.message === "success") {
+    //   window.location.reload();
+    // }
+  };
 
   const handleRegister = () => {};
 
