@@ -19,10 +19,9 @@ export default function Register() {
       password: data.password,
       passwordConfirm: data.passwordConfirm,
     });
-    console.log(response);
-    // if (response.message === "success") {
-    //   window.location.reload();
-    // }
+    if (response.message === "success") {
+      window.location.reload();
+    }
   };
 
   const handleRegister = () => {};
