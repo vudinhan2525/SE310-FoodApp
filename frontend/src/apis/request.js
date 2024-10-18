@@ -3,4 +3,8 @@ import axios from "axios";
 const request = axios.create({
   baseURL: "http://localhost:5173/api/v1",
 });
-export default request;
+const authRequest = axios.create({
+  baseURL: "http://localhost:5173/api/v1",
+  withCredentials: true,
+});
+export { request, authRequest };

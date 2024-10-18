@@ -1,3 +1,4 @@
+import authApi from "@/apis/authApi";
 import { createContext, useState, useEffect } from "react";
 const AuthContext = createContext();
 function AuthProvider({ children }) {
@@ -13,7 +14,11 @@ function AuthProvider({ children }) {
     setIsLoggedIn(false);
   };
   const ckLogged = async () => {
-    // check login
+    const response = await authApi.isLoggedIn();
+    if (response.message === "success") {
+      setIsLoggedIn(true);
+      setUserData(response.user);
+    }
 
     setLoading(false);
   };
