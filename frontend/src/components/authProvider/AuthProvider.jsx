@@ -15,7 +15,7 @@ function AuthProvider({ children }) {
   };
   const ckLogged = async () => {
     const response = await authApi.isLoggedIn();
-    if (response.message === "success") {
+    if (response?.message === "success") {
       setIsLoggedIn(true);
       setUserData(response.user);
     }

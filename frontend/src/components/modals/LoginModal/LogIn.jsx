@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import axios from "axios";
 import { AuthContext } from "../../AuthProvider/AuthProvider";
 import { FaUser, FaKey, FaCircleNotch } from "react-icons/fa6";
+import authApi from "@/apis/authApi";
 function LogIn({ setMethod }) {
   const { login, setShowLoginModal } = useContext(AuthContext);
   const [email, setEmail] = useState("");
@@ -13,6 +14,15 @@ function LogIn({ setMethod }) {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    const response = await authApi.login({
+      email,
+      password,
+    });
+    if (response?.status === "success") {
+      window.location.reload();
+    } else {
+      setShowError(true);
+    }
   };
   return (
     <>
@@ -76,7 +86,7 @@ function LogIn({ setMethod }) {
         )}
         <p
           onClick={() => setMethod("forgotPassword")}
-          className="text-xs font-medium ml-2 underline mt-1 cursor-pointer"
+          className="text-xs font-medium ml-2 inline-block underline mt-1 cursor-pointer"
         >
           Forgot your password ?
         </p>

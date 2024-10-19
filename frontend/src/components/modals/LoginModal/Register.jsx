@@ -9,6 +9,7 @@ export default function Register() {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
     watch,
   } = useForm();
   const onSubmit = async (data) => {
@@ -19,8 +20,16 @@ export default function Register() {
       password: data.password,
       passwordConfirm: data.passwordConfirm,
     });
-    if (response.message === "success") {
+    if (response?.status === "success") {
       window.location.reload();
+    } else if (
+      response?.status === "failed" &&
+      response?.message === "Email has been used!"
+    ) {
+      setError("email", {
+        type: "manual",
+        message: "Email has already been used.",
+      });
     }
   };
 

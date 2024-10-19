@@ -86,12 +86,16 @@ namespace backend.Controllers
         {
             if (newUser.password != newUser.passwordConfirm)
             {
-                return BadRequest("Password and confirmation password do not match.");
+                return Ok(new {
+                    status = "failed",
+                    message = "Password and confirmation password do not match."
+                });
             }
             var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == newUser.email);
             if (existingUser != null)
             {
                 return Ok(new {
+                    status = "failed",
                     message = "Email has been used!",
                 });
             }
@@ -113,8 +117,57 @@ namespace backend.Controllers
             // Set the token as a cookie
             SetJwtCookie(token);
             return Ok(new
+            {   
+                status = "success",
+                message = "Register successfully",
+            });
+        }
+        //POST : api/v1/user/login
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginUser([FromBody] LoginBodyDto loginBody){
+            // Find the user by email
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginBody.email);
+            if (user == null)
             {
-                message = "success",
+                return Ok(new
+                {   
+                    status = "failed",
+                    message = "Invalid email or password."
+                });
+            }
+
+            // Verify the password
+            var passwordHasher = new PasswordHasher<User>();
+            var result = passwordHasher.VerifyHashedPassword(user, user.Password, loginBody.password);
+            if (result == PasswordVerificationResult.Failed)
+            {
+                return Ok(new
+                {   status = "failed",
+                    message = "Invalid email or password."
+                });
+            }
+
+            // Generate the token
+            var token = GenerateJwtToken(user);
+
+            // Set the token as a cookie (optional)
+            SetJwtCookie(token);
+
+            return Ok(new
+            {   status = "success",
+                message = "Login successfully",
+            });
+        }
+        //GET : api/v1/user/logout
+        [HttpGet("logout")]
+        public IActionResult LogoutUser(){
+            // Clear the JWT token cookie
+            Response.Cookies.Delete("jwt"); 
+
+            return Ok(new
+            {   
+                status = "success",
+                message = "Logged out successfully."
             });
         }
         // DELETE: api/v1/user/{id}
@@ -158,5 +211,6 @@ namespace backend.Controllers
             Response.Cookies.Append("jwt", token, cookieOptions);
         }
         public record CreateUserDto(string firstName, string lastName, string email,string password,string passwordConfirm);
+        public record LoginBodyDto(string email, string password);
     }
 }
