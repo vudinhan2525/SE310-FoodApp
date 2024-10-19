@@ -2,10 +2,17 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../authProvider/AuthProvider";
 import { Link } from "react-router-dom";
 import SearchBox from "./SearchBox";
-import { FaBell } from "react-icons/fa6";
+import { FaArrowRightFromBracket, FaBell } from "react-icons/fa6";
+import authApi from "@/apis/authApi";
 export default function Header() {
   const [open, setOpen] = useState(false);
   const { setShowLoginModal, isLoggedIn } = useContext(AuthContext);
+  const handleLogout = async () => {
+    const response = await authApi.logout();
+    if (response?.status === "success") {
+      window.location.reload();
+    }
+  };
   return (
     <div className="flex fixed bg-white/95 z-[99] left-0 right-0 top-0 items-center px-24 justify-between">
       <Link
@@ -50,7 +57,17 @@ export default function Header() {
               </p>
             </div>
             {open && (
-              <div className="w-[200px] before:w-[120px] before:h-[20px]  before:absolute before:top-[-20px] before:right-[50%] before:translate-x-[50%] h-[300px] mt-[5px] bg-red-50 shadow-md rounded-sm right-[50%] translate-x-[50%] top-[100%] absolute"></div>
+              <div className="w-[180px] before:w-[120px] before:h-[20px]  before:absolute before:top-[-20px] before:right-[50%] before:translate-x-[50%] h-[300px] mt-[5px] bg-white shadow-md rounded-sm right-[50%] translate-x-[50%] top-[100%] absolute">
+                <div
+                  onClick={() => {
+                    handleLogout();
+                  }}
+                  className="flex justify-center px-4 transition-all rounded-t-md cursor-pointer hover:bg-gray-100 gap-3 items-center py-2"
+                >
+                  <p className="text-lg">Log out</p>
+                  <FaArrowRightFromBracket className="text-lg"></FaArrowRightFromBracket>
+                </div>
+              </div>
             )}
           </div>
         )}
