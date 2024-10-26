@@ -1,3 +1,4 @@
+import authApi from "@/apis/authApi";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaCircleNotch, FaEnvelope, FaKey, FaUser } from "react-icons/fa6";
@@ -8,9 +9,29 @@ export default function Register() {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
     watch,
   } = useForm();
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = async (data) => {
+    const response = await authApi.register({
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      password: data.password,
+      passwordConfirm: data.passwordConfirm,
+    });
+    if (response?.status === "success") {
+      window.location.reload();
+    } else if (
+      response?.status === "failed" &&
+      response?.message === "Email has been used!"
+    ) {
+      setError("email", {
+        type: "manual",
+        message: "Email has already been used.",
+      });
+    }
+  };
 
   const handleRegister = () => {};
 

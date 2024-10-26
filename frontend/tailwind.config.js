@@ -57,6 +57,15 @@ export default {
           5: "hsl(var(--chart-5))",
         },
       },
+      keyframes: {
+        swing: {
+          '0%, 100%': { transform: 'rotate(-3deg)' },
+          '50%': { transform: 'rotate(3deg)' },
+        },
+      },
+      animation: {
+        swing: 'swing 2s ease-in-out infinite',
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
