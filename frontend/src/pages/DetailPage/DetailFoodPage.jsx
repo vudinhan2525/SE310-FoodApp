@@ -128,7 +128,7 @@ export default function DetailFoodPage() {
          </div>
          {/* dưới */}
          <div className='ml-[3%] max-w-full mt-[3%]'>
-         <h2 className='text-[28px] font-semibold mb-[2%]'>Đánh giá</h2>
+         <h2 className='text-[28px] font-semibold mb-[3%]'>Đánh giá</h2>
          <Review store={store}/>
 
          </div>

@@ -13,8 +13,8 @@ export default function Review(props) {
     const listReview = [{ name: 'Minh Đức', rating: 4, date: '15/05/2004', content: "đồ ăn rất ngon, hi vọng sẽ càng ngày càng nhiều món ngon hơn", avatar: 'https://nhachannuoi.vn/wp-content/uploads/2024/07/meo.jpg', reply: 'Shop cảm ơn bạn đã ủng hộ' },
     { name: 'Minh Đức', rating: 4, date: '15/05/2004', content: "đồ ăn rất ngon, hi vọng sẽ càng ngày càng nhiều món ngon hơn", avatar: 'https://nhachannuoi.vn/wp-content/uploads/2024/07/meo.jpg', reply: 'Shop cảm ơn bạn đã ủng hộ Shop cảm ơn bạn đã ủng hộ Shop cảm ơn bạn đã ủng hộ' },
     { name: 'Minh Đức', rating: 4, date: '15/05/2004', content: "đồ ăn rất ngon, hi vọng sẽ càng ngày càng nhiều món ngon hơn", avatar: 'https://nhachannuoi.vn/wp-content/uploads/2024/07/meo.jpg', reply: 'Shop cảm ơn bạn đã ủng hộ' },
-    { name: 'Minh Đức', rating: 4, date: '15/05/2004', content: "đồ ăn rất ngon, hi vọng sẽ càng ngày càng nhiều món ngon hơn", avatar: 'https://nhachannuoi.vn/wp-content/uploads/2024/07/meo.jpg', reply: 'Shop cảm ơn bạn đã ủng hộ Shop cảm ơn bạn đã ủng hộ Shop cảm ơn bạn đã ủng hộ' },
-    { name: 'Minh Đức', rating: 4, date: '15/05/2004', content: "đồ ăn rất ngon, hi vọng sẽ càng ngày càng nhiều món ngon hơn", avatar: 'https://nhachannuoi.vn/wp-content/uploads/2024/07/meo.jpg', reply: 'Shop cảm ơn bạn đã ủng hộ' },
+    { name: 'Minh Đức', rating: 4, date: '15/05/2004', content: "đồ ăn rất ngon, hi vọng sẽ càng ngày càng nhiều món ngon hơn", avatar: 'https://nhachannuoi.vn/wp-content/uploads/2024/07/meo.jpg',  },
+    { name: 'Minh Đức', rating: 4, date: '15/05/2004', content: "đồ ăn rất ngon, hi vọng sẽ càng ngày càng nhiều món ngon hơn", avatar: 'https://nhachannuoi.vn/wp-content/uploads/2024/07/meo.jpg',  },
     { name: 'Minh Đức', rating: 4, date: '15/05/2004', content: "đồ ăn rất ngon, hi vọng sẽ càng ngày càng nhiều món ngon hơn", avatar: 'https://nhachannuoi.vn/wp-content/uploads/2024/07/meo.jpg', reply: 'Shop cảm ơn bạn đã ủng hộ Shop cảm ơn bạn đã ủng hộ Shop cảm ơn bạn đã ủng hộ' },
     { name: 'Minh Đức', rating: 4, date: '15/05/2004', content: "đồ ăn rất ngon, hi vọng sẽ càng ngày càng nhiều món ngon hơn", avatar: 'https://nhachannuoi.vn/wp-content/uploads/2024/07/meo.jpg', reply: 'Shop cảm ơn bạn đã ủng hộ' },
     { name: 'Minh Đức', rating: 4, date: '15/05/2004', content: "đồ ăn rất ngon, hi vọng sẽ càng ngày càng nhiều món ngon hơn", avatar: 'https://nhachannuoi.vn/wp-content/uploads/2024/07/meo.jpg', reply: 'Shop cảm ơn bạn đã ủng hộ Shop cảm ơn bạn đã ủng hộ Shop cảm ơn bạn đã ủng hộ' },
@@ -70,13 +70,14 @@ export default function Review(props) {
                                     <p className='text-xs mt-[-4px]'>{item.date}</p>
                                 </div>
                                 <p className='text-[18px]'>{item.content}</p>
-                                <div className=' mt-3  border-[1px] w-fit p-2 border-orange-300'>
+                                {item.reply?( <div className=' mt-3  border-[1px] w-fit p-2 border-orange-200'>
                                     <a href='' className='flex items-center mb-2 w-fit'>
-                                        <img className='rounded-full w-7 h-7 object-cover border-slate-400 border-[0.2px]' src={props.store.avatar} />
-                                        <h3 className='text-[16px] ml-2 font-semibold'>{props.store.name}</h3>
+                                        <img className='rounded-full w-7 h-7 object-cover border-slate-200 border-[0.2px]' src={props.store.avatar} />
+                                        <h3 className='text-[16px] ml-2 font-semibold text-gray-500'>{props.store.name}</h3>
                                     </a>
                                     <p className='ml-9 text-[18px]'>{item.reply}</p>
-                                </div>
+                                </div>):(<div/>)}
+                               
                             </div>
                         </div>
                     </>
