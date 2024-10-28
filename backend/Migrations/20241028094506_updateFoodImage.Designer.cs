@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using backend.Controllers;
 
@@ -11,9 +12,11 @@ using backend.Controllers;
 namespace backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241028094506_updateFoodImage")]
+    partial class updateFoodImage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,6 +89,12 @@ namespace backend.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("FoodId"));
 
+                    b.Property<bool>("Available")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int>("FoodTypeTypeId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Image1")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -98,9 +107,6 @@ namespace backend.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("Itemleft")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -111,15 +117,16 @@ namespace backend.Migrations
                     b.Property<long>("Price")
                         .HasColumnType("bigint");
 
-                    b.Property<decimal>("Rating")
-                        .HasColumnType("decimal(65,30)");
+                    b.Property<string>("Rating")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<int>("TypeId")
                         .HasColumnType("int");
 
                     b.HasKey("FoodId");
 
-                    b.HasIndex("TypeId");
+                    b.HasIndex("FoodTypeTypeId");
 
                     b.ToTable("Foods");
                 });
@@ -292,7 +299,7 @@ namespace backend.Migrations
                 {
                     b.HasOne("backend.Controllers.FoodType", "FoodType")
                         .WithMany("Foods")
-                        .HasForeignKey("TypeId")
+                        .HasForeignKey("FoodTypeTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
