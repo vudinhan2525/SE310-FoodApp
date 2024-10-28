@@ -84,23 +84,23 @@ export default function Review(props) {
                 })}
             </div>
             <Pagination className={"pt-2 pb-3"}>
-        <PaginationContent>
-            {page>1?(<PaginationItem>
-            <PaginationPrevious className={'cursor-pointer'} onClick={previous}/>
-          </PaginationItem>):(<div/>)}
-          
-          <PaginationItem>
-           <PaginationLink className={"font-semibold bg-gray-200 h-7"}   >{page}</PaginationLink>
-          </PaginationItem>
-          {(listReview.length-page*10)>0?(
-            <PaginationItem>
-            <PaginationNext className={'cursor-pointer'}
-              onClick={next} />
-          </PaginationItem>
-          ):(<div/>)}
-          
-        </PaginationContent>
-      </Pagination>
+                <PaginationContent>
+                    {page>1?(<PaginationItem>
+                    <PaginationPrevious className={'cursor-pointer'} onClick={previous}/>
+                </PaginationItem>):(<div/>)}
+                
+                <PaginationItem>
+                <PaginationLink className={"font-semibold bg-gray-200 h-7"}   >{page}</PaginationLink>
+                </PaginationItem>
+                {(listReview.length-page*10)>0?(
+                    <PaginationItem>
+                    <PaginationNext className={'cursor-pointer'}
+                    onClick={next} />
+                </PaginationItem>
+                ):(<div/>)}
+                
+                </PaginationContent>
+            </Pagination>
             
         </div>
     )
