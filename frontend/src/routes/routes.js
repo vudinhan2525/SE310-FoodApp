@@ -4,6 +4,8 @@ import ProfilePage from "../pages/User/ProfilePage";
 import CartPage from "@/pages/CartPage/CartPage";
 import DetailFoodPage from "@/pages/DetailPage/DetailFoodPage";
 import AboutPage from "@/pages/AboutPage/AboutPage";
+import FavoritePage from "@/pages/User/FavoritePage";
+import BillPage from "@/pages/BillPage/BillPage";
 
 const publicRoutes = [
   { path: "/", component: HomePage },
@@ -12,5 +14,7 @@ const publicRoutes = [
   { path: "/cart", component: CartPage },
   { path: "/detail", component: DetailFoodPage },
   { path: "/about", component: AboutPage },
+  { path: "/favorite", component: FavoritePage },
+  { path: "/bill", component: BillPage }
 ];
 export { publicRoutes };

@@ -78,7 +78,76 @@ export default function CartPage() {
             })}
           </div>
         </div>
-        <div className="basis-[30%]">
+        <div className="basis-[30%] flex flex-col gap-5">
+        <div className="px-4  py-4 bg-white rounded-lg">
+                    <form  className="space-y-4 p-4 bg-gray-100 rounded-lg shadow-md">
+                        <div>
+                            <label className="block font-medium">House Number</label>
+                            <input
+                            type="text"
+                            name="houseNumber"
+                            // value={formData.houseNumber}
+                            // onChange={handleChange}
+                            placeholder="Enter house number"
+                            className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block font-medium">Ward</label>
+                            <input
+                            type="text"
+                            name="ward"
+                            // value={formData.ward}
+                            // onChange={handleChange}
+                            placeholder="Enter ward"
+                            className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block font-medium">District</label>
+                            <input
+                            type="text"
+                            name="district"
+                            // value={formData.district}
+                            // onChange={handleChange}
+                            placeholder="Enter district"
+                            className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block font-medium">City</label>
+                            <input
+                            type="text"
+                            name="city"
+                            // value={formData.city}
+                            // onChange={handleChange}
+                            placeholder="Enter city"
+                            className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block font-medium">Country</label>
+                            <input
+                            type="text"
+                            name="country"
+                            // value={formData.country}
+                            placeholder="Enter country"
+                            className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg bg-gray-200 cursor-not-allowed"
+                            />
+                        </div>
+
+                        <button
+                            type="submit"
+                            className="w-full py-2 font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-all"
+                        >
+                            Submit Address
+                        </button>
+                        </form>
+                </div>
           <div className="px-4  py-4 bg-white rounded-lg">
             <div className="flex pb-3 justify-between">
               <h1>Thành tiền</h1>
