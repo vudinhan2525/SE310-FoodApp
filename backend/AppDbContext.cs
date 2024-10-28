@@ -23,6 +23,12 @@ namespace backend.Controllers
                 .HasKey(bi => bi.ItemId);
             modelBuilder.Entity<FoodType>().HasKey(ft => ft.TypeId);
              modelBuilder.Entity<UserFoodOrder>().HasKey(userOrder => userOrder.OrderId);
+
+              modelBuilder.Entity<Food>()
+                .HasOne(f => f.FoodType)
+                .WithMany(ft => ft.Foods)
+                .HasForeignKey(f => f.TypeId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
