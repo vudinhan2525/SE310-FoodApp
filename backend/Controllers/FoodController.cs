@@ -137,7 +137,52 @@ namespace backend.Controllers
                 }
             });
         }
-    
+        [HttpGet("getfood")]
+        public async Task<IActionResult> GetFoodById(int id)
+        {
+            // Fetch the food item by ID, including related data if needed
+            var food = await _context.Foods
+                .Include(f => f.FoodType)      // Include related FoodType
+                .Include(f => f.Ratings)       // Include Ratings if needed
+                .Include(f => f.Orders)        // Include Orders if needed
+                .Include(f => f.SavedUsers)    // Include SavedUsers if needed
+                .FirstOrDefaultAsync(f => f.FoodId == id);
+
+            // Check if food item exists
+            if (food == null)
+            {
+                return NotFound(new
+                {
+                    status = "error",
+                    message = "Food item not found"
+                });
+            }
+
+            // Return the food item details
+            return Ok(new
+            {
+                status = "success",
+                data = new
+                {
+                    food.FoodId,
+                    food.Name,
+                    food.Image1,
+                    food.Image2,
+                    food.Image3,
+                    food.Description,
+                    food.TypeId,
+                    food.Rating,
+                    food.NumberRating,
+                    food.Price,
+                    food.Itemleft,
+                    FoodType = new
+                    {
+                        food.FoodType.TypeId,
+                        food.FoodType.NameType
+                    }
+                }
+            });
+        }
         [HttpGet("search")]
         public async Task<IActionResult> SearchFood(int page = 1, int limit = 10, string kw = null)
         {
@@ -187,6 +232,6 @@ namespace backend.Controllers
                 totalItems = await query.CountAsync() 
             });
         }
-    
+
     }
 }
