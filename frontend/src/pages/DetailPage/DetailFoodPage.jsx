@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import ShowImage from '@/components/detailFood/ShowImage'
 import { MdOutlineShoppingCart } from "react-icons/md";
 import RatingLayout from '@/components/ui/ratingLayout';
@@ -9,54 +9,74 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import Review from '@/components/detailFood/Review';
 import { FaRegHeart, FaHeart } from "react-icons/fa";
+import foodApi from '@/apis/foodApi';
+import { useParams } from 'react-router-dom';
 
 
 
 
 export default function DetailFoodPage() {
   const [count,setCount]= useState(1);
+  const { id } = useParams();
   const[note, setNote]= useState('')
+  const [food, setFood] = useState(null);
   const [isSave,setIsSave]= useState(false)
   const clickSave=()=>{
       setIsSave(!isSave)
   }
-    const listImage=[
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTa9Qq1rV_svdydH5u3O8r5ZmT8udMBnSuKeA&s',
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMqxblUCytv_3FcErsPcP8oQe_0iK9kezGHw&s',
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5sT5zC4y0-6mPucxnXLg4ATqCxjVN7bAttQ&s',
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTa9Qq1rV_svdydH5u3O8r5ZmT8udMBnSuKeA&s',
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMqxblUCytv_3FcErsPcP8oQe_0iK9kezGHw&s',
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5sT5zC4y0-6mPucxnXLg4ATqCxjVN7bAttQ&s'
-    ]
-    const food={
-      name:"Burger bò phô mai",
-      price:35000,
-      rating:3.5,
-      description:"Burger bò phô mai – Sự kết hợp hoàn hảo giữa miếng thịt bò tươi ngon, được nướng chín tới, và lớp phô mai cheddar tan chảy thơm béo. Bánh mì mềm mịn, kẹp cùng rau tươi giòn như xà lách, cà chua và dưa chuột muối, tạo nên một món ăn đầy hấp dẫn. Hương vị đậm đà, quyện giữa vị ngọt tự nhiên của thịt bò và sự béo ngậy của phô mai, đảm bảo làm hài lòng cả những thực khách khó tính nhất. Đây là lựa chọn lý tưởng cho những bữa ăn nhanh gọn mà vẫn bổ dưỡng!",
-      inStock:1
-    };
-    const store={
-      avatar:'https://product.hstatic.net/1000389344/product/burger_web_2daf139345214f3eb6caa111ae710674_master.jpg',
-      address:"287, Trần Xuân Soạn, Quận 7, Tp.HCM",
-      name:'Shop ăn vặt cô Linh',
-      rating:3.5,
-      numberRating:200,
-      phoneNumber:'0944662775'
+  // const listImage=[
+  //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTa9Qq1rV_svdydH5u3O8r5ZmT8udMBnSuKeA&s',
+  //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMqxblUCytv_3FcErsPcP8oQe_0iK9kezGHw&s',
+  //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5sT5zC4y0-6mPucxnXLg4ATqCxjVN7bAttQ&s',
+  //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTa9Qq1rV_svdydH5u3O8r5ZmT8udMBnSuKeA&s',
+  //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMqxblUCytv_3FcErsPcP8oQe_0iK9kezGHw&s',
+  //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5sT5zC4y0-6mPucxnXLg4ATqCxjVN7bAttQ&s'
+  // ]
+  // const food={
+  //   name:"Burger bò phô mai",
+  //   price:35000,
+  //   rating:3.5,
+  //   description:"Burger bò phô mai – Sự kết hợp hoàn hảo giữa miếng thịt bò tươi ngon, được nướng chín tới, và lớp phô mai cheddar tan chảy thơm béo. Bánh mì mềm mịn, kẹp cùng rau tươi giòn như xà lách, cà chua và dưa chuột muối, tạo nên một món ăn đầy hấp dẫn. Hương vị đậm đà, quyện giữa vị ngọt tự nhiên của thịt bò và sự béo ngậy của phô mai, đảm bảo làm hài lòng cả những thực khách khó tính nhất. Đây là lựa chọn lý tưởng cho những bữa ăn nhanh gọn mà vẫn bổ dưỡng!",
+  //   inStock:1
+  // };
+  const store={
+    avatar:'https://product.hstatic.net/1000389344/product/burger_web_2daf139345214f3eb6caa111ae710674_master.jpg',
+    address:"287, Trần Xuân Soạn, Quận 7, Tp.HCM",
+    name:'Shop ăn vặt cô Linh',
+    rating:3.5,
+    numberRating:200,
+    phoneNumber:'0944662775'
 
-    }
-    const handleChange = (e) => {
-      const inputValue = e.target.value;
-  
-      // Kiểm tra xem người dùng có nhập số nguyên hay không
-      if (inputValue === '' || /^[0-9]+$/.test(inputValue)) {
-        if(inputValue>999)
-        {
-          setCount(999);
-        }else{
-          setCount(inputValue);
-        }
+  }
+  const handleChange = (e) => {
+    const inputValue = e.target.value;
+
+    // Kiểm tra xem người dùng có nhập số nguyên hay không
+    if (inputValue === '' || /^[0-9]+$/.test(inputValue)) {
+      if(inputValue>999)
+      {
+        setCount(999);
+      }else{
+        setCount(inputValue);
       }
-    };
+    }
+  };
+  const getFoodbyId = async () => {
+    const response = await foodApi.getFoodbyId(id)
+    console.log(response.data)
+    if(response.status === "success"){
+      setFood(response.data);
+    }
+  }
+  useEffect(() => {
+    if(id){
+      getFoodbyId();
+    }
+  },[id])
+  if (!food) {
+    return <p>Loading...</p>; // Show loading while food data is being fetched
+  }
+  const listImage = [food.image1, food.image2, food.image3].filter(Boolean);
   return (
     <ScrollArea>
   <section className=' h-screen relative top-20 mx-[10%] scroll-smooth'>
@@ -66,13 +86,14 @@ export default function DetailFoodPage() {
             </div>
             
             <div className='basis-[58%] pl-[4%] mt-4 mr-[5%]  '>
-              <div>
+              {/* <div>
                 <a href='' className='flex items-center mb-2 mt-[-20px]'>
                    <img className='rounded-full w-10 h-10 object-cover border-slate-400 border-[1px]' src={store.avatar} />
                    <h3 className='text-[18px] ml-3 font-semibold'>{store.name}</h3>
                 </a>
               
-              </div>
+              </div> */}
+
               <div className='flex items-center'>
                 <h2 className='font-extrabold text-4xl/[45px] mr-[4%] '>{food.name} </h2>
                 <div>

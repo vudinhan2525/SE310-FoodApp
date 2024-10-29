@@ -12,7 +12,7 @@ const publicRoutes = [
   { path: "/profile", component: ProfilePage },
   { path: "/store", component: StorePage },
   { path: "/cart", component: CartPage },
-  { path: "/detail", component: DetailFoodPage },
+  { path: "/detail/:id", component: DetailFoodPage },
   { path: "/about", component: AboutPage },
   { path: "/favorite", component: FavoritePage },
   { path: "/bill", component: BillPage }
