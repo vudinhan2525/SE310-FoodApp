@@ -79,5 +79,118 @@ namespace backend.Controllers
                 }
             });
         }
+    
+        [HttpPost]
+        public async Task<IActionResult> CreateRating([FromBody] RatingBodyDto ratingBody)
+        {
+            // Validate user and food existence
+            var userExists = await _context.Users.AnyAsync(u => u.UserId == ratingBody.userId);
+            var foodExists = await _context.Foods.AnyAsync(f => f.FoodId == ratingBody.foodId);
+
+            if (!userExists)
+            {
+                return BadRequest("User does not exist.");
+            }
+            
+            if (!foodExists)
+            {
+                return BadRequest("Food item does not exist.");
+            }
+
+            // Create a new Rating object
+            var newRating = new Rating
+            {
+                UserId = ratingBody.userId,
+                FoodId = ratingBody.foodId,
+                Content = ratingBody.content,
+                RatingValue = ratingBody.ratingValue,
+                Date = DateTime.UtcNow
+            };
+
+            // Add and save the new rating
+            try
+            {
+                _context.Ratings.Add(newRating);
+                await _context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    status = "success",
+                    message = "Rating created successfully.",
+                    data = newRating
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating rating.");
+                return StatusCode(500, "An error occurred while creating the rating.");
+            }
+        }
+        [HttpPost("/update")]
+        public async Task<IActionResult> UpdateRating([FromBody] UpdateRatingDto ratingBody)
+        {
+            // Find the rating by ratingId
+            var rating = await _context.Ratings
+                .FirstOrDefaultAsync(r => r.RatingId == ratingBody.ratingId);
+
+            if (rating == null)
+            {
+                return NotFound("Rating not found for the given ID.");
+            }
+
+            // Update the rating properties
+            rating.Content = ratingBody.content;
+            rating.RatingValue = ratingBody.ratingValue;
+            rating.Date = DateTime.UtcNow; // Update the date to the current date/time
+
+            // Save changes to the database
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok(new
+                {
+                    status = "success",
+                    message = "Rating updated successfully.",
+                    data = rating
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating rating.");
+                return StatusCode(500, "An error occurred while updating the rating.");
+            }
+        }
+        [HttpDelete]
+        public async Task<IActionResult> DeleteRating(int ratingId)
+        {
+            // Find the rating by ratingId
+            var rating = await _context.Ratings.FindAsync(ratingId);
+
+            if (rating == null)
+            {
+                return NotFound("Rating not found for the given ID.");
+            }
+
+            // Remove the rating from the database
+            _context.Ratings.Remove(rating);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok(new
+                {
+                    status = "success",
+                    message = "Rating deleted successfully."
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting rating.");
+                return StatusCode(500, "An error occurred while deleting the rating.");
+            }
+        }
+        public record RatingBodyDto(int userId, int foodId,string content,int ratingValue);
+        public record UpdateRatingDto(int ratingId,string content,int ratingValue);
+    
     }
 }
