@@ -8,6 +8,19 @@ const foodApi = {
     }
     const response = await request.get(query);
     return response.data;
+  },
+  getNewestFood: async (paging,limit) => {
+    let query = `/Food/Newest?page=${paging}&limit=${limit}`
+    const response = await request.get(query);
+    return response.data;
+  },
+  getSearchedFood: async (paging,limit,kw) => {
+    let query = `/Food/Search?page=${paging}&limit=${limit}`
+    if(kw){
+      query += `&kw=${kw}`
+    }
+    const response = await request.get(query);
+    return response.data;
   }
-};
+}
 export default foodApi;

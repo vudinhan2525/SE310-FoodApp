@@ -56,6 +56,7 @@ export default function MenuCategory() {
           );
         })}
       </div>
+      <div className=""></div>
       <div className="grid grid-cols-4 space-x-4 mt-4">
         {foods.map((el, idx) => {
           return (
@@ -65,15 +66,17 @@ export default function MenuCategory() {
                 el.image1
               }
               title={el.name}
-              description={"Burger King"}
+              description={el.description}
               price={el.price}
             />
           );
         })}
       </div>
-      <Pagination onChange={(page) => {
-        setPage(page)
-      }} total={total} defaultCurrent={1} pageSize={4}/>
+      <div className="w-full flex justify-center mt-5">
+        <Pagination className="items-center" onChange={(page) => {
+          setPage(page)
+        }} total={total} defaultCurrent={1} pageSize={4}/>
+      </div>
     </div>
   );
 }
