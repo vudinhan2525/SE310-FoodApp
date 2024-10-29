@@ -21,6 +21,11 @@ const foodApi = {
     }
     const response = await request.get(query);
     return response.data;
+  },
+  getFoodbyId: async (foodId) => {
+    let query = `/Food/getfood?id=${foodId}`
+    const response = await request.get(query);
+    return response.data;
   }
 }
 export default foodApi;
