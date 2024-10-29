@@ -7,7 +7,7 @@ namespace backend.Controllers
         public int FoodId { get; set; }  // Foreign Key
         public string Content { get; set; }
         public DateTime Date { get; set; }
-        public string RatingValue { get; set; }
+        public decimal RatingValue { get; set; }
         public string? Reply { get; set; }
         public DateTime? DateReply { get; set; }
 
