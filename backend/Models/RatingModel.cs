@@ -8,7 +8,7 @@ namespace backend.Controllers
         public string Content { get; set; }
         public DateTime Date { get; set; }
         public string RatingValue { get; set; }
-        public string Reply { get; set; }
+        public string? Reply { get; set; }
         public DateTime? DateReply { get; set; }
 
         // Navigation properties
