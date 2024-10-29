@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import FoodCardHorizontal from "../food/FoodCartHorizontal";
+import useDebounce from "@/hooks/useDebounce";
+import foodApi from "@/apis/foodApi";
 // Adjust the import path as needed
 
 // Sample data for food items
@@ -12,18 +14,21 @@ const foodItems = [
 
 export default function SearchBox() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredFoods, setFilteredFoods] = useState([]);
 
-  const handleSearch = (e) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-
-    // Filter food items based on search query
-    const results = foodItems.filter((item) =>
-      item.title.toLowerCase().includes(query.toLowerCase())
-    );
-    setFilteredFoods(results);
-  };
+  const [foods, setFood] = useState([]);
+  const debounceSearch = useDebounce(searchQuery, 500);
+  const getSearchFoods = async () => {
+    const response = await foodApi.getSearchedFood(1,4,debounceSearch)
+    console.log(response.data)
+    if(response.status === "success"){
+      setFood(response.data);
+    }
+  }
+  useEffect(() => {
+    if(debounceSearch.trim() !== ""){
+      getSearchFoods()
+    }
+  },[debounceSearch])
 
   return (
     <div className="w-[400px] relative">
@@ -33,7 +38,7 @@ export default function SearchBox() {
           placeholder="Search for food..."
           className="w-full bg-transparent outline-none px-6 py-3"
           value={searchQuery}
-          onChange={handleSearch}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
         <div className="w-[60px] flex items-center justify-center h-full text-gray-400 hover:text-gray-600 rounded-r-full cursor-pointer transition-all hover:bg-gray-200">
           <FaMagnifyingGlass />
@@ -42,13 +47,13 @@ export default function SearchBox() {
 
       {/* Show filtered FoodCardHorizontal components */}
       {searchQuery && (
-        <div className="absolute top-[60px] left-0 right-0 bg-white shadow-lg rounded-lg p-4 max-h-[200px] flex flex-col gap-3 overflow-y-auto">
-          {filteredFoods.length > 0 ? (
-            filteredFoods.map((item) => (
+        <div className="absolute top-[60px] left-[50%] translate-x-[-50%] bg-white shadow-lg rounded-lg p-4 max-h-[300px] flex flex-col gap-3 overflow-y-auto w-[500px]">
+          {foods.length > 0 ? (
+            foods.map((item) => (
               <FoodCardHorizontal
-                key={item.id}
-                img={item.img}
-                title={item.title}
+                key={item.foodId}
+                img={item.image1}
+                title={item.name}
                 rating={item.rating}
                 description={item.description}
                 price={item.price}

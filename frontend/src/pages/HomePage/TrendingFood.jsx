@@ -1,8 +1,25 @@
+import foodApi from "@/apis/foodApi";
 import FoodCard from "@/components/food/FoodCard";
+import { Pagination } from "antd";
+import { useEffect, useState } from "react";
 
 import { FaAngleRight } from "react-icons/fa6";
 
 export default function TrendingFood() {
+  const [foods,setFood] = useState([]);
+  const [total,setTotal] = useState(4)
+  const [page,setPage] = useState(1)
+  const getNewestFoods = async () => {
+    const response = await foodApi.getNewestFood(page,4)
+    console.log(response.data)
+    if(response.status === "success"){
+      setFood(response.data);
+      setTotal(response.pagination.totalItems)
+    }
+  }
+  useEffect(() => {
+    getNewestFoods();
+  },[page]) 
   return (
     <div className="mt-6">
       <div className="flex justify-between items-center">
@@ -20,20 +37,23 @@ export default function TrendingFood() {
       </div>
 
       <div className="grid grid-cols-4 space-x-4 mt-4">
-        {[1, 2, 3, 4].map((el, idx) => {
+        {foods.map((el, idx) => {
           return (
             <FoodCard
               key={idx}
               img={
-                "https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg"
+                el.image1
               }
-              title={"Burger King"}
+              title={el.name}
               description={"Burger King"}
-              price={5.6}
+              price={el.price}
             />
           );
         })}
       </div>
+      <Pagination onChange={(page) => {
+        setPage(page)
+      }} total={total} defaultCurrent={1} pageSize={4}/>
     </div>
   );
 }
