@@ -12,8 +12,8 @@ using backend.Controllers;
 namespace backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241028092516_InitialCreate1")]
-    partial class InitialCreate1
+    [Migration("20241029100920_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -89,15 +89,24 @@ namespace backend.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("FoodId"));
 
-                    b.Property<bool>("Available")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<int>("FoodTypeTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Image")
+                    b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<string>("Image1")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Image2")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Image3")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("Itemleft")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -109,16 +118,15 @@ namespace backend.Migrations
                     b.Property<long>("Price")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("Rating")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                    b.Property<decimal>("Rating")
+                        .HasColumnType("decimal(65,30)");
 
                     b.Property<int>("TypeId")
                         .HasColumnType("int");
 
                     b.HasKey("FoodId");
 
-                    b.HasIndex("FoodTypeTypeId");
+                    b.HasIndex("TypeId");
 
                     b.ToTable("Foods");
                 });
@@ -169,7 +177,6 @@ namespace backend.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Reply")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<int>("UserId")
@@ -291,7 +298,7 @@ namespace backend.Migrations
                 {
                     b.HasOne("backend.Controllers.FoodType", "FoodType")
                         .WithMany("Foods")
-                        .HasForeignKey("FoodTypeTypeId")
+                        .HasForeignKey("TypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
