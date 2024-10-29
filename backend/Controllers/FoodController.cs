@@ -57,7 +57,7 @@ namespace backend.Controllers
                     f.Price,
                     f.Itemleft,
                     f.Rating,
-                    f.NumberRating,
+                    f.NumberRating,f.Description,
                     FoodType = new
                     {
                         f.FoodType.TypeId,
@@ -108,7 +108,7 @@ namespace backend.Controllers
                     f.Rating,
                     f.NumberRating,
                     f.Price,
-                    f.Itemleft,
+                    f.Itemleft,f.Description,
                     FoodType = new
                     {
                         f.FoodType.TypeId,
@@ -116,12 +116,77 @@ namespace backend.Controllers
                     }
                 })
                 .ToListAsync();
-            // Return the result
+
+            // Retrieve total count for pagination metadata
+            int totalItems = await _context.Foods.CountAsync();
+
+            // Calculate total pages based on item count and limit
+            int totalPages = (int)Math.Ceiling(totalItems / (double)limit);
+
+            // Return the result with pagination metadata
             return Ok(new
             {
                 status = "success",
-                data = newestFoodItems
+                data = newestFoodItems,
+                pagination = new
+                {
+                    currentPage = page,
+                    pageSize = limit,
+                    totalItems,
+                    totalPages
+                }
             });
         }
+    
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchFood(int page = 1, int limit = 10, string kw = null)
+        {
+            // Adjust pagination parameters
+            var skip = (page - 1) * limit;
+
+            // Start querying from the Foods context
+            var query = _context.Foods.AsQueryable();
+
+            // If a keyword is provided, filter by it (e.g., by Name or other fields)
+            if (!string.IsNullOrEmpty(kw))
+            {
+                query = query.Where(f => f.Name.Contains(kw) ); // adjust fields as needed
+            }
+
+            // Apply ordering, pagination, and projection
+            var foodResults = await query
+                .OrderByDescending(f => f.FoodId) // Order by newest (or adjust as necessary)
+                .Skip(skip)
+                .Take(limit)
+                .Select(f => new
+                {
+                    f.FoodId,
+                    f.Name,
+                    f.Image1,
+                    f.Image2,
+                    f.Image3,
+                    f.Rating,
+                    f.NumberRating,
+                    f.Price,
+                    f.Itemleft,
+                    f.Description,
+                    FoodType = new
+                    {
+                        f.FoodType.TypeId,
+                        f.FoodType.NameType
+                    }
+                })
+                .ToListAsync();
+
+            return Ok(new
+            {
+                status = "success",
+                data = foodResults,
+                currentPage = page,
+                pageSize = limit,
+                totalItems = await query.CountAsync() 
+            });
+        }
+    
     }
 }

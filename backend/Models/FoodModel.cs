@@ -7,6 +7,7 @@ namespace backend.Controllers
         public string Image1 { get; set; }
         public string Image2 { get; set; }
         public string Image3 { get; set; }
+        public string Description { get; set; }
         public int TypeId { get; set; }  // Foreign Key
         public decimal Rating { get; set; }
         public decimal NumberRating { get; set; }
