@@ -39,15 +39,15 @@ export default function DetailFoodPage() {
   //   description:"Burger bò phô mai – Sự kết hợp hoàn hảo giữa miếng thịt bò tươi ngon, được nướng chín tới, và lớp phô mai cheddar tan chảy thơm béo. Bánh mì mềm mịn, kẹp cùng rau tươi giòn như xà lách, cà chua và dưa chuột muối, tạo nên một món ăn đầy hấp dẫn. Hương vị đậm đà, quyện giữa vị ngọt tự nhiên của thịt bò và sự béo ngậy của phô mai, đảm bảo làm hài lòng cả những thực khách khó tính nhất. Đây là lựa chọn lý tưởng cho những bữa ăn nhanh gọn mà vẫn bổ dưỡng!",
   //   inStock:1
   // };
-  const store={
-    avatar:'https://product.hstatic.net/1000389344/product/burger_web_2daf139345214f3eb6caa111ae710674_master.jpg',
-    address:"287, Trần Xuân Soạn, Quận 7, Tp.HCM",
-    name:'Shop ăn vặt cô Linh',
-    rating:3.5,
-    numberRating:200,
-    phoneNumber:'0944662775'
+  // const store={
+  //   avatar:'https://product.hstatic.net/1000389344/product/burger_web_2daf139345214f3eb6caa111ae710674_master.jpg',
+  //   address:"287, Trần Xuân Soạn, Quận 7, Tp.HCM",
+  //   name:'Shop ăn vặt cô Linh',
+  //   rating:3.5,
+  //   numberRating:200,
+  //   phoneNumber:'0944662775'
 
-  }
+  // }
   const handleChange = (e) => {
     const inputValue = e.target.value;
 
@@ -150,7 +150,7 @@ export default function DetailFoodPage() {
          {/* dưới */}
          <div className='ml-[3%] max-w-full mt-[3%]'>
          <h2 className='text-[28px] font-semibold mb-[3%]'>Đánh giá</h2>
-         <Review store={store}/>
+         <Review foodId={food.foodId}/>
 
          </div>
     </section>

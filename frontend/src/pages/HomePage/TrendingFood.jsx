@@ -44,6 +44,7 @@ export default function TrendingFood() {
               img={
                 el.image1
               }
+              id={el.foodId}
               title={el.name}
               description={"Burger King"}
               price={el.price}
@@ -51,9 +52,11 @@ export default function TrendingFood() {
           );
         })}
       </div>
-      <Pagination onChange={(page) => {
-        setPage(page)
-      }} total={total} defaultCurrent={1} pageSize={4}/>
+      <div className="w-full flex justify-center mt-5">
+        <Pagination onChange={(page) => {
+          setPage(page)
+        }} total={total} defaultCurrent={1} pageSize={4}/>
+      </div>
     </div>
   );
 }
