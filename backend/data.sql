@@ -55,3 +55,10 @@ INSERT INTO Ratings (UserId, FoodId, Content, Date, RatingValue, Reply, DateRepl
 (1, 8, 'Best pasta I’ve ever had!', '2024-10-28 11:00:00', 5, NULL, NULL),
 (1, 9, 'Very disappointing.', '2024-10-29 12:15:00', 1, NULL, NULL),
 (1, 10, 'Excellent service and food!', '2024-10-30 13:30:00', 5, NULL, NULL);
+
+
+INSERT INTO userfoodsaved (UserId,FoodId) VALUES
+(1,1),
+(1,2),
+(1,3),
+(1,4);

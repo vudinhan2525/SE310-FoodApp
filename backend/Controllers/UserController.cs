@@ -57,6 +57,12 @@ namespace backend.Controllers
                     
                     if (user != null)
                     {
+                        // Fetch saved food IDs
+                        var savedFoodIds = await _context.UserFoodSaved
+                            .Where(u => u.UserId == user.UserId)
+                            .Select(u => u.FoodId.ToString())
+                            .ToListAsync();
+
                         return Ok(new
                         {
                             message = "success",
@@ -65,7 +71,8 @@ namespace backend.Controllers
                                 user.Username,
                                 user.Email,
                                 user.Address,
-                                user.Avatar
+                                user.Avatar,
+                                userSaved = savedFoodIds // Add the saved food IDs array here
                             }
                         });
                     }
@@ -80,6 +87,7 @@ namespace backend.Controllers
                 return Unauthorized("Token validation failed: " + ex.Message);
             }
         }
+
         // POST: api/v1/user
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserDto newUser)
@@ -177,6 +185,30 @@ namespace backend.Controllers
             // In a real scenario, you would delete the user from the database
             return NoContent();
         }
+        [HttpPost("/removeFoodSaved")]
+        public async Task<IActionResult> RemoveFoodSaved([FromBody] UserFoodDto userFood)
+        {
+            // Validate the input
+            if (userFood == null || userFood.userId <= 0 || userFood.foodId <= 0)
+            {
+                return BadRequest("Invalid input.");
+            }
+
+            // Find the UserFoodSaved entry to remove
+            var userFoodSaved = await _context.UserFoodSaved
+                .FirstOrDefaultAsync(ufs => ufs.UserId == userFood.userId && ufs.FoodId == userFood.foodId );
+            
+            if (userFoodSaved == null)
+            {
+                return NotFound("Food item not found in user's saved foods.");
+            }
+
+            // Remove the entry
+            _context.UserFoodSaved.Remove(userFoodSaved);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Food item removed from saved foods successfully." });
+        }
         private string GenerateJwtToken(User user)
         {
             var claims = new[]
@@ -212,5 +244,6 @@ namespace backend.Controllers
         }
         public record CreateUserDto(string firstName, string lastName, string email,string password,string passwordConfirm);
         public record LoginBodyDto(string email, string password);
+        public record UserFoodDto(int userId, int foodId);
     }
 }
