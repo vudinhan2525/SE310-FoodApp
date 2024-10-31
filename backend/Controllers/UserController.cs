@@ -67,12 +67,12 @@ namespace backend.Controllers
                         {
                             message = "success",
                             user = new
-                            {
+                            {   user.UserId,
                                 user.Username,
                                 user.Email,
                                 user.Address,
                                 user.Avatar,
-                                userSaved = savedFoodIds // Add the saved food IDs array here
+                                userSaved = savedFoodIds 
                             }
                         });
                     }
