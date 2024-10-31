@@ -185,7 +185,7 @@ namespace backend.Controllers
             // In a real scenario, you would delete the user from the database
             return NoContent();
         }
-        [HttpPost("/removeFoodSaved")]
+        [HttpPost("removeFoodSaved")]
         public async Task<IActionResult> RemoveFoodSaved([FromBody] UserFoodDto userFood)
         {
             // Validate the input
@@ -208,6 +208,33 @@ namespace backend.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Food item removed from saved foods successfully." });
+        }
+        [HttpPost("addFoodSaved")]
+        public async Task<IActionResult> AddFoodSaved([FromBody] UserFoodDto userFood)
+        {
+            if (userFood == null)
+            {
+                return BadRequest("UserFood data is null.");
+            }
+
+            // Check if the user and food already exist in the UserFoodSaved table
+            var existingUserFood = await _context.UserFoodSaved.FindAsync(userFood.userId, userFood.foodId);
+            if (existingUserFood != null)
+            {
+                return Conflict("This food item is already saved for the user.");
+            }
+
+            var userFoodSaved = new UserFoodSaved
+            {
+                UserId = userFood.userId,
+                FoodId = userFood.foodId
+            };
+
+            // Add the new entry to the UserFoodSaved table
+            _context.UserFoodSaved.Add(userFoodSaved);
+            await _context.SaveChangesAsync();
+
+            return Ok("Food item successfully saved for the user.");
         }
         private string GenerateJwtToken(User user)
         {

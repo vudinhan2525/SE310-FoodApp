@@ -12,6 +12,7 @@ import { FaRegHeart, FaHeart } from "react-icons/fa";
 import foodApi from "@/apis/foodApi";
 import { useParams } from "react-router-dom";
 import { AuthContext } from "@/components/authProvider/AuthProvider";
+import userApi from "@/apis/userApi";
 
 export default function DetailFoodPage() {
   const [count, setCount] = useState(1);
@@ -70,8 +71,20 @@ export default function DetailFoodPage() {
   if (!food) {
     return <p>Loading...</p>; // Show loading while food data is being fetched
   }
-  const removeFoodSaved = async (id) => {};
-  const addFoodSaved = async (id) => {};
+  const removeFoodSaved = async (id) => {
+    try {
+      await userApi.removeFoodSaved({ userId: userData.userId, foodId: id });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const addFoodSaved = async (id) => {
+    try {
+      await userApi.addFoodSaved({ userId: userData.userId, foodId: id });
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const handleToggleFoodSaved = async (id) => {
     // Check if the food ID is already saved
     if (userData.userSaved.includes(id)) {
