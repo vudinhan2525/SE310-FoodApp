@@ -65,6 +65,7 @@ export default function MenuCategory() {
               img={
                 el.image1
               }
+              id={el.foodId}
               title={el.name}
               description={el.description}
               price={el.price}
