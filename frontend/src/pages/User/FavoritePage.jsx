@@ -14,12 +14,13 @@ function FavoritePage() {
   const getFavoriteFood = async () => {
     try {
       const savedFoods = await userApi.getAllFoodSaved(userData.userId);
-      if (savedFoods) {
+      // console.log("Fetched savedFoods:", savedFoods);
+      if (savedFoods && Array.isArray(savedFoods.data)) {
         // Assuming savedFoods is an array of food items with FoodId and FoodName
-        const foodDetailsPromises = savedFoods.map(food => foodApi.getFoodbyId(food.foodId));
+        const foodDetailsPromises = savedFoods.data.map(food => foodApi.getFoodbyId(food.foodId));
         const foodDetails = await Promise.all(foodDetailsPromises);
         setFavorites(foodDetails);
-        console.log("Food details fetched:", foodDetails);
+        // console.log("Food details fetched:", foodDetails);
         
       }
     } catch (error) {
@@ -29,11 +30,11 @@ function FavoritePage() {
     }
 };
 useEffect(() => {
-  console.log("Updated favorites data:", favorites);
+  // console.log("Updated favorites data:", favorites);
 }, [favorites]); // This will run whenever favorites is updated
 useEffect(()=>{
   if(userData.userId){
-    console.log("Fetching favorite food for user ID:", userData.userId);
+    // console.log("Fetching favorite food for user ID:", userData.userId);
     getFavoriteFood();
   }
 },[userData])
