@@ -24,6 +24,7 @@ export default function Review({ foodId }) {
     const [page, setPage] = useState(1);
     const limit = 5;
     const [editingRatingId, setEditingRatingId] = useState(null);
+
     
     
     const getReviewsByFoodId = async () => {
@@ -87,7 +88,9 @@ export default function Review({ foodId }) {
         }
       },[page,foodId])
     const next = () => {
-        setPage(prevPage => prevPage + 1);
+        if (reviewList.length === limit) {
+            setPage(prevPage => prevPage + 1);
+        }
     };
 
     const previous = () => {
@@ -197,11 +200,11 @@ export default function Review({ foodId }) {
                     onClick={next} />
                 </PaginationItem>
                 ):(<div/>)} */}
-                {reviewList.length === limit && (
-                        <PaginationItem>
-                            <PaginationNext className='cursor-pointer' onClick={next} />
-                        </PaginationItem>
-                    )}
+                {reviewList.length > limit && (
+                    <PaginationItem>
+                        <PaginationNext className='cursor-pointer' onClick={next} />
+                    </PaginationItem>
+                )}
                 
                 </PaginationContent>
             </Pagination>

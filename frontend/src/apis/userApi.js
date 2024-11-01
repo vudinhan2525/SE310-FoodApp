@@ -9,5 +9,9 @@ const userApi = {
     const response = await request.post("/User/removeFoodSaved", { userId, foodId });
     return response.data;
   },
+  getAllFoodSaved: async (userId) => {
+    const response = await request.get(`/User/getAllFoodSaved?userId=${userId}`);
+    return response.data;
+  },
 };
 export default userApi;
