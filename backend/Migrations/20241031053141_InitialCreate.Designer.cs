@@ -12,8 +12,8 @@ using backend.Controllers;
 namespace backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241029142700_InitialCreate2")]
-    partial class InitialCreate2
+    [Migration("20241031053141_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -176,7 +176,7 @@ export default function DetailFoodPage() {
         {/* dưới */}
         <div className="ml-[3%] max-w-full mt-[3%]">
           <h2 className="text-[28px] font-semibold mb-[3%]">Đánh giá</h2>
-          <Review store={store} />
+          <Review foodId={food.foodId}/>
         </div>
       </section>
     </ScrollArea>

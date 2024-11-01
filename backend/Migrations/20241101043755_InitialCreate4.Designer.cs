@@ -12,8 +12,8 @@ using backend.Controllers;
 namespace backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241029100920_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20241101043755_InitialCreate4")]
+    partial class InitialCreate4
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -172,9 +172,8 @@ namespace backend.Migrations
                     b.Property<int>("FoodId")
                         .HasColumnType("int");
 
-                    b.Property<string>("RatingValue")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                    b.Property<decimal>("RatingValue")
+                        .HasColumnType("decimal(65,30)");
 
                     b.Property<string>("Reply")
                         .HasColumnType("longtext");
