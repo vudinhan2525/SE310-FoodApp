@@ -6,6 +6,7 @@ import { AuthContext } from "@/components/authProvider/AuthProvider";
 import userApi from "@/apis/userApi";
 import UserReview from "./MidContent";
 import MidContent from "./MidContent";
+import { Breadcrumb } from "antd";
 
 export default function ProfilePage() {
   const {userData} = useContext(AuthContext);
@@ -14,7 +15,7 @@ export default function ProfilePage() {
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
   const [favoriteCount, setFavoriteCount] = useState(0);
-  // const [reviewCount, setReviewCount] = useState(0);
+  const [reviewCount, setReviewCount] = useState(0);
   // console.log("user:",userData);
   useEffect(() => {
     if (userData) {
@@ -27,7 +28,7 @@ export default function ProfilePage() {
     }
   }, [userData]);
   useEffect(() => {
-    const fetchFavoriteFoodsCount = async () => {
+    const UpdateFoodsCount = async () => {
         try {
             const response = await userApi.getAllFoodSaved(userData.userId);
             const foods = response.data; 
@@ -39,7 +40,7 @@ export default function ProfilePage() {
         }
     };
     if (userData && userData.userId) {
-        fetchFavoriteFoodsCount();
+      UpdateFoodsCount();
     }
 }, [userData]);
 
@@ -52,11 +53,24 @@ export default function ProfilePage() {
       address,
     });
   };
+  const breadcrumbItems = [
+    { title: 'Home', href: '/' },
+    { title: 'Profile', href: '#' }, // Using a hash for the current book
+  ];
   return (
-  <section className="bg-orange-200 rounded-xl mx-32 h-full">
+  <section className="bg-orange-200 rounded-xl mx-12 h-full">
         <UserHeading />
+        <div className="px-16 flex justify-center ">
+          <Breadcrumb
+            className="font-semibold text-black text-xl"
+            items={breadcrumbItems.map((item) => ({
+                title: item.href ? <a href={item.href}>{item.title}</a> : item.title,
+            }))}
+          />
+        </div>
         {/* Lower Profile */}
         <div className="lowerProfile px-4 sm:px-8 py-8 rounded-xl flex flex-col lg:flex-row space-y-8 lg:space-y-0 lg:space-x-8">
+          
           {/* Left Setting - chua co chuc nang*/}
           <div className="leftSetting bg-white px-5 basis-full lg:basis-1/4 rounded-xl">
             <h1 className="text-2xl font-bold sm:text-xl text-center py-5 border-b-blue-500 border-b">
@@ -121,8 +135,8 @@ export default function ProfilePage() {
           </div>
           </div>
           {/* Review Block*/}
-        <div className="reviewBlock basis-full lg:basis-1/2 rounded-xl bg-white text-center h-64 lg:h-[800px]">
-          <MidContent/>
+        <div className="reviewBlock basis-full lg:basis-1/2 rounded-xl bg-white text-center h-64 lg:h-full">
+          <MidContent setReviewCount={setReviewCount}/>
         </div>
           {/* Order */}
         <div className="rightOnline basis-full lg:basis-1/4 flex flex-col justify-between h-full gap-8 px-4 lg:px-0">
@@ -149,7 +163,7 @@ export default function ProfilePage() {
             <div className="flex justify-between items-center py-4 border-b border-b-orange-200 px-5 hover:shadow-lg cursor-pointer transition-all duration-200">
               <h1 className="text-base sm:text-lg font-semibold text-gray-700">Reviews</h1>
               <div className="bg-orange-400 rounded-full w-[40px] h-[40px] flex items-center justify-center">
-                <span className="text-white font-bold">1</span>
+                <span className="text-white font-bold">{reviewCount}</span>
               </div>
             </div>
             <div className="flex justify-between items-center py-4 border-b border-b-orange-200 px-5 hover:shadow-lg cursor-pointer transition-all duration-200">

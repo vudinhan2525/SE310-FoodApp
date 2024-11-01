@@ -2,11 +2,11 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../authProvider/AuthProvider";
 import { Link } from "react-router-dom";
 import SearchBox from "./SearchBox";
-import { FaArrowRightFromBracket, FaBell } from "react-icons/fa6";
+import { FaArrowRightFromBracket, FaBell, FaCircleUser } from "react-icons/fa6";
 import authApi from "@/apis/authApi";
 export default function Header() {
   const [open, setOpen] = useState(false);
-  const { setShowLoginModal, isLoggedIn } = useContext(AuthContext);
+  const { setShowLoginModal, isLoggedIn, userData } = useContext(AuthContext);
   const handleLogout = async () => {
     const response = await authApi.logout();
     if (response?.status === "success") {
@@ -48,12 +48,10 @@ export default function Header() {
             <div className="flex hover:bg-gray-300 px-[10px] py-[6px] rounded-full cursor-pointer transition-all gap-2 justify-center items-center">
               <div
                 className="h-[30px] w-[30px] rounded-full bg-no-repeat bg-contain bg-center"
-                style={{
-                  backgroundImage: `url(https://ps.w.org/user-avatar-reloaded/assets/icon-256x256.png?rev=2540745)`,
-                }}
+                style={{ backgroundImage: `url(${userData.avatar})` }}
               />
-              <p className="text-sm font-bold line-clamp-1 max-w-[70px]">
-                An Vũ
+              <p className="text-sm font-bold line-clamp-1 max-w-[100px]">
+                {userData.username}
               </p>
             </div>
             {open && (
@@ -67,7 +65,18 @@ export default function Header() {
                   <p className="text-lg">Log out</p>
                   <FaArrowRightFromBracket className="text-lg"></FaArrowRightFromBracket>
                 </div>
+                <Link to={"/profile"}>
+                  <div
+                    className="flex justify-center px-4 transition-all rounded-t-md cursor-pointer hover:bg-gray-100 gap-3 items-center py-2"
+                  >
+                    <p className="text-lg">Profile</p>
+                    <FaCircleUser className="text-lg"></FaCircleUser>
+                  </div>
+                </Link>
+                
               </div>
+              
+              
             )}
           </div>
         )}
