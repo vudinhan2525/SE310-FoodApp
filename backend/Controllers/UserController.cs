@@ -236,6 +236,67 @@ namespace backend.Controllers
 
             return Ok("Food item successfully saved for the user.");
         }
+        [HttpGet("getAllFoodSaved")]
+        public async Task<IActionResult> GetAllFoodSaved(int userId, int page = 1, int limit = 10)
+        {
+            // Validate input
+            if (userId <= 0)
+            {
+                return BadRequest(new { status = "error", message = "Invalid user ID." });
+            }
+
+            if (page <= 0 || limit <= 0)
+            {
+                return BadRequest(new { status = "error", message = "Page and limit must be greater than zero." });
+            }
+
+            // Calculate the number of items to skip based on the current page and limit
+            int skip = (page - 1) * limit;
+
+            // Retrieve the saved food items for the user with pagination
+            var savedFoodsQuery = _context.UserFoodSaved
+                .Where(ufs => ufs.UserId == userId)
+                .Include(ufs => ufs.Food); // Include related Food data if needed
+
+            // Get the paginated list of saved food items
+            var savedFoods = await savedFoodsQuery
+                .Skip(skip)
+                .Take(limit)
+                .Select(ufs => new
+                {
+                    ufs.FoodId,
+                    FoodName = ufs.Food.Name,
+                    ufs.Food.Image1,
+                    ufs.Food.Image2,
+                    ufs.Food.Image3,
+                    ufs.Food.Price,
+                    ufs.Food.Itemleft,
+                    ufs.Food.Rating,
+                    ufs.Food.NumberRating,
+                    ufs.Food.Description
+                })
+                .ToListAsync();
+
+            // Retrieve total count for pagination metadata
+            int totalItems = await savedFoodsQuery.CountAsync();
+
+            // Calculate total pages based on item count and limit
+            int totalPages = (int)Math.Ceiling(totalItems / (double)limit);
+
+            // Return paginated response
+            return Ok(new
+            {
+                status = "success",
+                data = savedFoods,
+                pagination = new
+                {
+                    currentPage = page,
+                    pageSize = limit,
+                    totalItems,
+                    totalPages
+                }
+            });
+        }
         private string GenerateJwtToken(User user)
         {
             var claims = new[]
