@@ -1,10 +1,52 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Food from '@/components/food/Food';
 import SortNFilter from '@/components/ui/PageDashboard/SortNFilter';
+import { useLocation } from 'react-router-dom';
+import foodApi from '@/apis/foodApi';
 
 function SearchPage() {
   const [selectedFoodType, setSelectedFoodType] = useState(null);
   const [sliderValue, setSliderValue] = useState([]);
+  const location = useLocation();
+  const [foods, setFoods] = useState([]); 
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(null); // Error state
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const getQueryParams = () => {
+    const params = new URLSearchParams(location.search);
+    return params.get('query') || ''; // Get the 'query' parameter
+  };
+  const fetchSearchedFoods = async () => {
+    const query = searchQuery || getQueryParams();
+    console.log("query:",query);
+    if (query) {
+      try {
+        setLoading(true);
+        const response = await foodApi.getSearchedFood(1, 10, query); // Adjust limit as necessary
+        if (response.status === "success") {
+          setFoods(response.data);
+          setError(null);
+        } else {
+          setFoods([]);
+          setError('No results found');
+        }
+      } catch (err) {
+        setError('Failed to fetch foods');
+      } finally {
+        setLoading(false);
+      }
+    }
+    else{
+      setFoods([]);
+      setError(null);
+    }
+  };
+  useEffect(() => {
+    const query = getQueryParams();
+    setSearchQuery(query);
+    fetchSearchedFoods();
+  }, [location.search])
 
   return (
     <section className='rounded-xl mx-5 h-full mt-20 min-w-md'>
@@ -33,9 +75,11 @@ function SearchPage() {
       </div>
       <div className="shopItemSection mt-10 bg-theme-color rounded-lg h-full ">
         <div className="shopItemList flex justify-between gap-5">
-          <SortNFilter setSelectedFoodType={setSelectedFoodType} setMaxPrice={setSliderValue}/>
+          <SortNFilter setSelectedFoodType={setSelectedFoodType} setMaxPrice={setSliderValue} setSearchQuery={setSearchQuery} />
           <div className="rightItemsList bg-white p-5 m-5 w-full h-full border border-gray-300 shadow-lg">
-            <Food selectedFoodType={selectedFoodType} sliderValue={sliderValue}/> {/* Pass selectedFoodType */}
+            {loading && <p>Loading...</p>}
+            {error && <p className="text-red-500">{error}</p>}
+            {!loading && !error && <Food selectedFoodType={selectedFoodType} sliderValue={sliderValue} searchQuery={searchQuery} setSearchQuery={setSearchQuery}/>} {/* Pass fetched foods */}
           </div>
         </div>
       </div>

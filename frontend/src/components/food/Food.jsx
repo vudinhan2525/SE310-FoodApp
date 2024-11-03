@@ -3,10 +3,11 @@ import FoodCard from './FoodCard'
 import foodApi from '@/apis/foodApi';
 import { Pagination } from 'antd';
 
-const Food = ({selectedFoodType, sliderValue }) => {
+const Food = ({selectedFoodType, sliderValue, searchQuery, setSearchQuery  }) => {
   const [foods, setFood] = useState([]);
   const [total,setTotal] = useState(0);
   const [page,setPage] = useState(1);
+
   const itemsPerPage = 12;
   // console.log("price",sliderValue)
   const getAllFoods = async () => {
@@ -25,15 +26,39 @@ const Food = ({selectedFoodType, sliderValue }) => {
   }, [foods]);
   useEffect(() => {
     getAllFoods();
-  },[selectedFoodType,page]) 
+  },[selectedFoodType,page,searchQuery]) 
 
-  const filteredFoods = foods.filter(food => food.price <= sliderValue);
+  const filteredFoods = foods.filter(food => {
+    const isWithinPriceRange = food.price <= sliderValue;
+    const matchesSearchQuery = searchQuery ? food.name.toLowerCase().includes(searchQuery.toLowerCase()) : true;
+    return isWithinPriceRange && matchesSearchQuery;
+  });
+  useEffect(() => {
+    setTotal(searchQuery ? filteredFoods.length : foods.length);
+  }, [filteredFoods, searchQuery, foods.length]);
+
+  // Function to clear the search
+  const clearSearch = () => {
+    setSearchQuery(''); // Clear the search query using the setter function
+    setPage(1); // Optionally, reset the page to the first page
+  };
   return (
     <div className="dark:bg-gray-900 dark:text-white bg-gray-50 py-10">
         <section data-aos="fade-up" className="container ">
-        <h1 className=" my-8 border-l-8 border-primary/50 py-2 pl-2 text-3xl font-bold">
-            {selectedFoodType ? selectedFoodType.nameType : 'Best Food'}
-        </h1>
+          <div className="heading flex justify-between items-center">
+            <h1 className=" my-8 border-l-8 border-primary/50 py-2 pl-2 text-3xl font-bold ">
+                {searchQuery ? `Searched for "${searchQuery}"` : (selectedFoodType ? selectedFoodType.nameType : 'Best Food')}
+            </h1>
+            {searchQuery && (
+            <button 
+              onClick={clearSearch} 
+              className="bg-red-500 text-white rounded px-3 py-1 mt-2 ml-2 h-[50px] mx-5"
+            >
+              Cancel
+            </button>
+          )}  
+          </div>
+        
         
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 transition-all duration-300 ease-in-out">
           {filteredFoods.map((el, idx) => {
