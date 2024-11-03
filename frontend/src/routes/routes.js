@@ -6,6 +6,8 @@ import DetailFoodPage from "@/pages/DetailPage/DetailFoodPage";
 import AboutPage from "@/pages/AboutPage/AboutPage";
 import FavoritePage from "@/pages/User/FavoritePage";
 import BillPage from "@/pages/BillPage/BillPage";
+import CategoryPage from "@/pages/CategoryPage/CategoryPage";
+import SearchPage from "@/pages/SearchPage/SearchPage";
 
 const publicRoutes = [
   { path: "/", component: HomePage },
@@ -15,6 +17,8 @@ const publicRoutes = [
   { path: "/detail/:id", component: DetailFoodPage },
   { path: "/about", component: AboutPage },
   { path: "/favorite", component: FavoritePage },
-  { path: "/bill", component: BillPage }
+  { path: "/bill", component: BillPage },
+  { path: "/category", component: CategoryPage },
+  { path: "/search", component: SearchPage }
 ];
 export { publicRoutes };
