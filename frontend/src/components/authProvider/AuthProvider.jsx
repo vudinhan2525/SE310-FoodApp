@@ -6,7 +6,8 @@ function AuthProvider({ children }) {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [userData, setUserData] = useState({});
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [loading, setLoading] = useState(true);
+  const [carts, setCarts] = useState([]);
   const login = () => {
     setIsLoggedIn(true);
   };
@@ -18,6 +19,7 @@ function AuthProvider({ children }) {
     if (response?.message === "success") {
       setIsLoggedIn(true);
       setUserData(response.user);
+      setCarts(response.user.userCart);
     }
 
     setLoading(false);
@@ -37,6 +39,8 @@ function AuthProvider({ children }) {
         setShowLoginModal,
         showLogoutModal,
         setShowLogoutModal,
+        carts,
+        setCarts,
       }}
     >
       {loading ? <div></div> : children}

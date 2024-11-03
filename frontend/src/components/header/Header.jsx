@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../authProvider/AuthProvider";
 import { Link } from "react-router-dom";
 import SearchBox from "./SearchBox";
-import { FaArrowRightFromBracket, FaBell, FaCircleUser } from "react-icons/fa6";
+import { FaArrowRightFromBracket, FaBell, FaCartShopping, FaCircleUser } from "react-icons/fa6";
 import authApi from "@/apis/authApi";
 export default function Header() {
   const [open, setOpen] = useState(false);
@@ -40,22 +40,28 @@ export default function Header() {
           </div>
         )}
         {isLoggedIn && (
-          <div
-            className="relative"
-            onMouseEnter={() => setOpen(true)}
-            onMouseLeave={() => setOpen(false)}
-          >
+          <div className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
             <div className="flex hover:bg-gray-300 px-[10px] py-[6px] rounded-full cursor-pointer transition-all gap-2 justify-center items-center">
               <div
                 className="h-[30px] w-[30px] rounded-full bg-no-repeat bg-contain bg-center"
                 style={{ backgroundImage: `url(${userData.avatar})` }}
               />
-              <p className="text-sm font-bold line-clamp-1 max-w-[100px]">
-                {userData.username}
-              </p>
+              <p className="text-sm font-bold line-clamp-1 max-w-[100px]">{userData.username}</p>
             </div>
             {open && (
               <div className="w-[180px] before:w-[120px] before:h-[20px]  before:absolute before:top-[-20px] before:right-[50%] before:translate-x-[50%] h-[300px] mt-[5px] bg-white shadow-md rounded-sm right-[50%] translate-x-[50%] top-[100%] absolute">
+                <Link to={"/profile"}>
+                  <div className="flex justify-center px-4 transition-all rounded-t-md cursor-pointer hover:bg-gray-100 gap-3 items-center py-2">
+                    <p className="text-lg">Profile</p>
+                    <FaCircleUser className="text-lg"></FaCircleUser>
+                  </div>
+                </Link>
+                <Link to={"/cart"}>
+                  <div className="flex justify-center px-4 transition-all rounded-t-md cursor-pointer hover:bg-gray-100 gap-3 items-center py-2">
+                    <p className="text-lg">Your carts</p>
+                    <FaCartShopping className="text-lg"></FaCartShopping>
+                  </div>
+                </Link>
                 <div
                   onClick={() => {
                     handleLogout();
@@ -65,18 +71,7 @@ export default function Header() {
                   <p className="text-lg">Log out</p>
                   <FaArrowRightFromBracket className="text-lg"></FaArrowRightFromBracket>
                 </div>
-                <Link to={"/profile"}>
-                  <div
-                    className="flex justify-center px-4 transition-all rounded-t-md cursor-pointer hover:bg-gray-100 gap-3 items-center py-2"
-                  >
-                    <p className="text-lg">Profile</p>
-                    <FaCircleUser className="text-lg"></FaCircleUser>
-                  </div>
-                </Link>
-                
               </div>
-              
-              
             )}
           </div>
         )}

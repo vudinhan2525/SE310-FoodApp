@@ -13,6 +13,7 @@ import foodApi from "@/apis/foodApi";
 import { useParams } from "react-router-dom";
 import { AuthContext } from "@/components/authProvider/AuthProvider";
 import userApi from "@/apis/userApi";
+import cartApi from "@/apis/cartApi";
 
 export default function DetailFoodPage() {
   const [count, setCount] = useState(1);
@@ -58,7 +59,6 @@ export default function DetailFoodPage() {
   };
   const getFoodbyId = async () => {
     const response = await foodApi.getFoodbyId(id);
-    console.log(response.data);
     if (response.status === "success") {
       setFood(response.data);
     }
@@ -103,6 +103,15 @@ export default function DetailFoodPage() {
         userSaved: updatedUserSaved,
       });
       await addFoodSaved(id);
+    }
+  };
+  const handleAddToCart = async (id) => {
+    if (!id || !userData.userId) return;
+    const response = await cartApi.addCart(userData.userId, id, count, note);
+
+    if (response?.status === "success") {
+      alert("Food added successfully");
+      window.location.reload();
     }
   };
   const listImage = [food.image1, food.image2, food.image3].filter(Boolean);
@@ -166,7 +175,12 @@ export default function DetailFoodPage() {
                 />
               </div>
 
-              <button className="w-auto h-12 bg-primary-color bg-opacity-70 flex p-2 items-center mt-6 ">
+              <button
+                onClick={() => {
+                  handleAddToCart(id);
+                }}
+                className="w-auto h-12 bg-primary-color bg-opacity-70 flex p-2 items-center mt-6 "
+              >
                 <MdOutlineShoppingCart className="text-white w-5 h-5" />
                 <p className="text-white text-[16px] ml-2">Thêm vào giỏ hàng</p>
               </button>
@@ -176,7 +190,7 @@ export default function DetailFoodPage() {
         {/* dưới */}
         <div className="ml-[3%] max-w-full mt-[3%]">
           <h2 className="text-[28px] font-semibold mb-[3%]">Đánh giá</h2>
-          <Review foodId={food.foodId}/>
+          <Review foodId={food.foodId} />
         </div>
       </section>
     </ScrollArea>
