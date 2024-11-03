@@ -3,12 +3,14 @@ import { FaMagnifyingGlass } from "react-icons/fa6";
 import FoodCardHorizontal from "../food/FoodCartHorizontal";
 import useDebounce from "@/hooks/useDebounce";
 import foodApi from "@/apis/foodApi";
+import { useNavigate } from "react-router-dom";
 export default function SearchBox() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [foods, setFood] = useState([]);
   const debounceSearch = useDebounce(searchQuery, 500);
   const searchBoxRef = useRef(null);
+  const navigate = useNavigate();
   const getSearchFoods = async () => {
     const response = await foodApi.getSearchedFood(1, 4, debounceSearch);
     console.log(response.data);
@@ -33,6 +35,12 @@ export default function SearchBox() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+  const handleSearchSubmit = () => {
+    if (searchQuery.trim()) {
+      // Navigate to the search results page with the search query
+      navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
+    }
+  };
   return (
     <div ref={searchBoxRef} className="w-[400px] relative">
       <div className="bg-gray-100 rounded-full h-[50px] flex items-center">
@@ -45,6 +53,11 @@ export default function SearchBox() {
             setSearchQuery(e.target.value);
             setIsSearching(true);
           }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              handleSearchSubmit(); // Submit on Enter key press
+            }
+          }}
         />
         <div className="w-[60px] flex items-center justify-center h-full text-gray-400 hover:text-gray-600 rounded-r-full cursor-pointer transition-all hover:bg-gray-200">
           <FaMagnifyingGlass />
@@ -56,6 +69,7 @@ export default function SearchBox() {
           {foods.length > 0 ? (
             foods.map((item) => (
               <FoodCardHorizontal
+                id={item.foodId}
                 key={item.foodId}
                 img={item.image1}
                 title={item.name}
