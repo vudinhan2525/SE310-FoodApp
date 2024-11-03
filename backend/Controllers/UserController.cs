@@ -62,7 +62,23 @@ namespace backend.Controllers
                             .Where(u => u.UserId == user.UserId)
                             .Select(u => u.FoodId.ToString())
                             .ToListAsync();
-
+                        var cartItems = await _context.UserFoodOrders
+                            .Where(o => o.UserId == user.UserId)
+                            .Select(o => new
+                            {
+                                o.OrderId,
+                                o.FoodId,
+                                o.Quantity,
+                                o.Note,
+                                FoodDetails = new
+                                {
+                                    o.Food.Name,
+                                    o.Food.Description,
+                                    o.Food.Image1,
+                                    o.Food.Price // You can include any additional properties from the Food table as needed
+                                }
+                            })
+                            .ToListAsync();
                         return Ok(new
                         {
                             message = "success",
@@ -72,7 +88,8 @@ namespace backend.Controllers
                                 user.Email,
                                 user.Address,
                                 user.Avatar,
-                                userSaved = savedFoodIds 
+                                userSaved = savedFoodIds ,
+                                userCart = cartItems
                             }
                         });
                     }
