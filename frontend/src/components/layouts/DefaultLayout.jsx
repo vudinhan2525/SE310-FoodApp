@@ -2,6 +2,7 @@ import Header from "@/components/header/Header";
 import { useContext } from "react";
 import { AuthContext } from "../authProvider/AuthProvider";
 import LoginModal from "../modals/LoginModal/LoginModal";
+import { Footer } from "../footer/Footer";
 
 export default function DefaultLayout({ children }) {
   const { showLoginModal } = useContext(AuthContext);
@@ -10,6 +11,7 @@ export default function DefaultLayout({ children }) {
       <Header />
       {children}
       {showLoginModal === true && <LoginModal />}
+      <Footer />
     </div>
   );
 }

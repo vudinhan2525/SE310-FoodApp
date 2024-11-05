@@ -25,6 +25,7 @@ function AuthProvider({ children }) {
     setLoading(false);
   };
   useEffect(() => {
+    // console.log("User data:", userData); 
     ckLogged();
   }, []);
   return (

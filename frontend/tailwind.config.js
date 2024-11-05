@@ -11,6 +11,7 @@ export default {
       },
       fontFamily: {
         body: ["Nunito"],
+        blackChancery: ["BlackChancery", "sans-serif"], 
       },
       colors: {
         "primary-color": "#EA6A12",
