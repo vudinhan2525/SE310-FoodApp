@@ -314,6 +314,42 @@ namespace backend.Controllers
                 }
             });
         }
+        [HttpPut("updateUser")]
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDto updatedUser)
+        {
+            if (updatedUser == null || updatedUser.UserId <= 0)
+            {
+                return BadRequest("Invalid user data.");
+            }
+
+            // Find the user in the database
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == updatedUser.UserId);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            // Update the user's information
+            user.Username = updatedUser.Username;
+            user.Email = updatedUser.Email;
+            user.Address = updatedUser.Address;
+            
+             if (!string.IsNullOrWhiteSpace(updatedUser.Avatar))
+                {
+                    user.Avatar = updatedUser.Avatar; // Update the avatar only if provided
+                }
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok(new { status = "success", message = "User updated successfully." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error updating user: " + ex.Message);
+                return StatusCode(500, "An error occurred while updating the user.");
+            }
+        }
         private string GenerateJwtToken(User user)
         {
             var claims = new[]
@@ -350,5 +386,6 @@ namespace backend.Controllers
         public record CreateUserDto(string firstName, string lastName, string email,string password,string passwordConfirm);
         public record LoginBodyDto(string email, string password);
         public record UserFoodDto(int userId, int foodId);
+        public record UpdateUserDto(int UserId, string Username, string Email, string Address, string Avatar);
     }
 }

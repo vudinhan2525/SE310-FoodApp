@@ -29,5 +29,15 @@ const authApi = {
       console.log(error);
     }
   },
+  updateUser: async (data) => {
+    try {
+      const { userId, ...updateData } = data;
+      console.log("Updating user with ID:", userId, "Data:", updateData);
+      const response = await authRequest.put(`/user/updateUser`, data);// Assuming `UserId` is included in data
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };
 export default authApi;

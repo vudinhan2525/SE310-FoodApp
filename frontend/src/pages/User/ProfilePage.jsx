@@ -7,24 +7,28 @@ import userApi from "@/apis/userApi";
 import UserReview from "./MidContent";
 import MidContent from "./MidContent";
 import { Breadcrumb } from "antd";
+import authApi from "@/apis/authApi";
 
 export default function ProfilePage() {
   const {userData} = useContext(AuthContext);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [username, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
   const [favoriteCount, setFavoriteCount] = useState(0);
   const [reviewCount, setReviewCount] = useState(0);
+
+  const [avatarUrl, setAvatarUrl] = useState(userData.avatar); // Add state for avatar URL
+  const [newAvatarUrl, setNewAvatarUrl] = useState(""); // State for new avatar URL input
+  const [showAvatarInput, setShowAvatarInput] = useState(false); // State to show input form
+
   // console.log("user:",userData);
   useEffect(() => {
     if (userData) {
-      const names = userData.username.split(" ");
-      const lastName = names.length > 1 ? names.slice(1).join(" ") : "";
-      setFirstName(names[0]);
-      setLastName(lastName);
+      setUserName(userData.username)
       setEmail(userData.email);
       setAddress(userData.address);
+
+      setAvatarUrl(userData.avatar);
     }
   }, [userData]);
   useEffect(() => {
@@ -44,15 +48,48 @@ export default function ProfilePage() {
     }
 }, [userData]);
 
-  const handleSave = () => {
-    // Logic to handle save (e.g., update the user data)
-    console.log({
-      firstName,
-      lastName,
+
+
+
+const handleChangeAvatar = () => {
+  setShowAvatarInput((prev) => !prev); // Show the input form
+};
+
+// Function to handle submitting the new avatar URL
+const handleAvatarSubmit = (e) => {
+  e.preventDefault();
+  setAvatarUrl(newAvatarUrl); // Update the avatar URL state
+  setShowAvatarInput(false); // Close the input form
+};
+const handleDeleteAvatar = () => {
+  // Set avatarUrl to null or empty string to indicate no avatar
+  setAvatarUrl("https://static.vecteezy.com/system/resources/thumbnails/036/280/651/small_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg");
+};
+
+
+
+const handleSave = async () => {
+  console.log("User:",userData.userId);
+  try {
+    const data = {
+      userId: userData.userId,
+      username,
       email,
       address,
-    });
-  };
+
+      avatar: newAvatarUrl || avatarUrl,
+    };
+
+    const response = await authApi.updateUser(data);
+    if (response && response.status === "success") {
+      console.log("User updated successfully:", response.message);
+    } else {
+      console.error("Update failed:", response.message || "Unknown error");
+    }
+  } catch (error) {
+    console.error("An error occurred while updating the user:", error);
+  }
+};
   const breadcrumbItems = [
     { title: 'Home', href: '/' },
     { title: 'Profile', href: '#' }, // Using a hash for the current book
@@ -80,32 +117,40 @@ export default function ProfilePage() {
             <div className="grid max-w-2xl mx-auto mt-8">
               <div className="flex flex-col items-center space-y-5 sm:flex-row sm:space-y-0">
               <div
-                  className="bg-cover w-32 h-32 sm:w-40 sm:h-40 rounded-full ring-2 ring-indigo-300"
-                  style={{ backgroundImage: `url(${userData.avatar})` }}
+                  className="bg-cover bg-center bg-no-repeat w-32 h-32 sm:w-40 sm:h-40 rounded-full ring-2 ring-indigo-300"
+                  style={{ backgroundImage: `url(${avatarUrl})` }}
               ></div>
                 <div className="flex flex-col space-y-5 sm:ml-8">
-                <Button className="font-medium hover:bg-slate-800">Change avatar</Button>
-                <Button className="font-medium bg-white text-black hover:bg-slate-300">Delete avatar</Button>
+                <Button className="font-medium hover:bg-slate-800" onClick={handleChangeAvatar}>Change avatar</Button>
+                <Button className="font-medium bg-white text-black hover:bg-slate-300" onClick={handleDeleteAvatar}>Delete avatar</Button>
               </div>
             </div>
+                  {/* Avatar URL Input Form */}
+            {showAvatarInput && (
+              <form onSubmit={handleAvatarSubmit} className="mt-4">
+                <input
+                  type="text"
+                  placeholder="Enter new avatar URL"
+                  value={newAvatarUrl}
+                  onChange={(e) => setNewAvatarUrl(e.target.value)}
+                  className="border border-gray-300 p-2 rounded"
+                  required
+                />
+                <button type="submit" className="ml-2 bg-blue-500 text-white p-2 rounded">
+                  Submit
+                </button>
+              </form>
+            )}
+
             {/* Update Info*/}
             <div className="mt-8 sm:mt-14 text-[#202142]">
               <div className="flex flex-col sm:flex-row sm:space-x-4 sm:space-y-0 space-y-2">
                 <div className="w-full">
-                  <label className="block mb-2 text-sm font-medium text-indigo-900">Your first name</label>
-                  <input
-                    type="text"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    className="bg-indigo-50 border border-indigo-300 text-sm rounded-lg w-full p-2.5"
-                  />
-                </div>
-                <div className="w-full">
                   <label className="block mb-2 text-sm font-medium text-indigo-900">Your last name</label>
                   <input
                     type="text"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
+                    value={username}
+                    onChange={(e) => setUserName(e.target.value)}
                     className="bg-indigo-50 border border-indigo-300 text-sm rounded-lg w-full p-2.5"
                   />
                 </div>
