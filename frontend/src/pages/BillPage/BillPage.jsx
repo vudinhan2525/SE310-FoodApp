@@ -1,3 +1,4 @@
+import { Button } from 'antd';
 import { Link } from 'lucide-react';
 import React from 'react'
 import { FaMinus, FaPlus, FaTrash } from "react-icons/fa6";
@@ -5,8 +6,20 @@ import { FaMinus, FaPlus, FaTrash } from "react-icons/fa6";
 function BillPage() {
     return (
         <div className="px-24 bg-gray-100 pb-24 mt-14">
-          <h2 className="pt-6 text-xl mb-4">Thanh toán</h2>
+          <h2 className="pt-6 text-xl mb-4">Lịch sử thanh toán</h2>
+          <div className="status flex justify-between bg-white p-3 rounded-xl my-3">
+            <div className="title">
+              <p>Tình trạng đơn hàng</p>
+            </div>
+            <div className="status-controller flex gap-5">
+              <Button variant='orange'>Đang xử lý</Button>
+              <Button>Đang giao hàng</Button>
+              <Button>Thành công</Button>
+              <Button>Thất bại</Button>
+            </div>
+          </div>
           <div className="flex gap-4">
+            {/* Table */}
             <div className="basis-[70%]">
               <div className="flex justify-between px-4  rounded-lg py-3  items-center bg-white">
                 <div className="basis-[50%] flex text-sm font-semibold items-center gap-2 ">
@@ -69,31 +82,6 @@ function BillPage() {
                     </div>
                   );
                 })}
-              </div>
-            </div>
-            <div className="basis-[30%]">
-              <div className="px-4  py-4 bg-white rounded-lg">
-                <div className="flex pb-3 justify-between">
-                  <h1>Thành tiền</h1>
-                  <h1>{24000}</h1>
-                </div>
-                {[2, 23].length > 0 && (
-                  <div className="flex pb-3 justify-between gap-2">
-                    <h1>Phí vận chuyển</h1>
-                    <h1>12000</h1>
-                  </div>
-                )}
-                <div className="bg-gray-200 h-[1px] w-full mx-auto"></div>
-                <div className="flex justify-between py-4 items-center">
-                  <h1 className="font-bold">Tổng số tiền (gồm VAT)</h1>
-                  <h1 className="text-xl text-primary-color font-bold">{320000}</h1>
-                </div>
-                <div
-                  className="w-full py-2 bg-primary-color text-white uppercase font-bold text-center rounded-md cursor-pointer transition-all hover:bg-red-700 select-none"
-                  onClick={() => {}}
-                >
-                  Thanh toán
-                </div>
               </div>
             </div>
           </div>

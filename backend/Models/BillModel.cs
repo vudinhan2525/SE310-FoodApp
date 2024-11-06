@@ -7,6 +7,7 @@ namespace backend.Controllers
         public long TotalPrice { get; set; }
         public int UserId { get; set; }  // Foreign Key
         public string Address { get; set; }
+        public string Status {get; set;}
 
         // Navigation properties
         public User User { get; set; }  // FK relationship

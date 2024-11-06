@@ -24,6 +24,9 @@ export default function Header() {
       ></Link>
       <SearchBox />
       <div className="flex items-center gap-4">
+        <Link to={'/about'}>
+          <p className="font-blackChancery text-2xl">About</p>
+        </Link>
         <div className="px-3 py-3 hover:bg-gray-100 text-gray-400 hover:text-gray-600 rounded-full cursor-pointer transition-all">
           <FaBell className=" " />
         </div>
