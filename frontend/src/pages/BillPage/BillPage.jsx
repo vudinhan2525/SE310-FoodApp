@@ -1,9 +1,31 @@
 import { Button } from 'antd';
 import { Link } from 'lucide-react';
-import React from 'react'
+import React, { useState } from 'react'
 import { FaMinus, FaPlus, FaTrash } from "react-icons/fa6";
+import BillContent from './BillContent';
+const bills = [
+  { id: 1, status: 'Hoàn thành', paymentDate: '12/09/2024', address: '21 LeeSin di rung' },
+  { id: 2, status: 'Đang giao hàng', paymentDate: '15/09/2024', address: '13 Garen lane' },
+  { id: 3, status: 'Thất bại', paymentDate: '18/09/2024', address: '19 Lux avenue' },
+];
+const statuses  = [
+  {id: 1, status: 'Hoàn thành'},
+  {id: 2, status: 'Đang giao hàng'},
+  {id: 3, status: 'Thất bại'},
+  {id: 4, status: 'Đang xử lý'},
+]
 
 function BillPage() {
+  const [selectedBill, setSelectedBill] = useState(null);
+  const [selectedStatus, setSelectedStatus] = useState(null);
+
+  const handleBillClick = (bill) => {
+    setSelectedBill(bill.id === selectedBill?.id ? null : bill);
+  };
+  const handleStatusClick = (status) => {
+    setSelectedStatus(status.status === selectedStatus ? null : status.status);
+    setSelectedBill(null); // Clear selected bill when changing status
+  };
     return (
         <div className="px-24 bg-gray-100 pb-24 mt-14">
           <h2 className="pt-6 text-xl mb-4">Lịch sử thanh toán</h2>
@@ -12,78 +34,39 @@ function BillPage() {
               <p>Tình trạng đơn hàng</p>
             </div>
             <div className="status-controller flex gap-5">
-              <Button variant='orange'>Đang xử lý</Button>
-              <Button>Đang giao hàng</Button>
-              <Button>Thành công</Button>
-              <Button>Thất bại</Button>
+            {statuses.map((sta) => (
+              <Button
+                key={sta.id}
+                type={selectedStatus === sta.status ? 'primary' : 'default'}
+                onClick={() => handleStatusClick(sta)}
+              >
+                {sta.status}
+              </Button>
+            ))}
             </div>
           </div>
-          <div className="flex gap-4">
-            {/* Table */}
-            <div className="basis-[70%]">
-              <div className="flex justify-between px-4  rounded-lg py-3  items-center bg-white">
-                <div className="basis-[50%] flex text-sm font-semibold items-center gap-2 ">
-                  <p>Sản phẩm(0 sản phẩm)</p>
+          <div className="">
+          {bills
+            .filter((bill) => !selectedStatus || bill.status === selectedStatus)
+            .map((bill) => (
+              <div key={bill.id} className="rounded-lg mb-2">
+                <div
+                  className={`px-5 items-center rounded-xl flex justify-between p-4 cursor-pointer ${
+                    selectedBill?.id === bill.id
+                      ? 'bg-orange-200 hover:opacity-80'
+                      : 'bg-white hover:shadow-lg'
+                  }`}
+                  onClick={() => handleBillClick(bill)}
+                >
+                  <p className="basis-1/4">Đơn hàng {bill.id}</p>
+                  <p className="basis-1/4 text-center">{bill.status}</p>
+                  <p className="basis-1/4 text-center">{bill.paymentDate}</p>
+                  <p className="basis-1/4 text-end">{bill.address}</p>
                 </div>
-                <div className="basis-[50%] flex items-center">
-                  <p className=" basis-[45%] text-center">Số lượng</p>
-                  <p className=" basis-[45%] text-center">Đơn giá</p>
-                  <p className=" basis-[45%]  text-center">Thành tiền</p>
-                  <p className=" basis-[45%]  text-center">Tình trạng</p>
-                  <p className=" basis-[10%]  text-center"></p>
-                </div>
+                {/* Show BillContent directly below the selected bill */}
+                {selectedBill?.id === bill.id && <BillContent bill={selectedBill} />}
               </div>
-              <div className="mt-4 rounded-lg overflow-hidden ">
-                {[1, 2, 3]?.map((cartItem, idx) => {
-                  return (
-                    <div key={idx}>
-                      <div className={`flex px-5 pr-8 py-6 bg-white `}>
-                        <div className="basis-[50%] flex gap-4 items-center">
-                          <div className="flex flex-col justify-between">
-                         
-                              Food name
-                
-                            <div className="flex items-end gap-1">
-                              <p className="font-bold">32.000</p>
-                              <p className="text-xs mb-1 line-through text-gray-500">{12000}</p>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="basis-[50%] flex items-center">
-                          <div className="quantity basis-[45%] flex justify-center">
-                            <div className="rounded-md text-center items-center justify-center inline-flex">
-                              <div className="px-2 py-2">
-                               7
-                              </div>
-                            </div>
-                          </div>
-                          <div className="price basis-[45%] flex justify-center">
-                            <div className="rounded-md text-center items-center justify-center inline-flex">
-                              <div className="px-2 py-2">
-                               7
-                              </div>
-                            </div>
-                          </div>
-                          <p className=" basis-[45%]  text-center select-none text-primary-color font-bold">{32000}</p>
-                          <div className="total basis-[45%] flex justify-center">
-                            <div className="rounded-md text-center items-center justify-center inline-flex">
-                              <div className="px-2 py-2">
-                               Đang giao hàng
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      {idx !== 2 && (
-                        <div className="bg-white w-[100%] h-[1px]">
-                          <div className="h-[1px] w-[90%] mx-auto bg-gray-200"></div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       );
