@@ -1,16 +1,29 @@
 import cartApi from "@/apis/cartApi";
 import { AuthContext } from "@/components/authProvider/AuthProvider";
-import { Checkbox } from "@/components/ui/checkbox";
 import { formatCurrency } from "@/lib/utils";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { FaMinus, FaPlus, FaTrash } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import Dialog from "./Dialog";
-
+import Payment from "./Payment";
+import { Checkbox } from "antd";
+import billApi from "@/apis/billApi";
 export default function CartPage() {
-  const { carts, setCarts } = useContext(AuthContext);
+  const { carts, setCarts, userData } = useContext(AuthContext);
   const [deleteId, setDeleteId] = useState(null);
   const [showDeleteSelect, setShowDeleteSelect] = useState(false);
+  const [itemSlt, setItemSlt] = useState([]);
+  const [total, setTotal] = useState(0);
+  useEffect(() => {
+    let sum = 0;
+    carts.forEach((cart) => {
+      if (itemSlt.includes(cart.foodId)) {
+        sum += cart.quantity * cart.foodDetails.price;
+      }
+    });
+    setTotal(sum);
+  }, [itemSlt, carts]);
+  const addressRef = useRef(null);
   const handleAddQuantity = async (orderId) => {
     setCarts((prevCarts) =>
       prevCarts.map((cartItem) =>
@@ -38,6 +51,21 @@ export default function CartPage() {
       alert("Food deleted successfully");
     }
   };
+  const handleAddBill = async (address) => {
+    let foodData = [];
+    carts.forEach((cart) => {
+      if (itemSlt.includes(cart.foodId)) {
+        foodData.push(cart);
+      }
+    });
+    const res = await billApi.addBill({
+      totalPrice: total + 12000,
+      address: JSON.stringify(address),
+      foodInfo: JSON.stringify(foodData),
+      userId: userData.userId,
+    });
+    console.log(res);
+  };
   return (
     <div className="px-24 bg-gray-100 pb-24 mt-14">
       <h2 className="pt-6 text-xl mb-4">{`GIỎ HÀNG (${carts.length} sản phẩm)`}</h2>
@@ -46,8 +74,16 @@ export default function CartPage() {
           <div className="flex justify-between px-4  rounded-lg py-3  items-center bg-white">
             <div className="basis-[60%] flex text-sm font-semibold items-center gap-2 ">
               <Checkbox
-                onCheckedChange={(checked) => {
-                  console.log(checked);
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    let arr = [];
+                    for (let i = 0; i < carts.length; i++) {
+                      arr.push(carts[i].foodId);
+                    }
+                    setItemSlt(arr);
+                  } else {
+                    setItemSlt([]);
+                  }
                 }}
               ></Checkbox>
               <p>{`Chọn tất cả (${carts.length} sản phẩm)`}</p>
@@ -64,7 +100,18 @@ export default function CartPage() {
                 <div key={idx}>
                   <div className={`flex px-4 py-6 bg-white `}>
                     <div className="basis-[60%] flex gap-4 items-center">
-                      <Checkbox className="" />
+                      <Checkbox
+                        className=""
+                        checked={itemSlt.includes(cartItem.foodId)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setItemSlt((prev) => [...prev, cartItem.foodId]);
+                          } else {
+                            const newArr = itemSlt.filter((item) => item != cartItem.foodId);
+                            setItemSlt(newArr);
+                          }
+                        }}
+                      />
                       <div
                         style={{
                           backgroundImage: `url(${cartItem.foodDetails.image1})`,
@@ -134,96 +181,34 @@ export default function CartPage() {
               <div className="w-full text-center text-lg mt-4">Currently no items in your cart</div>
             )}
           </div>
+          <Payment addressRef={addressRef} handleAddBill={handleAddBill} />
         </div>
         <div className="basis-[30%] flex flex-col gap-5">
           <div className="px-4  py-4 bg-white rounded-lg">
-            <form className="space-y-4 p-4 bg-gray-100 rounded-lg shadow-md">
-              <div>
-                <label className="block font-medium">House Number</label>
-                <input
-                  type="text"
-                  name="houseNumber"
-                  // value={formData.houseNumber}
-                  // onChange={handleChange}
-                  placeholder="Enter house number"
-                  className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg"
-                />
-              </div>
-
-              <div>
-                <label className="block font-medium">Ward</label>
-                <input
-                  type="text"
-                  name="ward"
-                  // value={formData.ward}
-                  // onChange={handleChange}
-                  placeholder="Enter ward"
-                  className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg"
-                />
-              </div>
-
-              <div>
-                <label className="block font-medium">District</label>
-                <input
-                  type="text"
-                  name="district"
-                  // value={formData.district}
-                  // onChange={handleChange}
-                  placeholder="Enter district"
-                  className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg"
-                />
-              </div>
-
-              <div>
-                <label className="block font-medium">City</label>
-                <input
-                  type="text"
-                  name="city"
-                  // value={formData.city}
-                  // onChange={handleChange}
-                  placeholder="Enter city"
-                  className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg"
-                />
-              </div>
-
-              <div>
-                <label className="block font-medium">Country</label>
-                <input
-                  type="text"
-                  name="country"
-                  // value={formData.country}
-                  placeholder="Enter country"
-                  className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg bg-gray-200 cursor-not-allowed"
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full py-2 font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-all"
-              >
-                Submit Address
-              </button>
-            </form>
-          </div>
-          <div className="px-4  py-4 bg-white rounded-lg">
             <div className="flex pb-3 justify-between">
               <h1>Thành tiền</h1>
-              <h1>{24000}</h1>
+              <h1>{formatCurrency(total)}</h1>
             </div>
             {[2, 23].length > 0 && (
               <div className="flex pb-3 justify-between gap-2">
-                <h1>Phí vận chuyển 22000</h1>
-                <h1>12000</h1>
+                <h1>Phí vận chuyển</h1>
+                <h1>{total !== 0 ? formatCurrency("12000") : formatCurrency("0")}</h1>
               </div>
             )}
             <div className="bg-gray-200 h-[1px] w-full mx-auto"></div>
             <div className="flex justify-between py-4 items-center">
               <h1 className="font-bold">Tổng số tiền (gồm VAT)</h1>
-              <h1 className="text-xl text-primary-color font-bold">{320000}</h1>
+              <h1 className="text-xl text-primary-color font-bold">
+                {total !== 0 ? formatCurrency(total + 12000) : formatCurrency(total)}
+              </h1>
             </div>
             <div
               className="w-full py-2 bg-primary-color text-white uppercase font-bold text-center rounded-md cursor-pointer transition-all hover:bg-red-700 select-none"
-              onClick={() => {}}
+              onClick={() => {
+                if (addressRef.current) {
+                  addressRef.current.click();
+                }
+              }}
             >
               Thanh toán
             </div>

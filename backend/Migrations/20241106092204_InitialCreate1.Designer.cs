@@ -12,7 +12,7 @@ using backend.Controllers;
 namespace backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241106062419_InitialCreate1")]
+    [Migration("20241106092204_InitialCreate1")]
     partial class InitialCreate1
     {
         /// <inheritdoc />
@@ -40,6 +40,14 @@ namespace backend.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<string>("FoodInfo")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<long>("TotalPrice")
                         .HasColumnType("bigint");
 
@@ -51,34 +59,6 @@ namespace backend.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Bills");
-                });
-
-            modelBuilder.Entity("backend.Controllers.BillItem", b =>
-                {
-                    b.Property<int>("ItemId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ItemId"));
-
-                    b.Property<int>("BillId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<long>("Price")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.HasKey("ItemId");
-
-                    b.HasIndex("BillId");
-
-                    b.ToTable("BillItems");
                 });
 
             modelBuilder.Entity("backend.Controllers.Food", b =>
@@ -278,17 +258,6 @@ namespace backend.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("backend.Controllers.BillItem", b =>
-                {
-                    b.HasOne("backend.Controllers.Bill", "Bill")
-                        .WithMany("BillItems")
-                        .HasForeignKey("BillId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Bill");
-                });
-
             modelBuilder.Entity("backend.Controllers.Food", b =>
                 {
                     b.HasOne("backend.Controllers.FoodType", "FoodType")
@@ -355,11 +324,6 @@ namespace backend.Migrations
                     b.Navigation("Food");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("backend.Controllers.Bill", b =>
-                {
-                    b.Navigation("BillItems");
                 });
 
             modelBuilder.Entity("backend.Controllers.Food", b =>
