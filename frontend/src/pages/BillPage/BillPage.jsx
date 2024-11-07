@@ -1,31 +1,71 @@
-import { Button } from 'antd';
+import { Button, Pagination } from 'antd';
 import { Link } from 'lucide-react';
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { FaMinus, FaPlus, FaTrash } from "react-icons/fa6";
 import BillContent from './BillContent';
-const bills = [
-  { id: 1, status: 'Hoàn thành', paymentDate: '12/09/2024', address: '21 LeeSin di rung' },
-  { id: 2, status: 'Đang giao hàng', paymentDate: '15/09/2024', address: '13 Garen lane' },
-  { id: 3, status: 'Thất bại', paymentDate: '18/09/2024', address: '19 Lux avenue' },
-];
+import { AuthContext } from '@/components/authProvider/AuthProvider';
+import billApi from '@/apis/billApi';
+
 const statuses  = [
-  {id: 1, status: 'Hoàn thành'},
-  {id: 2, status: 'Đang giao hàng'},
-  {id: 3, status: 'Thất bại'},
-  {id: 4, status: 'Đang xử lý'},
+  {id: 1, status: 'Finished'},
+  {id: 2, status: 'Ongoing'},
+  {id: 3, status: 'Failed'},
+  {id: 4, status: 'Pending'},
+  { id: 5, status: 'All' },
 ]
 
 function BillPage() {
+  const {userData} = useContext(AuthContext);
+  const [bills, setBills] = useState([]);
   const [selectedBill, setSelectedBill] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState(null);
+  const [total, setTotal] = useState(4);
+  const [page, setPage] = useState(1);
+  const [address, setAddress] = useState([]);
+
+  useEffect(() => {
+    const fetchUserBills = async () => {
+      try {
+        const response = await billApi.getBills(page, 4, userData.userId);
+        if (response.status === "success" && Array.isArray(response.data)) {
+          setBills(response.data); // Set the ratings from the response
+          setTotal(response.pagination.totalItems);
+        } else {
+          setBills([]); // Set to an empty array if the data is not an array
+        }
+      } catch (error) {
+        console.error("Failed to fetch user ratings:", error);
+      }
+    };
+
+    if (userData && userData.userId) {
+      fetchUserBills();
+    }
+  }, [userData, page]);
 
   const handleBillClick = (bill) => {
-    setSelectedBill(bill.id === selectedBill?.id ? null : bill);
+    // Toggle visibility of the bill content
+    if (selectedBill?.billId === bill.billId) {
+      setSelectedBill(null); // Hide the content if the bill is already selected
+    } else {
+      setSelectedBill(bill); // Show content if the bill is not selected
+    }
   };
   const handleStatusClick = (status) => {
     setSelectedStatus(status.status === selectedStatus ? null : status.status);
     setSelectedBill(null); // Clear selected bill when changing status
   };
+
+  const getParsedAddress = (addressString) => {
+    try {
+      const addressObj = JSON.parse(addressString);
+      return `${addressObj.address}, City ID: ${addressObj.city}, District ID: ${addressObj.district}, Ward ID: ${addressObj.ward}`;
+    } catch (error) {
+      console.error("Failed to parse address:", error);
+      return "Address not available";
+    }
+  };
+
     return (
         <div className="px-24 bg-gray-100 pb-24 mt-14">
           <h2 className="pt-6 text-xl mb-4">Lịch sử thanh toán</h2>
@@ -46,28 +86,40 @@ function BillPage() {
             </div>
           </div>
           <div className="">
-          {bills
-            .filter((bill) => !selectedStatus || bill.status === selectedStatus)
-            .map((bill) => (
-              <div key={bill.id} className="rounded-lg mb-2">
-                <div
-                  className={`px-5 items-center rounded-xl flex justify-between p-4 cursor-pointer ${
-                    selectedBill?.id === bill.id
-                      ? 'bg-orange-200 hover:opacity-80'
-                      : 'bg-white hover:shadow-lg'
-                  }`}
-                  onClick={() => handleBillClick(bill)}
-                >
-                  <p className="basis-1/4">Đơn hàng {bill.id}</p>
-                  <p className="basis-1/4 text-center">{bill.status}</p>
-                  <p className="basis-1/4 text-center">{bill.paymentDate}</p>
-                  <p className="basis-1/4 text-end">{bill.address}</p>
+            {bills
+              .filter((bill) => !selectedStatus || selectedStatus === 'All' || bill.status === selectedStatus)
+              .map((bill) => (
+                <div key={bill.billId} className="rounded-lg mb-2">
+                  <div
+                    className={`px-5 items-center rounded-xl flex justify-between p-4 cursor-pointer ${
+                      selectedBill?.billId === bill.billId
+                        ? 'bg-orange-200 hover:opacity-80'
+                        : 'bg-white hover:shadow-lg'
+                    }`}
+                    onClick={() => handleBillClick(bill)} // Toggle visibility on click
+                  >
+                    <p className="basis-1/4">Đơn hàng {bill.billId}</p>
+                    <p className="basis-[10%] text-center">{bill.status}</p>
+                    <p className="basis-1/4 text-center">{bill.date}</p>
+                    <p className="basis-[40%] text-end">{getParsedAddress(bill.address)}</p>
+                  </div>
+                  {/* Show BillContent only for the selected bill */}
+                  {selectedBill?.billId === bill.billId && <BillContent bill={bill} />}
                 </div>
-                {/* Show BillContent directly below the selected bill */}
-                {selectedBill?.id === bill.id && <BillContent bill={selectedBill} />}
-              </div>
-            ))}
+              ))}
           </div>
+
+          <div className="w-full flex justify-center mt-5">
+              <Pagination
+                className="items-center"
+                onChange={(page) => {
+                  setPage(page);
+                }}
+                total={total}
+                defaultCurrent={1}
+                pageSize={4}
+              />
+            </div>
         </div>
       );
 }
