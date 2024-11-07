@@ -16,6 +16,7 @@ const statuses  = [
 ]
 
 function BillPage() {
+  const [bills, setBills] = useState([]);
   const [selectedBill, setSelectedBill] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState(null);
 

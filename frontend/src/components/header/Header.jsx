@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import SearchBox from "./SearchBox";
 import { FaArrowRightFromBracket, FaBell, FaCartShopping, FaCircleUser } from "react-icons/fa6";
 import authApi from "@/apis/authApi";
+import Category from "./Category";
 export default function Header() {
   const [open, setOpen] = useState(false);
   const { setShowLoginModal, isLoggedIn, userData } = useContext(AuthContext);
@@ -22,6 +23,7 @@ export default function Header() {
         }}
         className="h-[60px] w-[100px] bg-no-repeat bg-contain bg-center"
       ></Link>
+      <Category/>
       <SearchBox />
       <div className="flex items-center gap-4">
         <Link to={'/about'}>
