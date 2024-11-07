@@ -31,6 +31,11 @@ const foodApi = {
     let query = `/Category/getAllFoodTypes`;
     const response = await request.get(query);
     return response.data;
+  },
+  getFoodType: async (typeId) => {
+    let query = `/Category/getFoodTypeById?id-${typeId}`;
+    const response = await request.get(query);
+    return response.data;
   }
 }
 export default foodApi;

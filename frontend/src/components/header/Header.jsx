@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../authProvider/AuthProvider";
 import { Link } from "react-router-dom";
 import SearchBox from "./SearchBox";
-import { FaArrowRightFromBracket, FaBell, FaCartShopping, FaCircleUser } from "react-icons/fa6";
+import { FaArrowRightFromBracket, FaBell, FaCartShopping, FaCircleUser, FaMoneyBill, FaMoneyBillTransfer, FaRegRectangleList } from "react-icons/fa6";
 import authApi from "@/apis/authApi";
 import Category from "./Category";
 export default function Header() {
@@ -65,6 +65,12 @@ export default function Header() {
                   <div className="flex justify-center px-4 transition-all rounded-t-md cursor-pointer hover:bg-gray-100 gap-3 items-center py-2">
                     <p className="text-lg">Your carts</p>
                     <FaCartShopping className="text-lg"></FaCartShopping>
+                  </div>
+                </Link>
+                <Link to={"/bill"}>
+                  <div className="flex justify-center px-4 transition-all rounded-t-md cursor-pointer hover:bg-gray-100 gap-3 items-center py-2">
+                    <p className="text-lg">Your bills</p>
+                    <FaRegRectangleList className="text-lg"></FaRegRectangleList>
                   </div>
                 </Link>
                 <div

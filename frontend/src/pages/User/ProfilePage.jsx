@@ -200,7 +200,9 @@ const handleSave = async () => {
               </div>
             </div>
             <div className="flex justify-between items-center py-4 border-b border-b-orange-200 px-5 hover:shadow-lg cursor-pointer transition-all duration-200">
-              <h1 className="text-base sm:text-lg font-semibold text-gray-700">Dineline</h1>
+              <Link to="/bill" className="flex-grow">
+                <h1 className="text-base sm:text-lg font-semibold text-gray-700">Bill</h1>
+              </Link>
               <div className="bg-orange-400 rounded-full w-[40px] h-[40px] flex items-center justify-center">
                 <span className="text-white font-bold">1</span>
               </div>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import foodApi from '@/apis/foodApi';
+import { Link } from 'react-router-dom';
 
 const Category = () => {
   const [foodTypes, setFoodTypes] = useState([]);
@@ -19,21 +20,27 @@ const Category = () => {
 
   return (
     <div
-      className="relative"
+       className="relative flex flex-col items-center"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setTimeout(() => { setIsHovered(false) }, 1500)}
     >
-      <div className="cursor-pointer font-bold">Categories</div>
+      <Link to="/category" className="cursor-pointer font-bold text-center">
+        Categories
+      </Link>
       {isHovered && (
         <div
-          className="absolute top-full mt-2 bg-white shadow-lg rounded-md p-3 w-[300px] z-10 grid grid-cols-3 gap-2"
+          className="absolute top-full mt-2 bg-white shadow-lg rounded-md p-3 w-[300px] z-10 grid grid-cols-3 gap-2 text-center transform -translate-x-1/2 left-1/2"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setTimeout(() => { setIsHovered(false) }, 1500)}
         >
-          {foodTypes.slice(0, 6).map((foodType) => ( // Limit to 6 items for 3x2 grid
-            <div key={foodType.typeId} className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-center">
+          {foodTypes.slice(0, 6).map((foodType) => (
+            <Link
+              key={foodType.typeId}
+              to={`/category/${foodType.typeId}`}
+              className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-center"
+            >
               {foodType.nameType}
-            </div>
+            </Link>
           ))}
         </div>
       )}
