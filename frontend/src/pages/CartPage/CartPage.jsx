@@ -1,7 +1,7 @@
 import cartApi from "@/apis/cartApi";
 import { AuthContext } from "@/components/authProvider/AuthProvider";
 import { formatCurrency } from "@/lib/utils";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { FaMinus, FaPlus, FaTrash } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import Dialog from "./Dialog";

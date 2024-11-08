@@ -5,7 +5,6 @@ import RatingLayout from "@/components/ui/ratingLayout";
 import { TbCurrencyDong } from "react-icons/tb";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Review from "@/components/detailFood/Review";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
@@ -22,29 +21,6 @@ export default function DetailFoodPage() {
   const [note, setNote] = useState("");
   const [food, setFood] = useState(null);
 
-  // const listImage=[
-  //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTa9Qq1rV_svdydH5u3O8r5ZmT8udMBnSuKeA&s',
-  //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMqxblUCytv_3FcErsPcP8oQe_0iK9kezGHw&s',
-  //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5sT5zC4y0-6mPucxnXLg4ATqCxjVN7bAttQ&s',
-  //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTa9Qq1rV_svdydH5u3O8r5ZmT8udMBnSuKeA&s',
-  //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMqxblUCytv_3FcErsPcP8oQe_0iK9kezGHw&s',
-  //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5sT5zC4y0-6mPucxnXLg4ATqCxjVN7bAttQ&s'
-  // ]
-  // const food={
-  //   name:"Burger bò phô mai",
-  //   price:35000,
-  //   rating:3.5,
-  //   description:"Burger bò phô mai – Sự kết hợp hoàn hảo giữa miếng thịt bò tươi ngon, được nướng chín tới, và lớp phô mai cheddar tan chảy thơm béo. Bánh mì mềm mịn, kẹp cùng rau tươi giòn như xà lách, cà chua và dưa chuột muối, tạo nên một món ăn đầy hấp dẫn. Hương vị đậm đà, quyện giữa vị ngọt tự nhiên của thịt bò và sự béo ngậy của phô mai, đảm bảo làm hài lòng cả những thực khách khó tính nhất. Đây là lựa chọn lý tưởng cho những bữa ăn nhanh gọn mà vẫn bổ dưỡng!",
-  //   inStock:1
-  // };
-  const store = {
-    avatar: "https://product.hstatic.net/1000389344/product/burger_web_2daf139345214f3eb6caa111ae710674_master.jpg",
-    address: "287, Trần Xuân Soạn, Quận 7, Tp.HCM",
-    name: "Shop ăn vặt cô Linh",
-    rating: 3.5,
-    numberRating: 200,
-    phoneNumber: "0944662775",
-  };
   const handleChange = (e) => {
     const inputValue = e.target.value;
 
@@ -138,7 +114,7 @@ export default function DetailFoodPage() {
                 <RatingLayout rating={food.rating} />
               </div>
               <button onClick={() => handleToggleFoodSaved(id)} className="ml-auto  w-fit mr-8">
-                {userData.userSaved.includes(id) ? <FaHeart size={25} color="red" /> : <FaRegHeart size={25} />}
+                {userData?.userSaved?.includes(id) ? <FaHeart size={25} color="red" /> : <FaRegHeart size={25} />}
               </button>
             </div>
             <div className="flex items-center mt-1 ml-[2px]">
