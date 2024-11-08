@@ -3,13 +3,23 @@ import { Form, Input, Select } from "antd";
 import axios from "axios";
 export default function PayingPage({ addressRef, handleAddBill }) {
   const onFinish = (values) => {
-    handleAddBill(values);
+    const sltCityIdx = city.findIndex((c) => c.value === values.city);
+    const sltDisIdx = district.findIndex((d) => d.value === values.district);
+    const sltWardIdx = ward.findIndex((w) => w.value === values.ward);
+
+    const newObj = {
+      ...values,
+      city: city[sltCityIdx].label,
+      district: district[sltDisIdx].label,
+      ward: ward[sltWardIdx].label,
+    };
+    handleAddBill(newObj);
   };
   const [validateAddress, setValidateAddress] = useState([]);
   const [form] = Form.useForm();
-  const [city, setCity] = useState();
-  const [district, setDistrict] = useState();
-  const [ward, setWard] = useState();
+  const [city, setCity] = useState([]);
+  const [district, setDistrict] = useState([]);
+  const [ward, setWard] = useState([]);
   const getCity = async () => {
     const response = await axios.get("https://provinces.open-api.vn/api/");
     const dataCity = [];

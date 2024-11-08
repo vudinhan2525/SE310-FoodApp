@@ -72,6 +72,7 @@ namespace backend.Controllers
                                 o.Note,
                                 FoodDetails = new
                                 {
+                                    o.Food.TypeId,
                                     o.Food.Name,
                                     o.Food.Description,
                                     o.Food.Image1,
