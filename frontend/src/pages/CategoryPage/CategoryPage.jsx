@@ -1,11 +1,26 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Food from '@/components/food/Food';
 import SortNFilter from '@/components/ui/PageDashboard/SortNFilter';
+import { useLocation, useParams } from 'react-router-dom';
 
 function CategoryPage() {
-  const [selectedFoodType, setSelectedFoodType] = useState(null);
+  const { foodType } = useParams();
+  const location = useLocation();
+  const passedFoodType = location.state?.foodType || null;
+  // console.log("food:",foodType)
+  const [selectedFoodType, setSelectedFoodType] = useState(passedFoodType);
   const [sliderValue, setSliderValue] = useState([]);
 
+  useEffect(() => {
+    if (passedFoodType) {
+      setSelectedFoodType(passedFoodType);
+    } else if (foodType) {
+      setSelectedFoodType({ typeId: foodType });
+    }
+  }, [foodType, passedFoodType]);
+
+
+  // console.log("Selected Food Type:", selectedFoodType);
   return (
     <section className='rounded-xl mx-5 h-full mt-20 min-w-md'>
       <div className="shopInfo">
