@@ -29,6 +29,10 @@ const BillContent = ({ bill }) => {
                   <div key={idx}>
                     <div className={`flex px-5 pr-8 py-6 bg-white`}>
                       <div className="basis-[50%] flex gap-4 items-center">
+                        <div
+                          className="bg-contain bg-center w-24 h-24 sm:w-20 sm:h-20 rounded-lg group-hover:opacity-90 "
+                          style={{ backgroundImage: `url(${item.foodDetails.image1})` }}
+                        ></div>
                         <div className="flex flex-col justify-between">
                           <p>{item.foodDetails.name}</p>
                           <div className="flex items-end gap-1">
@@ -77,7 +81,13 @@ const BillContent = ({ bill }) => {
         <div className="basis-[30%] flex flex-col gap-5 px-5 h-full">
           <div className="px-4 my-3 py-4 bg-white rounded-lg border border-orange-300">
             <form className="space-y-4 p-4 bg-gray-100 rounded-lg shadow-md">
-              <label className="block font-medium text-2xl text-center">Bill no. {bill.id}</label>
+              <label className="block font-medium text-2xl text-center">Bill no. {bill.billId}</label>
+              <div className="name">
+                <label className="block font-medium">Name</label>
+                <div className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg ">
+                  {address.username}
+                </div>
+              </div>
               <div>
                 <label className="block font-medium">Address</label>
                 <div
@@ -85,7 +95,7 @@ const BillContent = ({ bill }) => {
                   name="houseNumber"
                   className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg"
                 >
-                   {address.username}, {address.phonenumber}, {address.address}, {address.ward}, {address.district}, {address.city}
+                    {address.address}, {address.ward}, {address.district}, {address.city}
                 </div>
               </div>
               <div className="date">
@@ -98,6 +108,12 @@ const BillContent = ({ bill }) => {
                 <label className="block font-medium">Status</label>
                 <div className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg ">
                    {bill.status}
+                </div>
+              </div>
+              <div className="phone">
+                <label className="block font-medium">Number</label>
+                <div className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg ">
+                  {address.phonenumber}
                 </div>
               </div>
             </form>

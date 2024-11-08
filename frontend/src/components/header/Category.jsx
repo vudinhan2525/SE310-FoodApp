@@ -11,6 +11,7 @@ const Category = () => {
       try {
         const response = await foodApi.getAllFoodTypes();
         setFoodTypes(response.data);
+        console.log("Fetched Food Types:", response.data);
       } catch (error) {
         console.error("Error fetching food types:", error);
       }
@@ -18,25 +19,28 @@ const Category = () => {
     fetchFoodTypes();
   }, []);
 
+  const handleMouseEnter = () => setIsHovered(true);
+  const handleMouseLeave = () => setIsHovered(false);
   return (
     <div
        className="relative flex flex-col items-center"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setTimeout(() => { setIsHovered(false) }, 1500)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       <Link to="/category" className="cursor-pointer font-bold text-center">
         Categories
       </Link>
       {isHovered && (
         <div
-          className="absolute top-full mt-2 bg-white shadow-lg rounded-md p-3 w-[300px] z-10 grid grid-cols-3 gap-2 text-center transform -translate-x-1/2 left-1/2"
+          className="absolute top-full border bg-white shadow-lg rounded-md p-3 w-[600px] z-10 grid grid-cols-4 gap-2 text-center transform -translate-x-1/2 left-1/2"
           onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setTimeout(() => { setIsHovered(false) }, 1500)}
+          onMouseLeave={() => setTimeout(() => { setIsHovered(false) }, 2000)}
         >
-          {foodTypes.slice(0, 6).map((foodType) => (
+          {foodTypes.slice(0, 12).map((foodType) => (
             <Link
               key={foodType.typeId}
               to={`/category/${foodType.typeId}`}
+              state={{ foodType }} // Pass the full object here
               className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-center"
             >
               {foodType.nameType}

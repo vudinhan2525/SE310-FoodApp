@@ -20,6 +20,7 @@ const publicRoutes = [
   { path: "/favorite", component: FavoritePage },
   { path: "/bill", component: BillPage },
   { path: "/category", component: CategoryPage },
+  { path: "/category/:foodType", component: CategoryPage },
   { path: "/search", component: SearchPage }
 ];
 export { publicRoutes };
