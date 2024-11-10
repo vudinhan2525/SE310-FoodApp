@@ -1,6 +1,9 @@
-import React from 'react'
+import { AuthContext } from '@/components/authProvider/AuthProvider'
+import React, { useContext } from 'react'
 
 function UserHeading() {
+  const {userData} = useContext(AuthContext);
+  // console.log(userData);
   return (
     <div className='mt-16'>
         {/* UpperPicture */}
@@ -9,15 +12,17 @@ function UserHeading() {
               <div className="absolute backdrop-blur-lg bg-white/30 md:backdrop-filter-none bottom-0 w-full flex items-center py-5 justify-between">
                   {/* Left Info */}
                   <div className="userInfo flex flex-cols px-8 items-center">
-                      <div className="profilePic bg-[url('picture/userAvt.jpg')] lg:w-[100px] lg:h-[100px] w-[75px] h-[75px] px-8 bg-cover">
-                      </div>
+                      <div
+                        className="bg-cover w-32 h-32 sm:w-40 sm:h-40 rounded-full ring-2 ring-indigo-300"
+                        style={{ backgroundImage: `url(${userData.avatar})` }}
+                      ></div>
                       <div className="information px-8 items-center">
-                        <h1 className="text-orange-600 text-semibold">john doe</h1>
+                        <h1 className="text-orange-600 text-semibold">{userData.username}</h1>
                         <h2>Tran Phu, Ho Chi Minh City</h2>
                       </div>
                         <div className="jobs">
                           <h1>Ui/Ux Designer</h1>
-                          <h2>hello@gmail.com</h2>
+                          <h2>{userData.email}</h2>
                           <h2>email</h2>
                         </div>
                   </div>
@@ -39,6 +44,7 @@ function UserHeading() {
               </div>
           </div>
       </div>
+      
     </div>
   )
 }

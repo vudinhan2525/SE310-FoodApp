@@ -5,13 +5,14 @@ import RatingLayout from "@/components/ui/ratingLayout";
 import { TbCurrencyDong } from "react-icons/tb";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Review from "@/components/detailFood/Review";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
 import foodApi from "@/apis/foodApi";
 import { useParams } from "react-router-dom";
 import { AuthContext } from "@/components/authProvider/AuthProvider";
+import userApi from "@/apis/userApi";
+import cartApi from "@/apis/cartApi";
 
 export default function DetailFoodPage() {
   const [count, setCount] = useState(1);
@@ -20,29 +21,6 @@ export default function DetailFoodPage() {
   const [note, setNote] = useState("");
   const [food, setFood] = useState(null);
 
-  // const listImage=[
-  //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTa9Qq1rV_svdydH5u3O8r5ZmT8udMBnSuKeA&s',
-  //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMqxblUCytv_3FcErsPcP8oQe_0iK9kezGHw&s',
-  //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5sT5zC4y0-6mPucxnXLg4ATqCxjVN7bAttQ&s',
-  //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTa9Qq1rV_svdydH5u3O8r5ZmT8udMBnSuKeA&s',
-  //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMqxblUCytv_3FcErsPcP8oQe_0iK9kezGHw&s',
-  //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5sT5zC4y0-6mPucxnXLg4ATqCxjVN7bAttQ&s'
-  // ]
-  // const food={
-  //   name:"Burger bò phô mai",
-  //   price:35000,
-  //   rating:3.5,
-  //   description:"Burger bò phô mai – Sự kết hợp hoàn hảo giữa miếng thịt bò tươi ngon, được nướng chín tới, và lớp phô mai cheddar tan chảy thơm béo. Bánh mì mềm mịn, kẹp cùng rau tươi giòn như xà lách, cà chua và dưa chuột muối, tạo nên một món ăn đầy hấp dẫn. Hương vị đậm đà, quyện giữa vị ngọt tự nhiên của thịt bò và sự béo ngậy của phô mai, đảm bảo làm hài lòng cả những thực khách khó tính nhất. Đây là lựa chọn lý tưởng cho những bữa ăn nhanh gọn mà vẫn bổ dưỡng!",
-  //   inStock:1
-  // };
-  const store = {
-    avatar: "https://product.hstatic.net/1000389344/product/burger_web_2daf139345214f3eb6caa111ae710674_master.jpg",
-    address: "287, Trần Xuân Soạn, Quận 7, Tp.HCM",
-    name: "Shop ăn vặt cô Linh",
-    rating: 3.5,
-    numberRating: 200,
-    phoneNumber: "0944662775",
-  };
   const handleChange = (e) => {
     const inputValue = e.target.value;
 
@@ -57,7 +35,6 @@ export default function DetailFoodPage() {
   };
   const getFoodbyId = async () => {
     const response = await foodApi.getFoodbyId(id);
-    console.log(response.data);
     if (response.status === "success") {
       setFood(response.data);
     }
@@ -70,8 +47,20 @@ export default function DetailFoodPage() {
   if (!food) {
     return <p>Loading...</p>; // Show loading while food data is being fetched
   }
-  const removeFoodSaved = async (id) => {};
-  const addFoodSaved = async (id) => {};
+  const removeFoodSaved = async (id) => {
+    try {
+      await userApi.removeFoodSaved({ userId: userData.userId, foodId: id });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const addFoodSaved = async (id) => {
+    try {
+      await userApi.addFoodSaved({ userId: userData.userId, foodId: id });
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const handleToggleFoodSaved = async (id) => {
     // Check if the food ID is already saved
     if (userData.userSaved.includes(id)) {
@@ -90,6 +79,15 @@ export default function DetailFoodPage() {
         userSaved: updatedUserSaved,
       });
       await addFoodSaved(id);
+    }
+  };
+  const handleAddToCart = async (id) => {
+    if (!id || !userData.userId) return;
+    const response = await cartApi.addCart(userData.userId, id, count, note);
+
+    if (response?.status === "success") {
+      alert("Food added successfully");
+      window.location.reload();
     }
   };
   const listImage = [food.image1, food.image2, food.image3].filter(Boolean);
@@ -116,7 +114,7 @@ export default function DetailFoodPage() {
                 <RatingLayout rating={food.rating} />
               </div>
               <button onClick={() => handleToggleFoodSaved(id)} className="ml-auto  w-fit mr-8">
-                {userData.userSaved.includes(id) ? <FaHeart size={25} color="red" /> : <FaRegHeart size={25} />}
+                {userData?.userSaved?.includes(id) ? <FaHeart size={25} color="red" /> : <FaRegHeart size={25} />}
               </button>
             </div>
             <div className="flex items-center mt-1 ml-[2px]">
@@ -153,7 +151,12 @@ export default function DetailFoodPage() {
                 />
               </div>
 
-              <button className="w-auto h-12 bg-primary-color bg-opacity-70 flex p-2 items-center mt-6 ">
+              <button
+                onClick={() => {
+                  handleAddToCart(id);
+                }}
+                className="w-auto h-12 bg-primary-color bg-opacity-70 flex p-2 items-center mt-6 "
+              >
                 <MdOutlineShoppingCart className="text-white w-5 h-5" />
                 <p className="text-white text-[16px] ml-2">Thêm vào giỏ hàng</p>
               </button>
@@ -163,7 +166,7 @@ export default function DetailFoodPage() {
         {/* dưới */}
         <div className="ml-[3%] max-w-full mt-[3%]">
           <h2 className="text-[28px] font-semibold mb-[3%]">Đánh giá</h2>
-          <Review store={store} />
+          <Review foodId={food.foodId} />
         </div>
       </section>
     </ScrollArea>

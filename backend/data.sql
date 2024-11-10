@@ -1,3 +1,5 @@
+
+
 INSERT INTO foodtypes (TypeId, NameType, ParentId) VALUES
 (1, 'Vietnamese Noodles', false),
 (2, 'Grilled Dishes', false),
@@ -62,3 +64,8 @@ INSERT INTO userfoodsaved (UserId,FoodId) VALUES
 (1,2),
 (1,3),
 (1,4);
+
+INSERT INTO userfoodorders(OrderId,UserId,FoodId,Quantity,Note) VALUES
+(1, 1,2,4,"Nhiều tương ớt"),
+(2, 1,3,1,''),
+(3, 1,4,5,'');

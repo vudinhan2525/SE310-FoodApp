@@ -3,6 +3,7 @@ import FoodCard from "@/components/food/FoodCard";
 import { Pagination } from "antd";
 import { useEffect, useState } from "react";
 import { FaAngleRight } from "react-icons/fa6";
+import { Link } from "react-router-dom";
 const types = ["All","Vietnamese Noodles", "Rice Dishes", "Soups", "Desserts", "Seafood"];
 export default function MenuCategory() {
   const [typeSlt, setTypeSlt] = useState(0);
@@ -27,6 +28,7 @@ export default function MenuCategory() {
         <header className="font-serif text-4xl font-medium my-4 text-blue-950">
           Menu category
         </header>
+        <Link to="/category">
         <div className="group flex items-center gap-4 cursor-pointer">
           <p className="font-semibold group-hover:underline transition-all">
             View all
@@ -35,6 +37,7 @@ export default function MenuCategory() {
             <FaAngleRight className="text-lg" />
           </div>
         </div>
+        </Link>
       </div>
       <div className="flex gap-2">
         {types.map((el, idx) => {

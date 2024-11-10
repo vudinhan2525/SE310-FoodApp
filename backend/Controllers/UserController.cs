@@ -62,7 +62,24 @@ namespace backend.Controllers
                             .Where(u => u.UserId == user.UserId)
                             .Select(u => u.FoodId.ToString())
                             .ToListAsync();
-
+                        var cartItems = await _context.UserFoodOrders
+                            .Where(o => o.UserId == user.UserId)
+                            .Select(o => new
+                            {
+                                o.OrderId,
+                                o.FoodId,
+                                o.Quantity,
+                                o.Note,
+                                FoodDetails = new
+                                {
+                                    o.Food.TypeId,
+                                    o.Food.Name,
+                                    o.Food.Description,
+                                    o.Food.Image1,
+                                    o.Food.Price // You can include any additional properties from the Food table as needed
+                                }
+                            })
+                            .ToListAsync();
                         return Ok(new
                         {
                             message = "success",
@@ -72,7 +89,8 @@ namespace backend.Controllers
                                 user.Email,
                                 user.Address,
                                 user.Avatar,
-                                userSaved = savedFoodIds 
+                                userSaved = savedFoodIds ,
+                                userCart = cartItems
                             }
                         });
                     }
@@ -185,7 +203,7 @@ namespace backend.Controllers
             // In a real scenario, you would delete the user from the database
             return NoContent();
         }
-        [HttpPost("/removeFoodSaved")]
+        [HttpPost("removeFoodSaved")]
         public async Task<IActionResult> RemoveFoodSaved([FromBody] UserFoodDto userFood)
         {
             // Validate the input
@@ -208,6 +226,130 @@ namespace backend.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Food item removed from saved foods successfully." });
+        }
+        [HttpPost("addFoodSaved")]
+        public async Task<IActionResult> AddFoodSaved([FromBody] UserFoodDto userFood)
+        {
+            if (userFood == null)
+            {
+                return BadRequest("UserFood data is null.");
+            }
+
+            // Check if the user and food already exist in the UserFoodSaved table
+            var existingUserFood = await _context.UserFoodSaved.FindAsync(userFood.userId, userFood.foodId);
+            if (existingUserFood != null)
+            {
+                return Conflict("This food item is already saved for the user.");
+            }
+
+            var userFoodSaved = new UserFoodSaved
+            {
+                UserId = userFood.userId,
+                FoodId = userFood.foodId
+            };
+
+            // Add the new entry to the UserFoodSaved table
+            _context.UserFoodSaved.Add(userFoodSaved);
+            await _context.SaveChangesAsync();
+
+            return Ok("Food item successfully saved for the user.");
+        }
+        [HttpGet("getAllFoodSaved")]
+        public async Task<IActionResult> GetAllFoodSaved(int userId, int page = 1, int limit = 10)
+        {
+            // Validate input
+            if (userId <= 0)
+            {
+                return BadRequest(new { status = "error", message = "Invalid user ID." });
+            }
+
+            if (page <= 0 || limit <= 0)
+            {
+                return BadRequest(new { status = "error", message = "Page and limit must be greater than zero." });
+            }
+
+            // Calculate the number of items to skip based on the current page and limit
+            int skip = (page - 1) * limit;
+
+            // Retrieve the saved food items for the user with pagination
+            var savedFoodsQuery = _context.UserFoodSaved
+                .Where(ufs => ufs.UserId == userId)
+                .Include(ufs => ufs.Food); // Include related Food data if needed
+
+            // Get the paginated list of saved food items
+            var savedFoods = await savedFoodsQuery
+                .Skip(skip)
+                .Take(limit)
+                .Select(ufs => new
+                {
+                    ufs.FoodId,
+                    FoodName = ufs.Food.Name,
+                    ufs.Food.Image1,
+                    ufs.Food.Image2,
+                    ufs.Food.Image3,
+                    ufs.Food.Price,
+                    ufs.Food.Itemleft,
+                    ufs.Food.Rating,
+                    ufs.Food.NumberRating,
+                    ufs.Food.Description
+                })
+                .ToListAsync();
+
+            // Retrieve total count for pagination metadata
+            int totalItems = await savedFoodsQuery.CountAsync();
+
+            // Calculate total pages based on item count and limit
+            int totalPages = (int)Math.Ceiling(totalItems / (double)limit);
+
+            // Return paginated response
+            return Ok(new
+            {
+                status = "success",
+                data = savedFoods,
+                pagination = new
+                {
+                    currentPage = page,
+                    pageSize = limit,
+                    totalItems,
+                    totalPages
+                }
+            });
+        }
+        [HttpPut("updateUser")]
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDto updatedUser)
+        {
+            if (updatedUser == null || updatedUser.UserId <= 0)
+            {
+                return BadRequest("Invalid user data.");
+            }
+
+            // Find the user in the database
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == updatedUser.UserId);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            // Update the user's information
+            user.Username = updatedUser.Username;
+            user.Email = updatedUser.Email;
+            user.Address = updatedUser.Address;
+            
+             if (!string.IsNullOrWhiteSpace(updatedUser.Avatar))
+                {
+                    user.Avatar = updatedUser.Avatar; // Update the avatar only if provided
+                }
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok(new { status = "success", message = "User updated successfully." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error updating user: " + ex.Message);
+                return StatusCode(500, "An error occurred while updating the user.");
+            }
         }
         private string GenerateJwtToken(User user)
         {
@@ -245,5 +387,6 @@ namespace backend.Controllers
         public record CreateUserDto(string firstName, string lastName, string email,string password,string passwordConfirm);
         public record LoginBodyDto(string email, string password);
         public record UserFoodDto(int userId, int foodId);
+        public record UpdateUserDto(int UserId, string Username, string Email, string Address, string Avatar);
     }
 }

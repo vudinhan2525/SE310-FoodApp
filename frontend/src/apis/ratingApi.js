@@ -6,6 +6,11 @@ const ratingApi = {
     const response = await request.get(query);
     return response.data;
   },
+  getRatingByUserId: async (userId, paging, limit) => {
+    let query = `/Rating/user/${userId}?page=${paging}&limit=${limit}`;
+    const response = await request.get(query);
+    return response.data;
+  },
   addRating: async (userId, foodId, content, ratingValue) => {
     const data = {
       userId: userId,

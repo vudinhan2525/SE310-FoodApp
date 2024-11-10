@@ -1,102 +1,125 @@
+import { Button, Pagination } from 'antd';
 import { Link } from 'lucide-react';
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { FaMinus, FaPlus, FaTrash } from "react-icons/fa6";
+import BillContent from './BillContent';
+import { AuthContext } from '@/components/authProvider/AuthProvider';
+import billApi from '@/apis/billApi';
+
+const statuses  = [
+  {id: 1, status: 'Finished'},
+  {id: 2, status: 'Ongoing'},
+  {id: 3, status: 'Failed'},
+  {id: 4, status: 'Pending'},
+  { id: 5, status: 'All' },
+]
 
 function BillPage() {
+  const {userData} = useContext(AuthContext);
+  const [bills, setBills] = useState([]);
+  const [selectedBill, setSelectedBill] = useState(null);
+  const [selectedStatus, setSelectedStatus] = useState(null);
+  const [total, setTotal] = useState(4);
+  const [page, setPage] = useState(1);
+  const [address, setAddress] = useState([]);
+
+  useEffect(() => {
+    const fetchUserBills = async () => {
+      try {
+        const response = await billApi.getBills(page, 4, userData.userId);
+        if (response.status === "success" && Array.isArray(response.data)) {
+          setBills(response.data); // Set the ratings from the response
+          setTotal(response.pagination.totalItems);
+        } else {
+          setBills([]); // Set to an empty array if the data is not an array
+        }
+      } catch (error) {
+        console.error("Failed to fetch user ratings:", error);
+      }
+    };
+
+    if (userData && userData.userId) {
+      fetchUserBills();
+    }
+  }, [userData, page]);
+
+  const handleBillClick = (bill) => {
+    // Toggle visibility of the bill content
+    if (selectedBill?.billId === bill.billId) {
+      setSelectedBill(null); // Hide the content if the bill is already selected
+    } else {
+      setSelectedBill(bill); // Show content if the bill is not selected
+    }
+  };
+  const handleStatusClick = (status) => {
+    setSelectedStatus(status.status === selectedStatus ? null : status.status);
+    setSelectedBill(null); // Clear selected bill when changing status
+  };
+
+  const getParsedAddress = (addressString) => {
+    try {
+      const addressObj = JSON.parse(addressString);
+      return `${addressObj.address}, City ID: ${addressObj.city}, District ID: ${addressObj.district}, Ward ID: ${addressObj.ward}`;
+    } catch (error) {
+      console.error("Failed to parse address:", error);
+      return "Address not available";
+    }
+  };
+
     return (
         <div className="px-24 bg-gray-100 pb-24 mt-14">
-          <h2 className="pt-6 text-xl mb-4">Thanh toán</h2>
-          <div className="flex gap-4">
-            <div className="basis-[70%]">
-              <div className="flex justify-between px-4  rounded-lg py-3  items-center bg-white">
-                <div className="basis-[50%] flex text-sm font-semibold items-center gap-2 ">
-                  <p>Sản phẩm(0 sản phẩm)</p>
-                </div>
-                <div className="basis-[50%] flex items-center">
-                  <p className=" basis-[45%] text-center">Số lượng</p>
-                  <p className=" basis-[45%] text-center">Đơn giá</p>
-                  <p className=" basis-[45%]  text-center">Thành tiền</p>
-                  <p className=" basis-[45%]  text-center">Tình trạng</p>
-                  <p className=" basis-[10%]  text-center"></p>
-                </div>
-              </div>
-              <div className="mt-4 rounded-lg overflow-hidden ">
-                {[1, 2, 3]?.map((cartItem, idx) => {
-                  return (
-                    <div key={idx}>
-                      <div className={`flex px-5 pr-8 py-6 bg-white `}>
-                        <div className="basis-[50%] flex gap-4 items-center">
-                          <div className="flex flex-col justify-between">
-                         
-                              Food name
-                
-                            <div className="flex items-end gap-1">
-                              <p className="font-bold">32.000</p>
-                              <p className="text-xs mb-1 line-through text-gray-500">{12000}</p>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="basis-[50%] flex items-center">
-                          <div className="quantity basis-[45%] flex justify-center">
-                            <div className="rounded-md text-center items-center justify-center inline-flex">
-                              <div className="px-2 py-2">
-                               7
-                              </div>
-                            </div>
-                          </div>
-                          <div className="price basis-[45%] flex justify-center">
-                            <div className="rounded-md text-center items-center justify-center inline-flex">
-                              <div className="px-2 py-2">
-                               7
-                              </div>
-                            </div>
-                          </div>
-                          <p className=" basis-[45%]  text-center select-none text-primary-color font-bold">{32000}</p>
-                          <div className="total basis-[45%] flex justify-center">
-                            <div className="rounded-md text-center items-center justify-center inline-flex">
-                              <div className="px-2 py-2">
-                               Đang giao hàng
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      {idx !== 2 && (
-                        <div className="bg-white w-[100%] h-[1px]">
-                          <div className="h-[1px] w-[90%] mx-auto bg-gray-200"></div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
+          <h2 className="pt-6 text-xl mb-4">Lịch sử thanh toán</h2>
+          <div className="status flex justify-between bg-white p-3 rounded-xl my-3">
+            <div className="title">
+              <p>Tình trạng đơn hàng</p>
             </div>
-            <div className="basis-[30%]">
-              <div className="px-4  py-4 bg-white rounded-lg">
-                <div className="flex pb-3 justify-between">
-                  <h1>Thành tiền</h1>
-                  <h1>{24000}</h1>
-                </div>
-                {[2, 23].length > 0 && (
-                  <div className="flex pb-3 justify-between gap-2">
-                    <h1>Phí vận chuyển</h1>
-                    <h1>12000</h1>
-                  </div>
-                )}
-                <div className="bg-gray-200 h-[1px] w-full mx-auto"></div>
-                <div className="flex justify-between py-4 items-center">
-                  <h1 className="font-bold">Tổng số tiền (gồm VAT)</h1>
-                  <h1 className="text-xl text-primary-color font-bold">{320000}</h1>
-                </div>
-                <div
-                  className="w-full py-2 bg-primary-color text-white uppercase font-bold text-center rounded-md cursor-pointer transition-all hover:bg-red-700 select-none"
-                  onClick={() => {}}
-                >
-                  Thanh toán
-                </div>
-              </div>
+            <div className="status-controller flex gap-5">
+            {statuses.map((sta) => (
+              <Button
+                key={sta.id}
+                type={selectedStatus === sta.status ? 'primary' : 'default'}
+                onClick={() => handleStatusClick(sta)}
+              >
+                {sta.status}
+              </Button>
+            ))}
             </div>
           </div>
+          <div className="">
+            {bills
+              .filter((bill) => !selectedStatus || selectedStatus === 'All' || bill.status === selectedStatus)
+              .map((bill) => (
+                <div key={bill.billId} className="rounded-lg mb-2">
+                  <div
+                    className={`px-5 items-center rounded-xl flex justify-between p-4 cursor-pointer ${
+                      selectedBill?.billId === bill.billId
+                        ? 'bg-orange-200 hover:opacity-80'
+                        : 'bg-white hover:shadow-lg'
+                    }`}
+                    onClick={() => handleBillClick(bill)} // Toggle visibility on click
+                  >
+                    <p className="basis-1/4">Đơn hàng {bill.billId}</p>
+                    <p className="basis-[10%] text-center">{bill.status}</p>
+                    <p className="basis-1/4 text-center">{bill.date}</p>
+                    <p className="basis-[40%] text-end">{getParsedAddress(bill.address)}</p>
+                  </div>
+                  {/* Show BillContent only for the selected bill */}
+                  {selectedBill?.billId === bill.billId && <BillContent bill={bill} />}
+                </div>
+              ))}
+          </div>
+
+          <div className="w-full flex justify-center mt-5">
+              <Pagination
+                className="items-center"
+                onChange={(page) => {
+                  setPage(page);
+                }}
+                total={total}
+                defaultCurrent={1}
+                pageSize={4}
+              />
+            </div>
         </div>
       );
 }

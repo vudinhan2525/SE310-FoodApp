@@ -2,11 +2,12 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../authProvider/AuthProvider";
 import { Link } from "react-router-dom";
 import SearchBox from "./SearchBox";
-import { FaArrowRightFromBracket, FaBell } from "react-icons/fa6";
+import { FaArrowRightFromBracket, FaBell, FaCartShopping, FaCircleUser, FaMoneyBill, FaMoneyBillTransfer, FaRegRectangleList } from "react-icons/fa6";
 import authApi from "@/apis/authApi";
+import Category from "./Category";
 export default function Header() {
   const [open, setOpen] = useState(false);
-  const { setShowLoginModal, isLoggedIn } = useContext(AuthContext);
+  const { setShowLoginModal, isLoggedIn, userData } = useContext(AuthContext);
   const handleLogout = async () => {
     const response = await authApi.logout();
     if (response?.status === "success") {
@@ -22,8 +23,12 @@ export default function Header() {
         }}
         className="h-[60px] w-[100px] bg-no-repeat bg-contain bg-center"
       ></Link>
+      <Category/>
       <SearchBox />
       <div className="flex items-center gap-4">
+        <Link to={'/about'}>
+          <p className="font-blackChancery text-2xl">About</p>
+        </Link>
         <div className="px-3 py-3 hover:bg-gray-100 text-gray-400 hover:text-gray-600 rounded-full cursor-pointer transition-all">
           <FaBell className=" " />
         </div>
@@ -40,24 +45,34 @@ export default function Header() {
           </div>
         )}
         {isLoggedIn && (
-          <div
-            className="relative"
-            onMouseEnter={() => setOpen(true)}
-            onMouseLeave={() => setOpen(false)}
-          >
+          <div className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
             <div className="flex hover:bg-gray-300 px-[10px] py-[6px] rounded-full cursor-pointer transition-all gap-2 justify-center items-center">
               <div
                 className="h-[30px] w-[30px] rounded-full bg-no-repeat bg-contain bg-center"
-                style={{
-                  backgroundImage: `url(https://ps.w.org/user-avatar-reloaded/assets/icon-256x256.png?rev=2540745)`,
-                }}
+                style={{ backgroundImage: `url(${userData.avatar})` }}
               />
-              <p className="text-sm font-bold line-clamp-1 max-w-[70px]">
-                An Vũ
-              </p>
+              <p className="text-sm font-bold line-clamp-1 max-w-[100px]">{userData.username}</p>
             </div>
             {open && (
               <div className="w-[180px] before:w-[120px] before:h-[20px]  before:absolute before:top-[-20px] before:right-[50%] before:translate-x-[50%] h-[300px] mt-[5px] bg-white shadow-md rounded-sm right-[50%] translate-x-[50%] top-[100%] absolute">
+                <Link to={"/profile"}>
+                  <div className="flex justify-center px-4 transition-all rounded-t-md cursor-pointer hover:bg-gray-100 gap-3 items-center py-2">
+                    <p className="text-lg">Profile</p>
+                    <FaCircleUser className="text-lg"></FaCircleUser>
+                  </div>
+                </Link>
+                <Link to={"/cart"}>
+                  <div className="flex justify-center px-4 transition-all rounded-t-md cursor-pointer hover:bg-gray-100 gap-3 items-center py-2">
+                    <p className="text-lg">Your carts</p>
+                    <FaCartShopping className="text-lg"></FaCartShopping>
+                  </div>
+                </Link>
+                <Link to={"/bill"}>
+                  <div className="flex justify-center px-4 transition-all rounded-t-md cursor-pointer hover:bg-gray-100 gap-3 items-center py-2">
+                    <p className="text-lg">Your bills</p>
+                    <FaRegRectangleList className="text-lg"></FaRegRectangleList>
+                  </div>
+                </Link>
                 <div
                   onClick={() => {
                     handleLogout();

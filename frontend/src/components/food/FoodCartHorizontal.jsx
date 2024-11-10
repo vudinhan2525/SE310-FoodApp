@@ -1,8 +1,14 @@
 import { formatCurrency } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
 
-const FoodCardHorizontal = ({ img, title, rating, description, price }) => {
+const FoodCardHorizontal = ({id, img, title, rating, description, price }) => {
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    navigate(`/detail/${id}`);
+  };
     return (
-      <div className="flex h-[75px] shadow-lg transition-all duration-500 hover:shadow-xl dark:bg-slate-950 dark:text-white cursor-pointer border border-gray-300 rounded-xl">
+      <div onClick={handleCardClick} className="flex h-[75px] shadow-lg transition-all duration-500 hover:shadow-xl dark:bg-slate-950 dark:text-white cursor-pointer border border-gray-300 rounded-xl">
         <div className="flex-shrink-0 overflow-hidden w-[30%] rounded-l-xl">
           <img
             src={img}

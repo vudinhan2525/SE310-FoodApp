@@ -189,6 +189,70 @@ namespace backend.Controllers
                 return StatusCode(500, "An error occurred while deleting the rating.");
             }
         }
+
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetRatingByUserId(int userId, int page = 1, int limit = 10)
+        {
+            // Validate parameters
+            if (userId <= 0)
+            {
+                return BadRequest("Invalid user ID.");
+            }
+
+            if (page <= 0 || limit <= 0)
+            {
+                return BadRequest("Page and limit must be greater than zero.");
+            }
+
+            // Calculate total items
+            var totalItems = await _context.Ratings.CountAsync(r => r.UserId == userId);
+            var totalPages = (int)Math.Ceiling((double)totalItems / limit);
+
+            // Fetch ratings with pagination and include Food data
+            var ratings = await _context.Ratings
+                .Include(r => r.Food) // Include Food information if needed
+                .Where(r => r.UserId == userId)
+                .OrderByDescending(r => r.Date)
+                .Skip((page - 1) * limit)
+                .Take(limit)
+                .ToListAsync();
+
+            if (ratings == null || !ratings.Any())
+            {
+                return NotFound($"No ratings found for user ID {userId}.");
+            }
+
+            return Ok(new
+            {
+                status = "success",
+                data = ratings.Select(r => new
+                {
+                    r.RatingId,
+                    r.UserId,
+                    r.FoodId,
+                    r.Content,
+                    r.Date,
+                    r.RatingValue,
+                    r.Reply,
+                    r.DateReply,
+                    Food = new // Include food data in the response if needed
+                    {
+                        r.Food.FoodId,
+                        r.Food.Name, // Adjust based on your Food model
+                        r.Food.Description // Adjust based on your Food model
+                    }
+                }),
+                pagination = new
+                {
+                    currentPage = page,
+                    pageSize = limit,
+                    totalItems,
+                    totalPages
+                }
+            });
+        }
+
+        
         public record RatingBodyDto(int userId, int foodId,string content,int ratingValue);
         public record UpdateRatingDto(int ratingId,string content,int ratingValue);
     
