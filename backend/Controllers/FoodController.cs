@@ -12,7 +12,7 @@ namespace backend.Controllers
     [ApiController]
     [Route("api/v1/[controller]")]
     public class FoodController : ControllerBase
-    {   
+    {
 
         private readonly AppDbContext _context;
         private readonly ILogger<UserController> _logger;
@@ -57,7 +57,8 @@ namespace backend.Controllers
                     f.Price,
                     f.Itemleft,
                     f.Rating,
-                    f.NumberRating,f.Description,
+                    f.NumberRating,
+                    f.Description,
                     FoodType = new
                     {
                         f.FoodType.TypeId,
@@ -108,7 +109,8 @@ namespace backend.Controllers
                     f.Rating,
                     f.NumberRating,
                     f.Price,
-                    f.Itemleft,f.Description,
+                    f.Itemleft,
+                    f.Description,
                     FoodType = new
                     {
                         f.FoodType.TypeId,
@@ -195,7 +197,7 @@ namespace backend.Controllers
             // If a keyword is provided, filter by it (e.g., by Name or other fields)
             if (!string.IsNullOrEmpty(kw))
             {
-                query = query.Where(f => f.Name.Contains(kw) ); // adjust fields as needed
+                query = query.Where(f => f.Name.Contains(kw)); // adjust fields as needed
             }
 
             // Apply ordering, pagination, and projection
@@ -229,9 +231,123 @@ namespace backend.Controllers
                 data = foodResults,
                 currentPage = page,
                 pageSize = limit,
-                totalItems = await query.CountAsync() 
+                totalItems = await query.CountAsync()
             });
         }
+        [HttpPost("addFood")]
+        public async Task<IActionResult> AddFood([FromBody] FoodDto newFood)
+        {
+            if (newFood == null)
+            {
+                return BadRequest(new { status = "error", message = "Invalid food data." });
+            }
+
+            try
+            {
+                // Tạo một đối tượng Food mới từ dữ liệu DTO
+                var food = new Food
+                {
+                    Name = newFood.Name.Trim(),
+                    Image1 = newFood.Image1,
+                    Image2 = newFood.Image2,
+                    Image3 = newFood.Image3,
+                    Description = newFood.Description,
+                    TypeId = newFood.TypeId,
+                    Price = newFood.Price,
+                    Itemleft = newFood.Itemleft
+                };
+
+                // Thêm sản phẩm vào DbContext
+                _context.Foods.Add(food);
+                await _context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    status = "success",
+                    data = new { food.FoodId, food.Name, food.TypeId, food.Price }
+                });
+            }
+            catch (Exception)
+            {
+                return BadRequest("Error.");
+            }
+        }
+        [HttpDelete("{Id}")]
+        public async Task<IActionResult> DeleteFood(int Id)
+        {
+            try
+            {
+                var food = await _context.Foods.FindAsync(Id);
+                if (food == null)
+                {
+                    return NotFound(new { status = "error", message = "Food type not found." });
+                }
+                 _context.Foods.Remove(food);
+                 await _context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    status = "success",
+                });
+            }
+            catch (Exception)
+            {
+                return BadRequest(new { status = "error", message = "Error" });
+            }
+        }
+        [HttpPut("{Id}")]
+        public async Task<IActionResult> UpdateFood(int Id, [FromBody] FoodDto newFood)
+        {
+
+            try
+            {
+                // Tạo một đối tượng Food mới từ dữ liệu DTO
+
+                // Thêm sản phẩm vào DbContext
+                var food = await _context.Foods.FindAsync(Id);
+                if (food == null || newFood == null)
+                {
+                    return NotFound(new { status = "error", message = "Food type not found." });
+                }
+                else
+                {
+                    food.Name = newFood.Name.Trim();
+                    food.Image1 = newFood.Image1;
+                    food.Image2 = newFood.Image2;
+                    food.Image3 = newFood.Image3;
+                    food.Description = newFood.Description;
+                    food.TypeId = newFood.TypeId;
+                    food.Price = newFood.Price;
+                    food.Itemleft = newFood.Itemleft;
+                }
+                await _context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    status = "success",
+                    data = new { food.FoodId, food.Name, food.TypeId, food.Price }
+                });
+            }
+            catch (Exception)
+            {
+                return BadRequest(new { status = "error", message = "Error" });
+            }
+        }
+
+
+        public class FoodDto
+        {
+            public string Name { get; set; } = string.Empty;
+            public string Image1 { get; set; } = string.Empty;
+            public string Image2 { get; set; } = string.Empty;
+            public string Image3 { get; set; } = string.Empty;
+            public string Description { get; set; } = string.Empty;
+            public int TypeId { get; set; }
+            public long Price { get; set; }
+            public int Itemleft { get; set; }
+        }
+
+
 
     }
 }

@@ -16,15 +16,15 @@ import {
 export default function ReviewTable(props){
     
     const columns = useMemo(() => [
-        { Header: 'UserName', accessor: "User.Username" },
+        { Header: 'UserName', accessor: "user.username" },
         { Header: ({ column }) => (
             <Button variant="ghost" {...column.getSortByToggleProps()}>
               Rating
               <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
-          ), accessor: 'RatingValue' },
-        { Header: 'Content', accessor: 'Content' },      
-        { Header: 'Reply', accessor: 'Reply' }
+          ), accessor: 'ratingValue' },
+        { Header: 'Content', accessor: 'content' },      
+        { Header: 'Reply', accessor: 'reply' }
     ], []);
     
     const data = useMemo(() => props.data, [props.data]);

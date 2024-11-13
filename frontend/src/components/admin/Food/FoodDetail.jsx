@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
     AlertDialog,
@@ -11,47 +11,99 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { Input } from "@/components/ui/input"
+
 import { Label } from "@/components/ui/label"
 import { useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { Trash, Pencil } from "lucide-react"
-import { types, food} from "./fetchingData"
+import { toast } from "sonner";
+import foodApi from "@/apis/foodApi";
+import { useNavigate } from "react-router-dom";
 export default function FoodDetail(props) {
-
-   if(props.id)
-   {
-    const food=food;
-    const types=types;
-   }
-   else
-   {
-    const food=props.food;
-    const types=props.types;
-   }
-    
+    const navigate=useNavigate()
+    const[food,setFood]= useState(props.food)
+    const[types,setTypes]=useState(props.types)
     const [isEdit, setIsEdit] = React.useState(false)
-
-    const [name, setName] = React.useState(food.Name);
-    const [price, setPrice] = React.useState(food.Price);
-    const [typeSelected, setTypeSelected] = React.useState(food.FoodType.TypeId);
-    const [description, setDesciption] = React.useState(food.Description);
-    const [image1, setImage1] = React.useState(food.Image1);
-    const [image2, setImage2] = React.useState(food.Image2);
-    const [image3, setImage3] = React.useState(food.Image3);
-    const [itemLeft, setItemLeft] = React.useState(food.ItemLeft)
-
-    const restoreData = () => {
-
+    const [name, setName] = React.useState(food.name);
+    const [price, setPrice] = React.useState(food.price);
+    const [typeSelected, setTypeSelected] = React.useState(food.foodType.typeId);
+    const [description, setDesciption] = React.useState(food.description);
+    const [image1, setImage1] = React.useState(food.image1);
+    const [image2, setImage2] = React.useState(food.image2);
+    const [image3, setImage3] = React.useState(food.image3);
+    const [itemLeft, setItemLeft] = React.useState(food.itemleft)
+    const resetData=()=>{
+        setName(food.name);
+        setPrice(food.price);
+        setDesciption(food.description);
+        setTypeSelected(food.foodType.typeId);
+        setImage1(food.image1);
+        setImage2(food.image2);
+        setImage3(food.image3)
+        setItemLeft(food.itemleft)
     }
-    if (!food) {
-        return (
-            <div>
-                <div className="mt-8 mx-auto font-bold text-xl">Error</div>
-                <Link className="mt-2" to={"/admin/food"}>Go to back</Link>
-            </div>
+    const updateData=()=>{
+        food.name=name;
+        food.price=price;
+        food.image1=image1;
+        food.image2=image2;
+        food.image3=image3;
+        food.description=description;
+        food.typeId=typeSelected;
+        food.itemleft=itemLeft;
+    }
+    const updateFood=async()=>{
+        console.log(name)
+        if(name==food.name && price==food.price && image1==food.image1 && image2==food.image2 && image3==food.image3
+            && description==food.description && typeSelected==food.foodType.typeId && itemLeft==food.itemleft)
+            {
+               
+                toast.info("No change information", {
+                    cancel: {
+                      label: "Close",
+                    },
+                  })
+            }
+            else{
+                const response= await foodApi.updateFood({FoodId:food.foodId,Name:name,Image1:image1,Image2:image2,Image3:image3,
+                    Itemleft:itemLeft,Description:description,Price:price,TypeId:typeSelected})
+                    if(response && response.status=='success')
+                    {
+                        updateData()
+                        setIsEdit(false)
+                        toast.success("Update successful", {
+                            cancel: {
+                              label: "Close",
+                            },
+                          })
+                    }else{
+                        toast.error("Error", {
+                            cancel: {
+                              label: "Close",
+                            },
+                          })
+                    }
+            }
+    }
+    const deleteFood=async()=>{
+        
+        const response=await foodApi.deleteFood(food.foodId);
+        if(response && response.status=='success')
+        {
+        navigate("/admin/food")
+            toast.success("Delete successful", {
+                cancel: {
+                  label: "Close",
+                },
+              })
+        }else{
+            toast.error("Error", {
+                cancel: {
+                  label: "Close",
+                },
+              })
+        }
 
-        )
     }
     return (
         <div>
@@ -64,7 +116,7 @@ export default function FoodDetail(props) {
                     <div className="ml-auto">
                         <Button
                             variant="ghost" className="p-2"
-                            onClick={()=>setIsEdit(!isEdit)} >
+                            onClick={()=>{setIsEdit(!isEdit);resetData()}} >
                             <Pencil size={20} />
                         </Button>
                         <AlertDialog>
@@ -81,7 +133,7 @@ export default function FoodDetail(props) {
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
                                     <AlertDialogCancel >Cancel</AlertDialogCancel>
-                                    <AlertDialogAction className="bg-red-500 hover:bg-red-400">Delete</AlertDialogAction>
+                                    <AlertDialogAction onClick={deleteFood} className="bg-red-500 hover:bg-red-400">Delete</AlertDialogAction>
                                 </AlertDialogFooter>
                             </AlertDialogContent>
                         </AlertDialog>
@@ -95,7 +147,7 @@ export default function FoodDetail(props) {
                             </label>
                             <input
                                 type="text"
-                                value={food.FoodId}
+                                value={food.foodId}
                                 disabled
                                 placeholder="Default Input"
                                 className="w-full mt-2 rounded-lg border-[1.5px] border-stroke bg-transparent py-2 px-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
@@ -131,8 +183,8 @@ export default function FoodDetail(props) {
                                     </option>
                                     {types.map((type) => {
                                         return (
-                                            <option value={type.TypeId} className="text-body dark:text-bodydark">
-                                                {type.NameType}
+                                            <option value={type.typeId} className="text-body dark:text-bodydark">
+                                                {type.nameType}
                                             </option>
                                         )
                                     })}
@@ -188,7 +240,7 @@ export default function FoodDetail(props) {
                             </label>
                             <input
                                 type="text"
-                                value={food.Rating}
+                                value={food.rating}
                                 disabled
                                 className="w-full mt-2 rounded-lg border-[1.5px] border-stroke bg-transparent py-2 px-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                             />
@@ -199,7 +251,7 @@ export default function FoodDetail(props) {
                             </label>
                             <input
                                 type="text"
-                                value={food.NumberRating}
+                                value={food.numberRating}
                                 disabled
                                 className="w-full mt-2 rounded-lg border-[1.5px] border-stroke bg-transparent py-2 px-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                             />
@@ -264,6 +316,7 @@ export default function FoodDetail(props) {
                                 rows={6}
                                 disabled={!isEdit}
                                 placeholder="Default textarea"
+                                onChange={(e)=>setDesciption(e.target.value)}
                                 value={description}
                                 className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                             ></textarea>
@@ -275,8 +328,8 @@ export default function FoodDetail(props) {
                 </div>
                 {!isEdit?(""):(
                     <div className="text-center  mb-4 mt-2">
-                    <Button  className="bg-blue-500 hover:bg-blue-400 active:scale-95 ease-in-out transition text-white font-bold mr-2" >Save</Button>
-                    <Button onClick={()=>setIsEdit(false)} className="bg-red-500 hover:bg-red-400 active:scale-95 ease-in-out transition text-white font-bold ml-2">Cancel</Button>
+                    <Button onClick={updateFood}  className="bg-blue-500 hover:bg-blue-400 active:scale-95 ease-in-out transition text-white font-bold mr-2" >Save</Button>
+                    <Button onClick={()=>{setIsEdit(false);resetData()}} className="bg-red-500 hover:bg-red-400 active:scale-95 ease-in-out transition text-white font-bold ml-2">Cancel</Button>
                 </div>
                 )}
                 

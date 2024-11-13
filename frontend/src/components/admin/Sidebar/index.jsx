@@ -4,7 +4,7 @@ import SidebarLinkGroup from './SidebarLinkGroup';
 import Logo from '../../../assets/logo.svg';
 import { LayoutGrid, ClipboardList } from 'lucide-react';
 
-const Sidebar = ({ sidebarOpen, setSidebarOpen,setName }) => {
+const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   const location = useLocation();
   const { pathname } = location;
 
@@ -109,7 +109,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen,setName }) => {
                     <React.Fragment>
                       <NavLink
                         to="/admin"
-                        onClick={()=>setName('Dashboard')}
+                      
                         className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
                           (pathname === '/admin' ||
                             pathname.includes('dashboard')) &&
@@ -235,7 +235,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen,setName }) => {
                         }`}
                       >
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-                          <li onClick={()=>setName('Food Management')}>
+                          <li >
                             <NavLink
                             
                               to="/admin/food"
@@ -247,7 +247,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen,setName }) => {
                              Food
                             </NavLink>
                           </li>
-                          <li  onClick={()=>setName('Food Type Management')}>
+                          <li >
                             <NavLink
                            
                               to="/admin/type"

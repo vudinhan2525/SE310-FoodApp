@@ -23,7 +23,7 @@ namespace backend.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     NameType = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    ParentId = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                    ParentId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {

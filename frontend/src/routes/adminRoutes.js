@@ -9,7 +9,7 @@ const adminRoutes = [
   { path: "/admin/food", component: FoodPage },
   { path: "/admin/food/add", component: AddFoodPage },
   { path: "/admin/type", component: TypePage },
-  { path: "admin/food/detail", component: FoodDetailPgae  },
+  { path: "admin/food/detail/:id", component: FoodDetailPgae  },
  
 ];
 export {adminRoutes};

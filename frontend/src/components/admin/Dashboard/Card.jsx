@@ -1,5 +1,5 @@
 import { bills } from "./fetchingData"
-import { foods } from "../Food/fetchingData";
+import { fetchFoods,  fetchTypes } from "../Food/fetchingData";
 import { AiOutlineProduct } from "react-icons/ai";
 import {
   Card,
@@ -24,19 +24,19 @@ function calculateMonthlyComparison(bills) {
 
   // Lọc các hóa đơn trong tháng hiện tại cho đến hôm nay
   const currentMonthBills = bills.filter(bill => {
-    const billDate = new Date(bill.Date);
+    const billDate = new Date(bill.date);
     return billDate >= startOfCurrentMonth && billDate <= endOfCurrentPeriod;
   });
 
   // Lọc các hóa đơn trong cùng kỳ của tháng trước
   const lastMonthBills = bills.filter(bill => {
-    const billDate = new Date(bill.Date);
+    const billDate = new Date(bill.date);
     return billDate >= startOfLastMonth && billDate <= endOfLastPeriod;
   });
 
   // Tính tổng TotalPrice của tháng hiện tại và tháng trước
-  const currentMonthTotal = currentMonthBills.reduce((sum, bill) => sum + bill.TotalPrice, 0);
-  const lastMonthTotal = lastMonthBills.reduce((sum, bill) => sum + bill.TotalPrice, 0);
+  const currentMonthTotal = currentMonthBills.reduce((sum, bill) => sum + bill.totalPrice, 0);
+  const lastMonthTotal = lastMonthBills.reduce((sum, bill) => sum + bill.totalPrice, 0);
 
   /// So sánh
   const comparison = currentMonthTotal >= lastMonthTotal ? "increased" : "decreased";
@@ -44,22 +44,22 @@ function calculateMonthlyComparison(bills) {
   
   // Tính tỷ lệ thay đổi phần trăm
   const percentageChangeRevenue = lastMonthTotal !== 0 
-    ? ((currentMonthTotal - lastMonthTotal) / lastMonthTotal * 100).toFixed(2)
+    ? ((currentMonthTotal - lastMonthTotal) / lastMonthTotal * 100)
     : null; // Trường hợp tháng trước không có hóa đơn
     // Count unique users for this month and last month
-const uniqueUsersThisMonth = new Set(currentMonthBills.map(bill => bill.UserId)).size;
-const uniqueUsersLastMonth = new Set(lastMonthBills.map(bill => bill.UserId)).size;
+const uniqueUsersThisMonth = new Set(currentMonthBills.map(bill => bill.userId)).size;
+const uniqueUsersLastMonth = new Set(lastMonthBills.map(bill => bill.userId)).size;
 
 // Calculate percentage change
 const percentageChangeUser = uniqueUsersLastMonth
-  ? ((uniqueUsersThisMonth - uniqueUsersLastMonth) / uniqueUsersLastMonth) * 100
+  ? ((uniqueUsersThisMonth - uniqueUsersLastMonth) / uniqueUsersLastMonth * 100)
   : null;
 
   const totalSaleThisMonth = currentMonthBills.reduce((tong, hoaDon) => {
-    return tong + hoaDon.FoodInfo.reduce((tongHoaDon, food) => tongHoaDon + food.quantity, 0);
+    return tong + hoaDon.foodInfo.reduce((tongHoaDon, food) => tongHoaDon + food.quantity, 0);
   }, 0);
   const totalSaleLastMonth=lastMonthBills.reduce((tong, hoaDon) => {
-    return tong + hoaDon.FoodInfo.reduce((tongHoaDon, food) => tongHoaDon + food.quantity, 0);
+    return tong + hoaDon.foodInfo.reduce((tongHoaDon, food) => tongHoaDon + food.quantity, 0);
   }, 0);
   const percentageChangeSales = totalSaleLastMonth
   ? ((totalSaleThisMonth - totalSaleLastMonth) /totalSaleLastMonth ) * 100
@@ -102,7 +102,7 @@ export function StatisticCard(props){
           <CardContent>
             <div className="text-2xl font-bold">{result.currentMonthTotal} đ</div>
             <p className="text-xs text-muted-foreground">
-              {result.percentageChangeRevenue>=0?('+'):('-')} {result.percentageChangeRevenue?result.percentageChangeRevenue:'N '}% from last month
+              {result.percentageChangeRevenue>=0?('+'):('-')} {result.percentageChangeRevenue?result.percentageChangeRevenue:'N'}   % from last month
             </p>
           </CardContent>
         </Card>
@@ -126,7 +126,7 @@ export function StatisticCard(props){
           <CardContent>
             <div className="text-2xl font-bold">{result.totalSaleThisMonth}</div>
             <p className="text-xs text-muted-foreground">
-              {result.totalSaleThisMonth>=0?('+'):('-')} {result.totalSaleThisMonth?result.totalSaleThisMonth:'N'} % from last month
+              {result.totalSaleThisMonth>=0?('+'):('-')} {result.percentageChangeSales?result.percentageChangeSales:'N'} % from last month
             </p>
           </CardContent>
         </Card>

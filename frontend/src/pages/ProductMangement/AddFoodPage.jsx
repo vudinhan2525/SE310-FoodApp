@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
     AlertDialog,
@@ -11,15 +11,14 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Link } from "react-router-dom";
-import { Trash, Pencil } from "lucide-react"
-import { types } from "@/components/admin/Food/fetchingData"
 import Default from "../../assets/defaultImage.png"
+import foodApi from "@/apis/foodApi"
+import { toast } from "sonner"
+import { useNavigate } from 'react-router-dom';
+
 export default function AddFoodPage(){
 
-   
+    const navigate = useNavigate();
     const [name, setName] = React.useState("");
     const[imageValid1,setImageValid1]= React.useState(false)
     const[imageValid2,setImageValid2]= React.useState(false)
@@ -30,7 +29,78 @@ export default function AddFoodPage(){
     const [image1, setImage1] = React.useState("");
     const [image2, setImage2] = React.useState("");
     const [image3, setImage3] = React.useState("");
-    const [itemLeft, setItemLeft] = React.useState("")
+    const [itemLeft, setItemLeft] = React.useState(0)
+    const[types,setTypes]= useState([])
+    useEffect(()=>{
+        async function loadData() {
+            const response= await foodApi.getAllFoodTypes();
+            if(response && response.status=='success')
+            {
+                setTypes(response.data);
+            }else{
+                toast.success("Error when fetching data", {
+                    cancel: {
+                      label: "Close",
+                    },
+                  })
+                  return;
+            }
+        }
+        loadData()
+    })
+    const addFood=async()=>{
+        if(!name || !description || !typeSelected)
+            {
+                toast.warning("Infomation invalid", {
+                    cancel: {
+                      label: "Close",
+                    },
+                  })
+                  return;
+            }
+        if(!imageValid1||!imageValid2||!imageValid3)
+        {
+            toast.warning("Url image invalid", {
+                cancel: {
+                  label: "Close",
+                },
+              })
+              return;
+        }
+        const response=await foodApi.addFood({Name:name,Image1:image1,Image2:image2,Image3:image3,
+            Itemleft:itemLeft,Description:description,Price:price,TypeId:typeSelected})
+        if(response && response.status=='success')
+        {
+            toast.success("Successful", {
+                cancel: {
+                  label: "Close",
+                },
+              })
+              resetData()
+              return;
+        }
+        else{
+            toast.error("Error", {
+                cancel: {
+                  label: "Close",
+                },
+              })
+              return;
+        }
+    }
+    const resetData=()=>{
+        setName("");
+        setImageValid1(false);
+        setImageValid2(false);
+        setImageValid3(false);
+        setPrice(0);
+        setTypeSelected("");
+        setDesciption("");
+        setImage1("");
+        setImage2("");
+        setImage3("");
+        setItemLeft(0);
+    }
     return(
         <div>
             <div className=" gap-9  bg-white rounded-sm border border-stroke shadow-md ">
@@ -71,8 +141,8 @@ export default function AddFoodPage(){
                                     </option>
                                     {types.map((type) => {
                                         return (
-                                            <option value={type.TypeId} className="text-body dark:text-bodydark">
-                                                {type.NameType}
+                                            <option value={type.typeId} className="text-body dark:text-bodydark">
+                                                {type.nameType}
                                             </option>
                                         )
                                     })}
@@ -102,7 +172,7 @@ export default function AddFoodPage(){
                                 In stock
                             </label>
                             <input
-                                type="text"
+                                type="number"
                                 onChange={(a)=>setItemLeft(a.target.value)}
                                 value={itemLeft}
                                 
@@ -129,6 +199,7 @@ export default function AddFoodPage(){
                                 rows={6}
                                 placeholder="Default textarea"
                                 value={description}
+                                onChange={(a)=>setDesciption(a.target.value)}
                                 className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                             ></textarea>
                         </div>
@@ -194,7 +265,7 @@ export default function AddFoodPage(){
                 </div>
                
                     <div className="text-center  mb-4 mt-2">
-                    <Button  className="bg-blue-500 hover:bg-blue-400 active:scale-95 ease-in-out transition text-white font-bold mr-2" >Save</Button>
+                    <Button onClick={addFood}  className="bg-blue-500 hover:bg-blue-400 active:scale-95 ease-in-out transition text-white font-bold mr-2" >Save</Button>
                     {/* <Button  className="bg-red-500 hover:bg-red-400 active:scale-95 ease-in-out transition text-white font-bold ml-2">Cancel</Button> */}
                 </div>
                 

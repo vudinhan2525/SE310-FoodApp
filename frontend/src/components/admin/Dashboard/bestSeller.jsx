@@ -7,6 +7,7 @@ function getDateMonday(date) {
       const daysFromMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
       const mondayOfCurrentWeek = new Date(currentDate);
       mondayOfCurrentWeek.setDate(currentDate.getDate() - daysFromMonday);
+      mondayOfCurrentWeek.setHours(0, 0, 0, 0);
       return mondayOfCurrentWeek
 }
 function getTopProducts(bills, filterBy = "week") {
@@ -17,9 +18,10 @@ function getTopProducts(bills, filterBy = "week") {
       const mondayOfCurrentWeek = getDateMonday(today);
       // Lọc hóa đơn theo tuần hoặc tháng
       const filteredBills = bills.filter(bill => {
-            const billTime = new Date(bill.Date);
+            const billTime = new Date(bill.date);
             const billYear = billTime.getFullYear();
             const billMonth = billTime.getMonth();
+            console.log
 
 
             if (filterBy == "month") {
@@ -31,7 +33,7 @@ function getTopProducts(bills, filterBy = "week") {
 
       // Tính tổng số lượng bán của từng sản phẩm
       const productSales = filteredBills.reduce((acc, bill) => {
-            bill.FoodInfo.forEach(item => {
+            bill.foodInfo.forEach(item => {
                   const { foodId, quantity, foodDetails } = item;
 
                   if (!acc[foodId]) {
@@ -51,7 +53,7 @@ function getTopProducts(bills, filterBy = "week") {
       const sortedProductSales = Object.values(productSales)
             .sort((a, b) => b.totalQuantity - a.totalQuantity)
             .slice(0, 5); // Lấy 5 sản phẩm bán chạy nhất
-
+      console.log(sortedProductSales)
       return sortedProductSales;
 }
 
@@ -87,24 +89,28 @@ export default function BestSeller(props) {
                               </div>
                         </div>
                   </div>
-                  <div className="mt-4">
-                        {top.map((item) => {
+                  <div className="mt-4 mx-auto">
+                        {top.length==0?
+                        (<div className="w-[500px]">
+                              <p className="ml-[50%] -translate-x-[50%] text-xl font-semibold  mt-[30%]  text-blue-600">No foods were sold.</p>
+                        </div>)
+                        :(top.map((item) => {
                               return (
-                                    <Link to={`/admin/food/detail`}
+                                    <Link to={`/admin/food/detail/${item.foodId}`}
                                           state={{ id: item.foodId }}>
                                           <div className="flex mb-3 items-center cursor-pointer hover:bg-gray-100 p-1 rounded-md">
                                                 <div className="rounded-md bg-white  p-[1px] w-14 items-center justify-center flex h-13">
                                                       <img src={item.image1} className="h-auto w-auto rounded-md object-cover" />
                                                 </div>
                                                 <div className="ml-4 w-[400px]">
-                                                      <p className="text-lg font-semibold line-clamp-1">{item.name} ha ha ha ha ha </p>
+                                                      <p className="text-lg font-semibold line-clamp-1">{item.name}</p>
                                                       <p className="text-gray-500 ">{item.totalQuantity} item</p>
                                                 </div>
                                           </div>
                                     </Link>
 
                               )
-                        })}
+                        }))}
                   </div>
             </div>
       )

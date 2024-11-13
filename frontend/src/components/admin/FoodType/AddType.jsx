@@ -1,10 +1,51 @@
 import React, { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { ChevronDown } from "lucide-react"
+import foodApi from "@/apis/foodApi"
+
+import { toast } from "sonner"
 export default function AddType(props) {
     const types = props.types
     const [name, setName] = React.useState("")
-    const [selected, setSelected] = useState("")
+    const [selected, setSelected] = useState(0)
+    const addType=async()=>{
+        
+       
+        if(name)
+        {
+            const response= await foodApi.addFoodType({NameType:name,ParentId:selected})
+            if(response)
+            {
+                
+                if(response.status=='success')
+                {
+                    setName("")
+                    setSelected(0)
+                    props.setTypes((prev)=>[...prev, response.data])
+                    toast.success("Successul", {
+                        cancel: {
+                          label: "Close",
+                        },
+                      })
+                }else{
+                    toast.error(response.message, {
+                        cancel: {
+                          label: "Close",
+                        },
+                      })
+                }
+
+              
+            }else{
+                toast.error("Error", {
+                    cancel: {
+                      label: "Close",
+                    },
+                  })
+            }
+        }
+        }
+       
     return (
         <div className=" w-full bg-white border shadow-md rounded-lg px-4 py-5">
             <div className="font-bold text-lg mb-6">Create a new food type</div>
@@ -33,13 +74,13 @@ export default function AddType(props) {
                             setSelected(e.target.value);
                         }}
                         className={`disabled:bg-whiter relative z-20 w-full appearance-none rounded-lg border border-stroke bg-transparent py-2 px-3 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input `} >
-                        <option value="-1" className="text-gray-600 font-bold dark:text-bodydark">
+                        <option value="0" className="text-gray-600 font-bold dark:text-bodydark">
                             No parent
                         </option>
                         {types.map((type) => {
                             return (
-                                <option value={type.TypeId} className="text-body dark:text-bodydark">
-                                    {type.NameType}
+                                <option value={type.typeId} className="text-body dark:text-bodydark">
+                                    {type.nameType}
                                 </option>
                             )
                         })}
@@ -50,7 +91,7 @@ export default function AddType(props) {
                 </div>
             </div>
             <div className="flex items-center justify-center mt-6">
-            <Button className="bg-blue-500 hover:bg-blue-400 active:scale-95 active:shadow-md transition ease-in-out 
+            <Button onClick={addType} className="bg-blue-500 hover:bg-blue-400 active:scale-95 active:shadow-md transition ease-in-out 
             text-center font-bold text-white ">Create</Button>
 
             </div>

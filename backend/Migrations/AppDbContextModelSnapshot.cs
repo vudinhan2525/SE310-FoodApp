@@ -120,8 +120,8 @@ namespace backend.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<bool>("ParentId")
-                        .HasColumnType("tinyint(1)");
+                    b.Property<int>("ParentId")
+                        .HasColumnType("int");
 
                     b.HasKey("TypeId");
 

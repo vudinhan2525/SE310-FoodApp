@@ -12,7 +12,7 @@ namespace backend.Controllers
     [ApiController]
     [Route("api/v1/[controller]")]
     public class BillController : ControllerBase
-    {   
+    {
 
         private readonly AppDbContext _context;
         private readonly ILogger<UserController> _logger;
@@ -87,11 +87,34 @@ namespace backend.Controllers
                 }
             });
         }
-    
-        public class BillBodyDto{
+        [HttpGet("getAll")]
+        public async Task<IActionResult> GetAllBill()
+        {
+            try
+            {
+                var bills = await _context.Bills.ToListAsync();
+                
+                return Ok(new
+                {
+                    status = "success",
+                    data = bills,
+                });
+            }
+            catch (Exception)
+            {
+                return BadRequest(new
+                {
+                    status = "Error",
+                });
+            }
+
+        }
+        
+        public class BillBodyDto
+        {
             public long totalPrice { get; set; }
             public string address { get; set; }
-            public string foodInfo {get; set;}
+            public string foodInfo { get; set; }
             public int userId { get; set; }
         }
     }

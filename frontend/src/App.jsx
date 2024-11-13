@@ -11,7 +11,7 @@ function App() {
         id="appjs"
         className=" font-body text-base overflow-hidden font-medium bg-white  "
       >
-        <Routes>
+        {/* <Routes>
           {publicRoutes.map((el, idx) => {
             const Layout = el.layout || DefaultLayout;
             return (
@@ -26,8 +26,8 @@ function App() {
               />
             );
           })}
-        </Routes>
-         {/* <Routes>
+        </Routes> */}
+         <Routes>
           {adminRoutes.map((el, idx) => {
             const Layout = el.layout || AdminLayout;
             return (
@@ -42,7 +42,7 @@ function App() {
               />
             );
           })}
-        </Routes> */}
+        </Routes>
       </div>
     </Router>
   );

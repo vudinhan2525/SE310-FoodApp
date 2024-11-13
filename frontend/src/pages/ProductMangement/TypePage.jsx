@@ -1,18 +1,37 @@
-import { types } from "@/components/admin/Food/fetchingData"
+import { fetchFoods,  fetchTypes } from "@/components/admin/Food/fetchingData"
 import TypeTable from "@/components/admin/FoodType/TypeTable"
 import AddType from "@/components/admin/FoodType/AddType";
+import foodApi from "@/apis/foodApi";
+import { useEffect,useState } from "react";
 export default function TypePage(){
-    const editType = types.map((type) => ({
-        ...type,          // Sao chép các thuộc tính khác của đối tượng `type`
-        Foods: type.Foods.length // Gán lại `Foods` thành độ dài của mảng `Foods`
-    }));
+    const [types,setTypes]=useState([]);
+    useEffect(()=>{
+        async function fetchData() {
+            const response=await foodApi.getAllFoodTypes()
+            if(response)
+            {
+                setTypes(response.data)
+            }
+        }
+        fetchData()
+    },[])
+    if(types.length==0)
+        {
+            
+            return( <div className="text-center">
+                <div className="mt-8 font-bold text-3xl">Error</div>
+               
+            </div>)
+           
+        }
+   
     return(
-        <div className="flex">
-            <div className="basis-2/6 mr-4">
-                 <AddType types={types}/>
+        <div className="md:flex">
+            <div className="basis-2/6 md:mr-4">
+                 <AddType types={types} setTypes={setTypes}/>
             </div>
-            <div className="h-[530px] ml-4 flex-1">
-                 <TypeTable types={editType}/>
+            <div className="h-[570px] md:ml-4 flex-1 mt-3 md:mt-0">
+                 <TypeTable types={types} setTypes={setTypes}/>
             </div>
            
            

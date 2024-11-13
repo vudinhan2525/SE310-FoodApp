@@ -1,12 +1,30 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import DropdownMessage from './DropdownMessage';
 import DropdownNotification from './DropdownNotification';
 import DropdownUser from './DropdownUser';
 import LogoIcon from '../../../assets/logo-icon.svg';
+import { NavLink, useLocation } from 'react-router-dom';
 
 
 const Header = (props) => {
+  const location = useLocation();
+  const { pathname } = location;
+  const [name,setName]=useState('Dashboard')
+  useEffect(()=>{
+    if(pathname.includes('type'))
+    {
+      setName('Food Type Management')
+    }
+    if(pathname=='/admin')
+    {
+      setName('Dashboard')
+    }
+    if(pathname=='/admin/food')
+    {
+      setName('Food Management')
+    }
+  },[pathname])
   return (
     <header className="sticky top-0 z-999 flex w-full bg-white drop-shadow-1 dark:bg-boxdark dark:drop-shadow-none">
       <div className="flex flex-grow items-center justify-between px-4 py-4 shadow-2 md:px-6 2xl:px-11">
@@ -60,7 +78,7 @@ const Header = (props) => {
         </div>
 
         <div>
-          <p className='text-2xl text-[#395aff] font-bold'>{props.name}</p>
+          <p className='text-2xl text-[#395aff] font-bold'>{name}</p>
         </div>
 
         <div className="flex items-center gap-3 2xsm:gap-7">

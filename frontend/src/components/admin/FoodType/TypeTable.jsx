@@ -21,7 +21,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
+import { Input } from '@/components/ui/input';
 import { Label } from "@/components/ui/label"
 import {
     Table,
@@ -35,11 +35,45 @@ import {
   import {ArrowUpDown, Pencil, Trash} from "lucide-react"
   import { useState } from 'react';
   import { ChevronDown } from 'lucide-react';
+import foodApi from '@/apis/foodApi';
+import { toast } from 'sonner';
 export default function TypeTable(props){
-    const data = useMemo(() => props.types, [props.types]);
-    const [name, setName] = React.useState("")
-    const [selected, setSelected] = useState("")
-
+   
+    const data=props.types
+    
+    const handleDialogOpen = () => {
+      setName("");  // Reset giá trị khi mở dialog
+    };
+    const deleteType = async(typeDelete)=>{
+      if(typeDelete.totalFood!=0)
+      {
+        toast.info("Cannot delete because there are existing foods.", {
+          cancel: {
+            label: "Close",
+          },
+        })
+        return;
+      }
+        const response= await foodApi.deleteFoodType(typeDelete.typeId)
+        if(response&& response.status=='success')
+        {
+          
+          props.setTypes((prevData) => prevData.filter((item) => item.typeId !== typeDelete.typeId && item.parentId!=typeDelete.typeId))
+          toast.success("Successul", {
+            cancel: {
+              label: "Close",
+            },
+          })
+        }else{
+          toast.error("Error", {
+            cancel: {
+              label: "Close",
+              onClick: () => console.log("Undo"),
+            },
+          })
+        }
+    }
+   
   const columns = useMemo(
     () => [
       {
@@ -49,15 +83,15 @@ export default function TypeTable(props){
               <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
           ),
-        accessor: 'TypeId',
+        accessor: 'typeId',
       },
       {
         Header: 'Name Type',
-        accessor: 'NameType',
+        accessor: 'nameType',
       },
       {
         Header: 'Parent Id',
-        accessor: 'ParentId',
+        accessor: 'parentId',
         Cell: ({ value }) => (value ? value : 'No'),
       },
       {
@@ -67,24 +101,60 @@ export default function TypeTable(props){
               <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
           ),
-        accessor: "Foods",
+        accessor: "totalFood",
       },
      
       {
         id: "action",
         Cell: ({ row }) => 
           {
-            
-
+            const [name, setName] = useState(row.original.nameType)
+            const [selected, setSelected] = useState(row.original.parentId)
+            const list=data.filter(item=>item.typeId!=row.original.typeId)
+            const updateType= async(type)=>{
+              const response= await foodApi.updateType(type)
+              if(response)
+              {
+                console.log(response)
+                if(response.status=='success')
+                {
+                  toast.success("Successful", {
+                    cancel: {
+                      label: "Close",
+                    },})
+                    props.setTypes((data)=>data.map(food => 
+                      food.typeId == type.typeId ? { ...food, nameType: type.nameType,parentId:type.parentId } : food
+                    ))
+                }
+                else{
+                  setName(row.original.nameType);
+                  setSelected(row.original.parentId); 
+                  toast.warning(response.message, {
+                    cancel: {
+                      label: "Close",
+                    },})
+                }
+                
+              }else{
+                setName(row.original.nameType);
+                  setSelected(row.original.parentId); 
+                toast.error("Error", {
+                  cancel: {
+                    label: "Close",
+                  },
+                })
+              }
+        
+            }
             return  (
               <div className='flex mr-[-8px]'>
                  <Dialog>
-          <DialogTrigger asChild>
-          <Button variant="ghost" className="p-2"><Pencil color='gray' size={20} /></Button>
+          <DialogTrigger asChild >
+          <Button variant="ghost" className="px-2 py-[2px] h-fit"><Pencil color='gray' size={20} /></Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Edit Food Type Id {row.original.TypeId}</DialogTitle>
+              <DialogTitle>Edit Food Type Id {row.original.typeId}</DialogTitle>
               <DialogDescription>
                 Make changes to your type here. Click save when you're done.
               </DialogDescription>
@@ -94,12 +164,10 @@ export default function TypeTable(props){
                     <label >
                         Name Type
                     </label>
-                    <input
+                    <Input
                         type="text"
-                        defaultValue={row.original.NameType}
-                       
+                        value={name}
                         onChange={(a) => setName(a.target.value)}
-                        
                         className="w-full mt-2 rounded-lg border-[1.5px] border-stroke bg-transparent py-2 px-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     />
                 </div>
@@ -111,7 +179,7 @@ export default function TypeTable(props){
                         <select
     
                            
-                            defaultValue={row.original.ParentId}
+                           value={selected}
                             onChange={(e) => {
                                 setSelected(e.target.value);
                             }}
@@ -119,10 +187,10 @@ export default function TypeTable(props){
                             <option value="-1" className="text-gray-600 font-bold dark:text-bodydark">
                                 No parent
                             </option>
-                            {data.map((type) => {
+                            {list.map((type) => {
                                 return (
-                                    <option value={type.TypeId} className="text-body dark:text-bodydark">
-                                        {type.NameType}
+                                    <option value={type.typeId} className="text-body dark:text-bodydark">
+                                        {type.nameType}
                                     </option>
                                 )
                             })}
@@ -134,7 +202,7 @@ export default function TypeTable(props){
                 </div>
             </div>
             <DialogFooter>
-            <Button className="bg-blue-500 hover:bg-blue-400 active:scale-95 active:shadow-md transition ease-in-out text-base pt-1
+            <Button onClick={()=>updateType({typeId:row.original.typeId,nameType:name,parentId:selected})} className="bg-blue-500 hover:bg-blue-400 active:scale-95 active:shadow-md transition ease-in-out text-base pt-1
                 text-center font-semibold text-white ">Save changes</Button>
     
             </DialogFooter>
@@ -143,19 +211,19 @@ export default function TypeTable(props){
                 
     <AlertDialog>
               <AlertDialogTrigger asChild>
-                  <Button variant="ghost" className="p-2"><Trash color='gray' size={20} /></Button>
+                  <Button variant="ghost" className="px-2 py-[2px] h-fit"><Trash color='gray' size={20} /></Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                   <AlertDialogHeader>
                       <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                       <AlertDialogDescription>
                           This action cannot be undone. This will permanently delete your
-                          food and remove your data from our servers.
+                          food type and remove your data from our servers.
                       </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                       <AlertDialogCancel >Cancel</AlertDialogCancel>
-                      <AlertDialogAction className="bg-red-500 hover:bg-red-400">Delete</AlertDialogAction>
+                      <AlertDialogAction onClick={()=>deleteType(row.original)} className="bg-red-500 hover:bg-red-400">Delete</AlertDialogAction>
                   </AlertDialogFooter>
               </AlertDialogContent>
           </AlertDialog>
@@ -165,7 +233,7 @@ export default function TypeTable(props){
          
       },
     ],
-    []
+    [data]
   );
 
   const {
@@ -189,7 +257,7 @@ export default function TypeTable(props){
 
     return(
         <div className=" bg-white border shadow-md  pt-5 relative h-full w-full rounded-lg px-4">
-            <div className='font-bold text-lg mb-4 '>Food type</div>
+            <div className='font-bold text-lg mb-3 '>Food type</div>
  <Table   {...getTableProps()}>
           <TableHeader>
             {headerGroups.map((headerGroup) => (

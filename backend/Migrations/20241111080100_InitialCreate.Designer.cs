@@ -12,7 +12,7 @@ using backend.Controllers;
 namespace backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241107075336_InitialCreate")]
+    [Migration("20241111080100_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -123,8 +123,8 @@ namespace backend.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<bool>("ParentId")
-                        .HasColumnType("tinyint(1)");
+                    b.Property<int>("ParentId")
+                        .HasColumnType("int");
 
                     b.HasKey("TypeId");
 

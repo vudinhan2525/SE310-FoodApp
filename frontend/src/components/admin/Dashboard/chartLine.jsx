@@ -114,12 +114,12 @@ function generateRevenueData(bills, month, year) {
             const monthlyTotals = Array(12).fill(0);
 
             bills.forEach(bill => {
-                  const billDate = new Date(bill.Date);
+                  const billDate = new Date(bill.date);
                   const billYear = billDate.getFullYear();
                   const billMonth = billDate.getMonth(); // 0 = tháng 1, 11 = tháng 12
 
                   if (billYear == year) {
-                        monthlyTotals[billMonth] += bill.TotalPrice;
+                        monthlyTotals[billMonth] += bill.totalPrice;
                   }
             });
 
@@ -131,13 +131,13 @@ function generateRevenueData(bills, month, year) {
             const dailyTotals = Array(daysInMonth).fill(0);
 
             bills.forEach(bill => {
-                  const billDate = new Date(bill.Date);
+                  const billDate = new Date(bill.date);
                   const billYear = billDate.getFullYear();
                   const billMonth = billDate.getMonth() + 1; // +1 vì tháng 1 = 0 trong JS
                   const billDay = billDate.getDate();
 
                   if (billYear == year && billMonth == month) {
-                        dailyTotals[billDay - 1] += bill.TotalPrice;
+                        dailyTotals[billDay - 1] += bill.totalPrice;
                   }
             });
 
@@ -155,12 +155,12 @@ function generateCustomerData(bills, month, year) {
             const monthlyUniqueUsers = Array(12).fill(0).map(() => new Set());
 
             bills.forEach(bill => {
-                  const billDate = new Date(bill.Date);
+                  const billDate = new Date(bill.date);
                   const billYear = billDate.getFullYear();
                   const billMonth = billDate.getMonth(); // 0 = tháng 1, 11 = tháng 12
 
                   if (billYear == year) {
-                        monthlyUniqueUsers[billMonth].add(bill.UserId);
+                        monthlyUniqueUsers[billMonth].add(bill.userId);
                   }
             });
 
@@ -178,13 +178,13 @@ function generateCustomerData(bills, month, year) {
       const dailyUniqueUsers = Array(daysInMonth).fill(0).map(() => new Set());
 
       bills.forEach(bill => {
-            const billDate = new Date(bill.Date);
+            const billDate = new Date(bill.date);
             const billYear = billDate.getFullYear();
             const billMonth = billDate.getMonth() + 1; // +1 vì tháng 1 = 0 trong JS
             const billDay = billDate.getDate();
 
             if (billYear == year && billMonth == month) {
-                  dailyUniqueUsers[billDay - 1].add(bill.UserId);
+                  dailyUniqueUsers[billDay - 1].add(bill.userId);
             }
       });
 
@@ -203,12 +203,12 @@ function generateSaleData(bills, month, year) {
             const monthlyQuantities = Array(12).fill(0);
 
             bills.forEach(bill => {
-                  const billDate = new Date(bill.Date);
+                  const billDate = new Date(bill.date);
                   const billYear = billDate.getFullYear();
                   const billMonth = billDate.getMonth(); // 0 = tháng 1, 11 = tháng 12
 
                   if (billYear == year) {
-                        const totalQuantity = bill.FoodInfo.reduce((sum, food) => sum + food.quantity, 0);
+                        const totalQuantity = bill.foodInfo.reduce((sum, food) => sum + food.quantity, 0);
                         monthlyQuantities[billMonth] += totalQuantity;
                   }
             });
@@ -226,13 +226,13 @@ function generateSaleData(bills, month, year) {
       const dailyQuantities = Array(daysInMonth).fill(0);
 
       bills.forEach(bill => {
-            const billDate = new Date(bill.Date);
+            const billDate = new Date(bill.date);
             const billYear = billDate.getFullYear();
             const billMonth = billDate.getMonth() + 1; // +1 vì tháng 1 = 0 trong JS
             const billDay = billDate.getDate();
 
             if (billYear == year && billMonth == month) {
-                  const totalQuantity = bill.FoodInfo.reduce((sum, food) => sum + food.quantity, 0);
+                  const totalQuantity = bill.foodInfo.reduce((sum, food) => sum + food.quantity, 0);
                   dailyQuantities[billDay - 1] += totalQuantity;
             }
       });
@@ -250,17 +250,17 @@ function generateSaleData(bills, month, year) {
 
 export default function ChartLine(props) {
       const currentYear = new Date().getFullYear();
-
+    const bills=props.bills
       const [selectMonth, setSelectMonth] = useState('All')
       const [selectYear, setSelectYear] = useState(currentYear)
       const [selectType, setSelectType] = useState('Revenue')
-      const [options, setOptions] = useState(optionsCustom(generateRevenueData(props.bills, selectMonth, selectYear).max, 'tr', '#3C50E0'))
+      const [options, setOptions] = useState(optionsCustom(generateRevenueData(bills, selectMonth, selectYear).max, 'tr', '#3C50E0'))
 
       const [data, setData] = useState({
             series: [
                   {
                         name: 'Revenue',
-                        data: generateRevenueData(props.bills, selectMonth, selectYear).data,
+                        data: generateRevenueData(bills, selectMonth, selectYear).data,
                   },
 
             ],
@@ -271,40 +271,40 @@ export default function ChartLine(props) {
                         series: [
                               {
                                     name: 'Revenue',
-                                    data: generateRevenueData(props.bills, selectMonth, selectYear).data,
+                                    data: generateRevenueData(bills, selectMonth, selectYear).data,
                               },
 
                         ],
                   })
-                  setOptions(optionsCustom(generateRevenueData(props.bills, selectMonth, selectYear).max, 'tr', '#3C50E0'))
+                  setOptions(optionsCustom(generateRevenueData(bills, selectMonth, selectYear).max, 'tr', '#3C50E0'))
             }
             if (selectType == 'Customer') {
                   setData({
                         series: [
                               {
                                     name: 'Customer',
-                                    data: generateCustomerData(props.bills, selectMonth, selectYear).data,
+                                    data: generateCustomerData(bills, selectMonth, selectYear).data,
                               },
 
                         ],
                   })
-                  setOptions(optionsCustom(generateCustomerData(props.bills, selectMonth, selectYear).max, '', '#2ccece'))
+                  setOptions(optionsCustom(generateCustomerData(bills, selectMonth, selectYear).max, '', '#2ccece'))
             }
             if (selectType == 'Sales') {
                   setData({
                         series: [
                               {
                                     name: 'Sales',
-                                    data: generateSaleData(props.bills, selectMonth, selectYear).data,
+                                    data: generateSaleData(bills, selectMonth, selectYear).data,
                               },
 
                         ],
                   })
-                  setOptions(optionsCustom(generateSaleData(props.bills, selectMonth, selectYear).max, '', '#62bce8'))
+                  setOptions(optionsCustom(generateSaleData(bills, selectMonth, selectYear).max, '', '#62bce8'))
             }
 
 
-      }, [selectMonth, selectYear, selectType])
+      }, [selectMonth, selectYear, selectType,props])
       const handleReset = () => {
             setData((prevState) => ({
                   ...prevState,

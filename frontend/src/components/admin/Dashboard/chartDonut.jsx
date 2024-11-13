@@ -51,6 +51,7 @@ function getDateMonday(date) {
   const daysFromMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
   const mondayOfCurrentWeek = new Date(currentDate);
   mondayOfCurrentWeek.setDate(currentDate.getDate() - daysFromMonday);
+  mondayOfCurrentWeek.setHours(0, 0, 0, 0);
   return mondayOfCurrentWeek
 }
 const getTopType = (bills, filterBy = "week") => {
@@ -61,7 +62,7 @@ const getTopType = (bills, filterBy = "week") => {
   const mondayOfCurrentWeek = getDateMonday(today);
 
   const filteredBills = bills.filter(bill => {
-    const billTime = new Date(bill.Date);
+    const billTime = new Date(bill.date);
     const billYear = billTime.getFullYear();
     const billMonth = billTime.getMonth();
 
@@ -75,12 +76,12 @@ const getTopType = (bills, filterBy = "week") => {
 
 
   const categorySales = filteredBills.reduce((acc, bill) => {
-    bill.FoodInfo.forEach(item => {
-      const { TypeId, NameType, quantity } = item;
-      if (!acc[TypeId]) {
-        acc[TypeId] = { NameType, quantity: 0 };
+    bill.foodInfo.forEach(item => {
+      const { typeId, nameType, quantity } = item;
+      if (!acc[typeId]) {
+        acc[typeId] = {nameType, quantity: 0 };
       }
-      acc[TypeId].quantity += quantity;
+      acc[typeId].quantity += quantity;
     });
     return acc;
   }, {});
@@ -114,8 +115,8 @@ const getTopType = (bills, filterBy = "week") => {
       category.color = colors[index]; 
     }
   });
-  if (otherPercentage != 0) {
-    top5Categories.push({ NameType: "Other", percentage: otherPercentage, quantity: otherQuantity, color: colors[5] });
+  if (otherPercentage != 0 && otherPercentage!=100) {
+    top5Categories.push({ nameType: "Other", percentage: otherPercentage, quantity: otherQuantity, color: colors[5] });
   }
   console.log(top5Categories)
   return top5Categories;
@@ -124,7 +125,7 @@ const getTopType = (bills, filterBy = "week") => {
 export default function ChartDonut(props) {
   const [top, setTop] = useState(getTopType(props.bills, 'week'))
   const [colors, setColors] = useState(top.map(item => item.color))
-  const [label, setLabel] = useState(top.map(item => item.NameType))
+  const [label, setLabel] = useState(top.map(item => item.nameType))
   const [data, setData] = useState({
     series: top.map(item => item.quantity),
   })
@@ -135,12 +136,12 @@ export default function ChartDonut(props) {
     const temp = getTopType(props.bills, selectedFilter)
     setTop(temp)
     setColors(temp.map(item => item.color))
-    setLabel(temp.map(item => item.NameType))
+    setLabel(temp.map(item => item.nameType))
     setData({
       series: temp.map(item => item.quantity),
     })
-    setOptions(optionsCustom(temp.map(item => item.NameType), temp.map(item => item.color)))
-  }, [selectedFilter])
+    setOptions(optionsCustom(temp.map(item => item.nameType), temp.map(item => item.color)))
+  }, [selectedFilter,props])
 
 
 
@@ -175,27 +176,35 @@ export default function ChartDonut(props) {
         </div>
       </div>
 
-      <div className="mb-2">
-        <div id="chartThree" className="mx-auto flex justify-center">
-          <ReactApexChart options={options} series={data.series} type="donut" />
-        </div>
+      <div className="mb-3">
+        {top.length==0?(<div className="">
+          <p className="ml-[35%] text-xl font-semibold  mt-[24%]  text-blue-600">No foods were sold.</p>
+    </div>)
+    :(<div id="chartThree" className="mx-auto flex justify-center">
+      <ReactApexChart options={options} series={data.series} type="donut" />
+    </div>)}
+        
       </div>
 
       <div className="-mx-8 flex flex-wrap items-center justify-center gap-y-3">
-        {top.map((item) => {
-          console.log(item)
-          return (
-            <div className="sm:w-1/3 w-full px-8">
-              <div className="flex w-full items-center">
-                <span className="mr-2 block h-3 w-full max-w-3 rounded-full" style={{ backgroundColor: item.color }}></span>
-                <p className="flex w-full justify-between text-sm font-medium text-black dark:text-white">
-                  <span> {item.NameType} </span>
-                  <span>{item.percentage} %</span>
-                </p>
+        {top.length==0?
+        (<div></div>)
+        :(
+          top.map((item) => {
+            console.log(item)
+            return (
+              <div className="sm:w-1/3 w-full px-8">
+                <div className="flex w-full items-center">
+                  <span className="mr-2 block h-3 w-full max-w-3 rounded-full" style={{ backgroundColor: item.color }}></span>
+                  <p className="flex w-full justify-between text-sm font-medium text-black dark:text-white">
+                    <span> {item.nameType} </span>
+                    <span>{item.percentage} %</span>
+                  </p>
+                </div>
               </div>
-            </div>
-          )
-        })}
+            )
+          })
+        )}
 
 
       </div>

@@ -3,13 +3,24 @@ import { request } from "./request";
 const ratingApi = {
   getRatingByFoodId: async (paging,limit,foodId) => {
     let query = `/Rating?page=${paging}&limit=${limit}&foodId=${foodId}`
-    const response = await request.get(query);
-    return response.data;
+    try{
+      const response = await request.get(query);
+      return response.data;
+    }
+    catch{
+      return false
+    }
   },
   getRatingByUserId: async (userId, paging, limit) => {
     let query = `/Rating/user/${userId}?page=${paging}&limit=${limit}`;
-    const response = await request.get(query);
-    return response.data;
+    try{
+      const response = await request.get(query);
+      return response.data;
+    }
+    catch{
+      return false
+    }
+   
   },
   addRating: async (userId, foodId, content, ratingValue) => {
     const data = {
