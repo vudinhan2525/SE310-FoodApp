@@ -1,5 +1,3 @@
-import { bills } from "./fetchingData"
-import { fetchFoods,  fetchTypes } from "../Food/fetchingData";
 import { AiOutlineProduct } from "react-icons/ai";
 import {
   Card,

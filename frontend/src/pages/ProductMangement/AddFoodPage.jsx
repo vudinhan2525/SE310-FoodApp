@@ -1,16 +1,5 @@
 import React, { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
 import Default from "../../assets/defaultImage.png"
 import foodApi from "@/apis/foodApi"
 import { toast } from "sonner"

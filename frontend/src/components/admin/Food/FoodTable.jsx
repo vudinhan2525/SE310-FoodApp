@@ -4,14 +4,6 @@ import { Pencil, ArrowUpDown, Check, ChevronsUpDown, Info } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import {
   Table,
   TableBody,
   TableCaption,
@@ -33,7 +25,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { fetchFoods, fetchTypes } from './fetchingData';
 import { Link } from "react-router-dom";
 import foodApi from '@/apis/foodApi';
 import { Input } from '@/components/ui/input';

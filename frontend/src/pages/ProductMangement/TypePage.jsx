@@ -1,4 +1,3 @@
-import { fetchFoods,  fetchTypes } from "@/components/admin/Food/fetchingData"
 import TypeTable from "@/components/admin/FoodType/TypeTable"
 import AddType from "@/components/admin/FoodType/AddType";
 import foodApi from "@/apis/foodApi";

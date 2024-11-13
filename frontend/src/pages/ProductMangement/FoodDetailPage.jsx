@@ -1,14 +1,9 @@
 import FoodDetail from "@/components/admin/Food/FoodDetail";
-import { reviews } from "@/components/admin/Food/fetchingData";
 import ReviewTable from "@/components/admin/Food/ReviewTable";
-import { useLocation } from "react-router-dom";
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from "react";
-import { fetchFood,fetchTypes } from "@/components/admin/Food/fetchingData";
 import foodApi from "@/apis/foodApi";
 import ratingApi from "@/apis/ratingApi";
-import { toast } from "sonner"
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 export default function FoodDetailPgae() {
     const navigate=useNavigate();
