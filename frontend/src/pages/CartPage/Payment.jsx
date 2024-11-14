@@ -1,12 +1,18 @@
 import { useEffect, useState } from "react";
 import { Form, Input, Select } from "antd";
 import axios from "axios";
+import Dialog from "./Dialog";
 export default function PayingPage({ addressRef, handleAddBill }) {
+  const [showAcceptPayment, setShowAcceptPayment] = useState(false);
+
   const onFinish = (values) => {
+    setShowAcceptPayment(true);
+  };
+  const handlePayment = () => {
+    const values = form.getFieldsValue();
     const sltCityIdx = city.findIndex((c) => c.value === values.city);
     const sltDisIdx = district.findIndex((d) => d.value === values.district);
     const sltWardIdx = ward.findIndex((w) => w.value === values.ward);
-
     const newObj = {
       ...values,
       city: city[sltCityIdx].label,
@@ -171,6 +177,20 @@ export default function PayingPage({ addressRef, handleAddBill }) {
           </Form>
         </div>
       </div>
+      {showAcceptPayment && (
+        <Dialog
+          onClose={() => {
+            setShowAcceptPayment(false);
+          }}
+          onYes={() => {
+            handlePayment();
+            setShowAcceptPayment(false);
+          }}
+          buttonContent={"Xác nhận"}
+          message={"Bạn có chắc muốn đặt món ăn này"}
+          content={"Món ăn sẽ được giao tới địa chỉ của bạn!!"}
+        />
+      )}
     </div>
   );
 }
