@@ -64,7 +64,9 @@ export default function CartPage() {
       foodInfo: JSON.stringify(foodData),
       userId: userData.userId,
     });
-    console.log(res);
+    if (res.billId) {
+      window.location.reload();
+    }
   };
   return (
     <div className="px-24 bg-gray-100 pb-24 mt-14">

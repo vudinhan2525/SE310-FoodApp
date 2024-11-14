@@ -6,12 +6,8 @@ import AdminLayout from "./components/admin/layout/DefaultLayout";
 function App() {
   return (
     <Router>
-      <div
-        spellCheck={false}
-        id="appjs"
-        className=" font-body text-base overflow-hidden font-medium bg-white  "
-      >
-        {/* <Routes>
+      <div spellCheck={false} id="appjs" className=" font-body text-base overflow-hidden font-medium bg-white  ">
+        <Routes>
           {publicRoutes.map((el, idx) => {
             const Layout = el.layout || DefaultLayout;
             return (
@@ -26,8 +22,8 @@ function App() {
               />
             );
           })}
-        </Routes> */}
-         <Routes>
+        </Routes>
+        <Routes>
           {adminRoutes.map((el, idx) => {
             const Layout = el.layout || AdminLayout;
             return (
