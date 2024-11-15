@@ -36,6 +36,16 @@ const billApi = {
     } catch (error) {
       return false
     }
+  },
+  getBillCompleted:async()=>{
+    try {
+      const response = await request.get(
+        `/Bill/getCompleted`
+      );
+      return response.data;
+    } catch (error) {
+      return false
+    }
   }
 };
 

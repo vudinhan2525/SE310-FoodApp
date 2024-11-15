@@ -109,6 +109,29 @@ namespace backend.Controllers
             }
 
         }
+
+        [HttpGet("getCompleted")]
+        public async Task<IActionResult> GetBillCompleted()
+        {
+            try
+            {
+                var bills = await _context.Bills.AsQueryable().Where(f => f.Status == "Completed").ToListAsync();
+                
+                return Ok(new
+                {
+                    status = "success",
+                    data = bills,
+                });
+            }
+            catch (Exception)
+            {
+                return BadRequest(new
+                {
+                    status = "Error",
+                });
+            }
+
+        }
         
         public class BillBodyDto
         {
