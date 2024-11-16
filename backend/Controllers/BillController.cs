@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-
+using System.Text.Json;
 namespace backend.Controllers
 {
     [ApiController]
@@ -25,30 +25,54 @@ namespace backend.Controllers
         public async Task<IActionResult> AddBill([FromBody] BillBodyDto body)
         {
             if (body == null)
-                return BadRequest("Invalid bill data.");
-
-            // Create a new Bill instance with data from the DTO
-            var newBill = new Bill
             {
-                TotalPrice = body.totalPrice,
-                Address = body.address,
-                FoodInfo = body.foodInfo,
-                UserId = body.userId,
-                Date = DateTime.UtcNow, // Set the date to the current UTC date and time
-                Status = "Pending"      // Set an initial status
-            };
+                
+                return BadRequest("Invalid bill data.");
+            }
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
             {
-                // Add and save the new bill to the database
+                // Parse foodInfo
+                var foodInfoList = JsonSerializer.Deserialize<List<OrderInfo>>(body.foodInfo);
+                var orderIds = foodInfoList.Select(f => f.orderId).ToList();
+             
+                // Find orders to delete
+                var ordersToDelete = await _context.UserFoodOrders
+                    .Where(ufo => orderIds.Contains(ufo.OrderId))
+                    .ToListAsync();
+
+                // Remove orders
+                _context.UserFoodOrders.RemoveRange(ordersToDelete);
+
+                // Create new bill
+                var newBill = new Bill
+                {
+                    TotalPrice = body.totalPrice,
+                    Address = body.address,
+                    FoodInfo = body.foodInfo,
+                    UserId = body.userId,
+                    Date = DateTime.UtcNow,
+                    Status = "Pending"
+                };
+                // Save to database
                 _context.Bills.Add(newBill);
                 await _context.SaveChangesAsync();
-
+                
+                await transaction.CommitAsync();  
                 return CreatedAtAction(nameof(AddBill), new { id = newBill.BillId }, newBill);
+            }
+            catch (JsonException jsonEx)
+            {
+                await transaction.RollbackAsync();
+                _logger.LogError(jsonEx, "Error deserializing foodInfo JSON: {Message}", jsonEx.Message);
+                return StatusCode(500, "Error processing food information");
             }
             catch (Exception ex)
             {
-                // Log or handle the exception as needed
+                await transaction.RollbackAsync();
+                _logger.LogError(ex, "Error processing bill: {Message}", ex.Message);
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
@@ -109,7 +133,22 @@ namespace backend.Controllers
             }
 
         }
-        
+        public class OrderInfo
+        {
+            public int orderId { get; set; }
+            public int foodId { get; set; }
+            public int quantity { get; set; }
+            public string note { get; set; }
+            public FoodDetails foodDetails { get; set; }
+        }
+        public class FoodDetails
+        {
+            public int typeId { get; set; }
+            public string name { get; set; }
+            public string description { get; set; }
+            public string image1 { get; set; }
+            public decimal price { get; set; }
+        }
         public class BillBodyDto
         {
             public long totalPrice { get; set; }
