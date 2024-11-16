@@ -58,6 +58,13 @@ export default function CartPage() {
         foodData.push(cart);
       }
     });
+    foodData = foodData.map((el, idx) => {
+      return {
+        ...el,
+        typeId: el.foodDetails.typeId,
+        nameType: el.foodDetails.nameType,
+      };
+    });
     const res = await billApi.addBill({
       totalPrice: total + 12000,
       address: JSON.stringify(address),
