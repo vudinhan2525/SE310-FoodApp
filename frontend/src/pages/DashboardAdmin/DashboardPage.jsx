@@ -13,7 +13,7 @@ export default function DashboardPage() {
       useEffect(()=>{
             async function fetchData() {
                   const response1= await foodApi.getAllFood(1,1000,null);
-                  const response2= await billApi.getAllBill();
+                  const response2= await billApi.getBillCompleted();
                   if(response1&&response1.status=='success')
                   {
                         setFoods(response1.data)

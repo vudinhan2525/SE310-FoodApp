@@ -149,6 +149,30 @@ namespace backend.Controllers
             public string image1 { get; set; }
             public decimal price { get; set; }
         }
+
+        [HttpGet("getCompleted")]
+        public async Task<IActionResult> GetBillCompleted()
+        {
+            try
+            {
+                var bills = await _context.Bills.AsQueryable().Where(f => f.Status == "Completed").ToListAsync();
+                
+                return Ok(new
+                {
+                    status = "success",
+                    data = bills,
+                });
+            }
+            catch (Exception)
+            {
+                return BadRequest(new
+                {
+                    status = "Error",
+                });
+            }
+
+        }
+        
         public class BillBodyDto
         {
             public long totalPrice { get; set; }
