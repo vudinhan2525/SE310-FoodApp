@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import RatingLayout from "../ui/ratingLayout";
 import {
   Pagination,
@@ -9,10 +9,9 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import ratingApi from "@/apis/ratingApi";
-import { useParams } from "react-router-dom";
 import { AuthContext } from "../authProvider/AuthProvider";
 import { Button, Dropdown, Menu } from "antd";
-import { FaFontAwesome, FaStar } from "react-icons/fa6";
+import { FaStar } from "react-icons/fa6";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 
 export default function Review({ foodId }) {
@@ -44,6 +43,18 @@ export default function Review({ foodId }) {
   const handleRatingSubmit = async () => {
     if (!rating || !content) {
       alert("Please provide both a rating and a comment.");
+      return;
+    }
+    if (editingRatingId) {
+      const response = await ratingApi.updateRating(editingRatingId, content, rating);
+      if (response.status === "success") {
+        alert("Rating updated successfully!");
+        setContent("");
+        setRating(0);
+        getReviewsByFoodId();
+      } else {
+        alert("Failed to submit rating.");
+      }
       return;
     }
     try {
@@ -137,7 +148,7 @@ export default function Review({ foodId }) {
             onClick={handleRatingSubmit}
             className="w-[100px] text-center cursor-pointer text-white font-semibold py-2 bg-primary-color inline-block rounded-md "
           >
-            Đánh giá
+            {editingRatingId ? "Cập nhật" : "Đánh giá"}
           </div>
         </div>
         {reviewList.map((item, idx) => {
@@ -176,7 +187,14 @@ export default function Review({ foodId }) {
                 </div>
                 {item.userId === userData.userId && (
                   <div className="flex space-x-2 mt-2">
-                    <button onClick={() => handleUpdate(item.ratingId)} className="text-blue-500 flex items-center">
+                    <button
+                      onClick={() => {
+                        setRating(item.ratingValue);
+                        setContent(item.content);
+                        setEditingRatingId(item.ratingId);
+                      }}
+                      className="text-blue-500 flex items-center"
+                    >
                       <FaEdit className="mr-1" />
                     </button>
                     <button onClick={() => handleDelete(item.ratingId)} className="text-red-500">

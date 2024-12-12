@@ -129,7 +129,8 @@ namespace backend.Controllers
                 return StatusCode(500, "An error occurred while creating the rating.");
             }
         }
-        [HttpPost("/update")]
+        
+        [HttpPost("/api/v1/Rating/update")]
         public async Task<IActionResult> UpdateRating([FromBody] UpdateRatingDto ratingBody)
         {
             // Find the rating by ratingId
@@ -165,7 +166,7 @@ namespace backend.Controllers
                 return StatusCode(500, "An error occurred while updating the rating.");
             }
         }
-        
+        [HttpPost("/dasdsa")]
         public async Task UpdateFoodRatingAndStats(int foodId)
         {
             try 

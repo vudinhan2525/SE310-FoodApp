@@ -1,35 +1,32 @@
 import { request } from "./request";
 
 const ratingApi = {
-  getRatingByFoodId: async (paging,limit,foodId) => {
-    let query = `/Rating?page=${paging}&limit=${limit}&foodId=${foodId}`
-    try{
+  getRatingByFoodId: async (paging, limit, foodId) => {
+    let query = `/Rating?page=${paging}&limit=${limit}&foodId=${foodId}`;
+    try {
       const response = await request.get(query);
       return response.data;
-    }
-    catch{
-      return false
+    } catch {
+      return false;
     }
   },
   getRatingByUserId: async (userId, paging, limit) => {
     let query = `/Rating/user/${userId}?page=${paging}&limit=${limit}`;
-    try{
+    try {
       const response = await request.get(query);
       return response.data;
+    } catch {
+      return false;
     }
-    catch{
-      return false
-    }
-   
   },
   addRating: async (userId, foodId, content, ratingValue) => {
     const data = {
       userId: userId,
       foodId: foodId,
       content: content,
-      ratingValue: ratingValue
+      ratingValue: ratingValue,
     };
-    const response = await request.post('/Rating', data);
+    const response = await request.post("/Rating", data);
     return response.data;
   },
   deleteRating: async (ratingId) => {
@@ -41,11 +38,10 @@ const ratingApi = {
     const data = {
       ratingId: ratingId,
       content: content,
-      ratingValue: ratingValue
+      ratingValue: ratingValue,
     };
-    const response = await request.post('/update', data);
+    const response = await request.post("/Rating/update", data);
     return response.data;
-  }
-
-}
+  },
+};
 export default ratingApi;
