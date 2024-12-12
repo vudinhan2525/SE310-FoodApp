@@ -112,6 +112,9 @@ namespace backend.Controllers
             {
                 _context.Ratings.Add(newRating);
                 await _context.SaveChangesAsync();
+                
+                // Update food rating statistics
+                await UpdateFoodRatingAndStats(ratingBody.foodId);
 
                 return Ok(new
                 {
@@ -137,7 +140,7 @@ namespace backend.Controllers
             {
                 return NotFound("Rating not found for the given ID.");
             }
-
+            int originalFoodId = rating.FoodId;
             // Update the rating properties
             rating.Content = ratingBody.content;
             rating.RatingValue = ratingBody.ratingValue;
@@ -147,6 +150,8 @@ namespace backend.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+                // Update food rating statistics
+                await UpdateFoodRatingAndStats(originalFoodId);
                 return Ok(new
                 {
                     status = "success",
@@ -160,6 +165,53 @@ namespace backend.Controllers
                 return StatusCode(500, "An error occurred while updating the rating.");
             }
         }
+        
+        public async Task UpdateFoodRatingAndStats(int foodId)
+        {
+            try 
+            {
+                // Fetch all ratings for this specific food
+                var foodRatings = await _context.Ratings
+                    .Where(r => r.FoodId == foodId)
+                    .ToListAsync();
+
+                // If no ratings exist, reset to default values
+                if (!foodRatings.Any())
+                {
+                    var foodToUpdate = await _context.Foods
+                        .FirstOrDefaultAsync(f => f.FoodId == foodId);
+
+                    if (foodToUpdate != null)
+                    {
+                        foodToUpdate.Rating = 0;
+                        foodToUpdate.NumberRating = 0;
+                        await _context.SaveChangesAsync();
+                        return;
+                    }
+                }
+
+                // Calculate new average rating
+                decimal averageRating = foodRatings.Average(r => r.RatingValue);
+                int numberOfRatings = foodRatings.Count;
+
+                // Update the food item with new rating statistics
+                var food = await _context.Foods
+                    .FirstOrDefaultAsync(f => f.FoodId == foodId);
+
+                if (food != null)
+                {
+                    food.Rating = Math.Round(averageRating, 2);
+                    food.NumberRating = numberOfRatings;
+                    
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error updating food rating for FoodId {foodId}");
+                throw; // Rethrow to allow caller to handle
+            }
+        }
         [HttpDelete]
         public async Task<IActionResult> DeleteRating(int ratingId)
         {
@@ -170,6 +222,7 @@ namespace backend.Controllers
             {
                 return NotFound("Rating not found for the given ID.");
             }
+            int originalFoodId = rating.FoodId;
 
             // Remove the rating from the database
             _context.Ratings.Remove(rating);
@@ -177,6 +230,9 @@ namespace backend.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+
+                // Update food rating statistics
+                await UpdateFoodRatingAndStats(originalFoodId);
                 return Ok(new
                 {
                     status = "success",
