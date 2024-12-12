@@ -11,6 +11,8 @@ function getDateMonday(date) {
       return mondayOfCurrentWeek
 }
 function getTopProducts(bills, filterBy = "week") {
+      console.log(filterBy)
+      console.log(bills)
       const today = new Date();
       const currentYear = today.getFullYear();
       const currentMonth = today.getMonth();
@@ -53,18 +55,19 @@ function getTopProducts(bills, filterBy = "week") {
       const sortedProductSales = Object.values(productSales)
             .sort((a, b) => b.totalQuantity - a.totalQuantity)
             .slice(0, 5); // Lấy 5 sản phẩm bán chạy nhất
-      console.log(sortedProductSales)
+      console.log("abcdef")
+      console.log(sortedProductSales[0])
       return sortedProductSales;
 }
 
 
 
 export default function BestSeller(props) {
-      const [top, setTop] = useState(getTopProducts(props.bills, 'week'))
+      const [top, setTop] = useState([])
       const [selectedFilter, setSelectedFilter] = useState('week')
       useEffect(() => {
             setTop(getTopProducts(props.bills, selectedFilter))
-      }, [selectedFilter])
+      }, [selectedFilter,props.bills])
       return (
             <div className="md:w-2/5 bg-white px-4 pb-3 pt-4 rounded-xl shadow-xl h-[420px] mt-4">
                   <div className="flex justify-between items-center">
@@ -94,9 +97,11 @@ export default function BestSeller(props) {
                         (<div className="w-[500px]">
                               <p className="ml-[50%] -translate-x-[50%] text-xl font-semibold  mt-[30%]  text-blue-600">No foods were sold.</p>
                         </div>)
-                        :(top.map((item) => {
+                        :(top.map((item, index) => {
                               return (
-                                    <Link to={`/admin/food/detail/${item.foodId}`}
+                                    <Link
+                                          key={index}
+                                     to={`/admin/food/detail/${item.foodId}`}
                                           state={{ id: item.foodId }}>
                                           <div className="flex mb-3 items-center cursor-pointer hover:bg-gray-100 p-1 rounded-md">
                                                 <div className="rounded-md bg-white  p-[1px] w-14 items-center justify-center flex h-13">

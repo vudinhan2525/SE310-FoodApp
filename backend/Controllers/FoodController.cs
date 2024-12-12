@@ -301,9 +301,6 @@ namespace backend.Controllers
 
             try
             {
-                // Tạo một đối tượng Food mới từ dữ liệu DTO
-
-                // Thêm sản phẩm vào DbContext
                 var food = await _context.Foods.FindAsync(Id);
                 if (food == null || newFood == null)
                 {

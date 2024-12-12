@@ -38,14 +38,14 @@ export default function DashboardPage() {
               </div>)
       }
       return (
-            <view>
+            <div>
                   <StatisticCard bills={bills} foods={foods} />
                   <ChartLine bills={bills}/>
                   <div className="md:flex">
                         <BestSeller bills={bills}/>
                         <ChartDonut bills={bills}/>
                   </div>
-            </view>
+            </div>
       )
 
 }

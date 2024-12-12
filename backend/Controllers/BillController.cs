@@ -156,7 +156,10 @@ namespace backend.Controllers
             try
             {
                 var bills = await _context.Bills.AsQueryable().Where(f => f.Status == "Completed").ToListAsync();
-                
+                foreach (var bill in bills)
+                {
+                    bill.TotalPrice -= 12000;
+                }
                 return Ok(new
                 {
                     status = "success",
@@ -173,6 +176,112 @@ namespace backend.Controllers
 
         }
         
+        [HttpPut("updateStatus")]
+        public async Task<IActionResult> UpdateStatusBill(int Id, string status)
+        {
+
+            try
+            {
+                var bill = await _context.Bills.FindAsync(Id);
+                if (bill == null)
+                {
+                    return NotFound(new { status = "error", message = "Bill not found." });
+                }
+                else
+                {
+                    bill.Status = status;
+                }
+                await _context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    status = "success",
+                    data = new { bill.BillId, bill.Status }
+                });
+            }
+            catch (Exception)
+            {
+                return BadRequest(new { status = "error", message = "Error" });
+            }
+        }
+
+        [HttpDelete("{Id}")]
+        public async Task<IActionResult> UpdateStatusBill(int Id)
+        {
+
+            try
+            {
+                var bill = await _context.Bills.FindAsync(Id);
+                if (bill == null)
+                {
+                    return NotFound(new { status = "error", message = "Bill not found." });
+                }
+                else
+                {
+                    _context.Bills.Remove(bill);
+                }
+                await _context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    status = "success",
+                });
+            }
+            catch (Exception)
+            {
+                return BadRequest(new { status = "error", message = "Error" });
+            }
+        }
+
+        [HttpGet("getForManageCustomer")]
+        public async Task<IActionResult> GetForManageCustomer()
+        {
+           try
+            {
+                // Lấy tất cả người dùng
+                var users = await _context.Users
+                    .Select(u => new 
+                    {
+                        u.UserId,
+                        u.Username,
+                        u.Email
+                    })
+                    .ToListAsync();
+
+                // Lấy tất cả hóa đơn đã hoàn thành
+                var bills = await _context.Bills
+                    .AsQueryable()
+                    .Where(f => f.Status == "Completed")
+                    .ToListAsync();
+                foreach (var bill in bills)
+                {
+                    bill.TotalPrice -= 12000;
+                }
+                // Kết hợp thông tin hóa đơn với thông tin người dùng
+                var result = users.Select(u => new
+                {
+                    userId = u.UserId,
+                    username = u.Username,
+                    email = u.Email,
+                    totalSpend = bills.Where(b => b.UserId == u.UserId).Sum(b => b.TotalPrice), // Tính tổng tiền
+                    totalQuantity = bills.Where(b => b.UserId == u.UserId).Sum(b => b.FoodInfo != null ? JsonSerializer.Deserialize<List<OrderInfo>>(b.FoodInfo).Sum(f => f.quantity) : 0) // Tính tổng số lượng sản phẩm
+                }).ToList();
+
+                return Ok(new
+                {
+                    status = "success",
+                    data = result,
+                });
+            }
+            catch (Exception)
+            {
+                return BadRequest(new
+                {
+                    status = "Error",
+                });
+            }
+        }
+      
         public class BillBodyDto
         {
             public long totalPrice { get; set; }

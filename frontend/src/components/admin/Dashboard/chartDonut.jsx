@@ -190,10 +190,9 @@ export default function ChartDonut(props) {
         {top.length==0?
         (<div></div>)
         :(
-          top.map((item) => {
-            console.log(item)
+          top.map((item, index) => {
             return (
-              <div className="sm:w-1/3 w-full px-8">
+              <div className="sm:w-1/3 w-full px-8" key={index}>
                 <div className="flex w-full items-center">
                   <span className="mr-2 block h-3 w-full max-w-3 rounded-full" style={{ backgroundColor: item.color }}></span>
                   <p className="flex w-full justify-between text-sm font-medium text-black dark:text-white">

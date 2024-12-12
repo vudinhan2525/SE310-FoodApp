@@ -1,15 +1,15 @@
-import { request } from "./request";
+import { request } from './request';
 
 const billApi = {
-  addBill: async (body) => {
+  addBill: async body => {
     try {
       const response = await request.post(
         `/Bill/addBill`,
         JSON.stringify(body), // Send the body as a JSON string
         {
           headers: {
-            "Content-Type": "application/json",
-          },
+            'Content-Type': 'application/json'
+          }
         }
       );
       return response.data;
@@ -17,7 +17,7 @@ const billApi = {
       console.log(error);
     }
   },
-  getBills: async (paging,limit,userId) => {
+  getBills: async (paging, limit, userId) => {
     try {
       const response = await request.get(
         `/Bill?page=${paging}&limit=${limit}&userId=${userId}`
@@ -27,24 +27,46 @@ const billApi = {
       console.log(error);
     }
   },
-  getAllBill:async()=>{
+  getAllBill: async () => {
     try {
-      const response = await request.get(
-        `/Bill/getAll`
-      );
+      const response = await request.get(`/Bill/getAll`);
       return response.data;
     } catch (error) {
-      return false
+      return false;
     }
   },
-  getBillCompleted:async()=>{
+  getBillCompleted: async () => {
     try {
-      const response = await request.get(
-        `/Bill/getCompleted`
+      const response = await request.get(`/Bill/getCompleted`);
+      return response.data;
+    } catch (error) {
+      return false;
+    }
+  },
+  updateStatusBill: async (id, status) => {
+    try {
+      const response = await request.put(
+        `/Bill/updateStatus?Id=${id}&status=${status}`
       );
       return response.data;
     } catch (error) {
-      return false
+      return false;
+    }
+  },
+  deleteBill: async (id) => {
+    try {
+      const response = await request.delete(`/Bill/${id}`);
+      return response.data;
+    } catch (error) {
+      return false;
+    }
+  },
+  getForManageCustomer: async () => {
+    try {
+      const response = await request.get(`/Bill/getForManageCustomer`);
+      return response.data;
+    } catch (error) {
+      return false;
     }
   }
 };
