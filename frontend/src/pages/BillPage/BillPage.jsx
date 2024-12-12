@@ -5,6 +5,7 @@ import { FaMinus, FaPlus, FaTrash } from "react-icons/fa6";
 import BillContent from './BillContent';
 import { AuthContext } from '@/components/authProvider/AuthProvider';
 import billApi from '@/apis/billApi';
+import { formatDate } from '@/lib/utils';
 
 const statuses  = [
   {id: 1, status: 'Finished'},
@@ -28,10 +29,10 @@ function BillPage() {
       try {
         const response = await billApi.getBills(page, 4, userData.userId);
         if (response.status === "success" && Array.isArray(response.data)) {
-          setBills(response.data); // Set the ratings from the response
+          setBills(response.data); 
           setTotal(response.pagination.totalItems);
         } else {
-          setBills([]); // Set to an empty array if the data is not an array
+          setBills([]); 
         }
       } catch (error) {
         console.error("Failed to fetch user ratings:", error);
@@ -100,7 +101,7 @@ function BillPage() {
                   >
                     <p className="basis-1/4">Đơn hàng {bill.billId}</p>
                     <p className="basis-[10%] text-center">{bill.status}</p>
-                    <p className="basis-1/4 text-center">{bill.date}</p>
+                    <p className="basis-1/4 text-center">{formatDate(bill.date)}</p>
                     <p className="basis-[40%] text-end">{getParsedAddress(bill.address)}</p>
                   </div>
                   {/* Show BillContent only for the selected bill */}

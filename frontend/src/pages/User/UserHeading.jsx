@@ -3,7 +3,7 @@ import React, { useContext } from 'react'
 
 function UserHeading() {
   const {userData} = useContext(AuthContext);
-  // console.log(userData);
+  console.log(userData);
   return (
     <div className='mt-16'>
         {/* UpperPicture */}
@@ -18,7 +18,7 @@ function UserHeading() {
                       ></div>
                       <div className="information px-8 items-center">
                         <h1 className="text-orange-600 text-semibold">{userData.username}</h1>
-                        <h2>Tran Phu, Ho Chi Minh City</h2>
+                        <h2>Địa chỉ: {userData.address}</h2>
                       </div>
                         <div className="jobs">
                           <h1>Ui/Ux Designer</h1>
@@ -26,21 +26,8 @@ function UserHeading() {
                           <h2>email</h2>
                         </div>
                   </div>
-                    {/* Right interaction */}
-                  <div className="interact flex flex-row justify-end px-4 sm:px-4 sm:space-y-0 sm:space-x-5">
-                      <div className="reviews justify-center bg-orange-500 lg:w-20 lg:h-20 w-14 h-14 rounded-lg flex-col items-center hidden md:flex">
-                          <h1 className="text-semibold items-center text-white text-center">111</h1>
-                          <h2 className=" items-center text-white text-center">review</h2>
-                      </div>
-                      <div className="photos justify-center bg-orange-500 lg:w-20 lg:h-20 w-14 h-14 rounded-lg flex-col items-center hidden md:flex">
-                          <h1 className="text-semibold items-center text-white text-center">111</h1>
-                          <h2 className="items-center text-white text-center">photos</h2>
-                      </div>
-                      <div className="followers justify-center bg-orange-500 lg:w-20 lg:h-20 w-14 h-14 rounded-lg flex-col items-center hidden md:flex">
-                          <h1 className="text-semibold items-center text-white text-center">111</h1>
-                          <h2 className="  text-white text-center">followers</h2>
-                      </div>
-                  </div>
+               
+                
               </div>
           </div>
       </div>
