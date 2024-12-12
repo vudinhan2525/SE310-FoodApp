@@ -77,7 +77,7 @@ namespace backend.Controllers
                                     o.Food.FoodType.NameType,
                                     o.Food.Description,
                                     o.Food.Image1,
-                                    o.Food.Price // You can include any additional properties from the Food table as needed
+                                    o.Food.Price ,
                                 }
                             })
                             .ToListAsync();

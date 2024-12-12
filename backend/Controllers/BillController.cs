@@ -85,6 +85,7 @@ namespace backend.Controllers
             // Fetch the bills for the specific user, applying pagination
             var bills = await _context.Bills
                 .Where(b => b.UserId == userId)  // Filter by userId
+                .OrderByDescending(b => b.Date)
                 .Skip(skip)                     // Skip records for pagination
                 .Take(limit)                    // Take the required number of records
                 .ToListAsync();                 // Execute the query asynchronously

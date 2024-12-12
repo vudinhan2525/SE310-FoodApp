@@ -8,6 +8,7 @@ import UserReview from "./MidContent";
 import MidContent from "./MidContent";
 import { Breadcrumb } from "antd";
 import authApi from "@/apis/authApi";
+import billApi from "@/apis/billApi";
 
 export default function ProfilePage() {
   const {userData} = useContext(AuthContext);
@@ -16,10 +17,10 @@ export default function ProfilePage() {
   const [address, setAddress] = useState("");
   const [favoriteCount, setFavoriteCount] = useState(0);
   const [reviewCount, setReviewCount] = useState(0);
-
-  const [avatarUrl, setAvatarUrl] = useState(userData.avatar); // Add state for avatar URL
-  const [newAvatarUrl, setNewAvatarUrl] = useState(""); // State for new avatar URL input
-  const [showAvatarInput, setShowAvatarInput] = useState(false); // State to show input form
+  const [billCount, setBillCount] = useState(0);
+  const [avatarUrl, setAvatarUrl] = useState(userData.avatar); 
+  const [newAvatarUrl, setNewAvatarUrl] = useState(""); 
+  const [showAvatarInput, setShowAvatarInput] = useState(false); 
 
   // console.log("user:",userData);
   useEffect(() => {
@@ -48,6 +49,23 @@ export default function ProfilePage() {
     }
 }, [userData]);
 
+useEffect(() => {
+  const updateBillCount = async () => {
+    try {
+      const response = await billApi.getBills(1,4,userData.userId); 
+      const bills = response.data;
+      setBillCount(bills.length);
+      // console.log("Bills:", bills);
+      // console.log("Bill Count:", bills.length);
+    } catch (error) {
+      console.error("Failed to fetch bills:", error);
+    }
+  };
+
+  if (userData && userData.userId) {
+    updateBillCount();
+  }
+}, [userData]);
 
 
 
@@ -109,7 +127,7 @@ const handleSave = async () => {
         <div className="lowerProfile px-4 sm:px-8 py-8 rounded-xl flex flex-col lg:flex-row space-y-8 lg:space-y-0 lg:space-x-8">
           
           {/* Left Setting - chua co chuc nang*/}
-          <div className="leftSetting bg-white px-5 basis-full lg:basis-1/4 rounded-xl">
+          <div className="leftSetting bg-white p-5 basis-full lg:basis-1/4 rounded-xl">
             <h1 className="text-2xl font-bold sm:text-xl text-center py-5 border-b-blue-500 border-b">
             Public profile
             </h1>
@@ -204,7 +222,7 @@ const handleSave = async () => {
                 <h1 className="text-base sm:text-lg font-semibold text-gray-700">Bill</h1>
               </Link>
               <div className="bg-orange-400 rounded-full w-[40px] h-[40px] flex items-center justify-center">
-                <span className="text-white font-bold">1</span>
+                <span className="text-white font-bold">{billCount}</span>
               </div>
             </div>
             <div className="flex justify-between items-center py-4 border-b border-b-orange-200 px-5 hover:shadow-lg cursor-pointer transition-all duration-200">
@@ -212,28 +230,6 @@ const handleSave = async () => {
               <div className="bg-orange-400 rounded-full w-[40px] h-[40px] flex items-center justify-center">
                 <span className="text-white font-bold">{reviewCount}</span>
               </div>
-            </div>
-            <div className="flex justify-between items-center py-4 border-b border-b-orange-200 px-5 hover:shadow-lg cursor-pointer transition-all duration-200">
-              <h1 className="text-base sm:text-lg font-semibold text-gray-700">Photos</h1>
-              <div className="bg-orange-400 rounded-full w-[40px] h-[40px] flex items-center justify-center">
-                <span className="text-white font-bold">1</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom Section - Order History */}
-          <div className="bottom-right flex-grow rounded-xl bg-white shadow-sm">
-            <h1 className="text-xl font-bold text-center py-5 border-b border-b-blue-500">
-              Order History
-            </h1>
-            <div className="flex justify-between items-center py-4 border-b border-b-orange-200 px-5 hover:shadow-lg cursor-pointer transition-all duration-200">
-              <h1 className="text-base sm:text-lg font-semibold text-gray-700">Favorite Order</h1>
-            </div>
-            <div className="flex justify-between items-center py-4 border-b border-b-orange-200 px-5 hover:shadow-lg cursor-pointer transition-all duration-200">
-              <h1 className="text-base sm:text-lg font-semibold text-gray-700">Order History</h1>
-            </div>
-            <div className="flex justify-between items-center py-4 border-b border-b-orange-200 px-5 hover:shadow-lg cursor-pointer transition-all duration-200">
-              <h1 className="text-base sm:text-lg font-semibold text-gray-700">My Address</h1>
             </div>
           </div>
         </div>
