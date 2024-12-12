@@ -16,8 +16,8 @@ export default function CartPage() {
   const [total, setTotal] = useState(0);
   useEffect(() => {
     let sum = 0;
-    carts.forEach((cart) => {
-      if (itemSlt.includes(cart.foodId)) {
+    carts.forEach((cart, idx) => {
+      if (itemSlt.includes(idx)) {
         sum += cart.quantity * cart.foodDetails.price;
       }
     });
@@ -53,8 +53,8 @@ export default function CartPage() {
   };
   const handleAddBill = async (address) => {
     let foodData = [];
-    carts.forEach((cart) => {
-      if (itemSlt.includes(cart.foodId)) {
+    carts.forEach((cart, idx) => {
+      if (itemSlt.includes(idx)) {
         foodData.push(cart);
       }
     });
@@ -87,7 +87,7 @@ export default function CartPage() {
                   if (e.target.checked) {
                     let arr = [];
                     for (let i = 0; i < carts.length; i++) {
-                      arr.push(carts[i].foodId);
+                      arr.push(i);
                     }
                     setItemSlt(arr);
                   } else {
@@ -111,12 +111,12 @@ export default function CartPage() {
                     <div className="basis-[60%] flex gap-4 items-center">
                       <Checkbox
                         className=""
-                        checked={itemSlt.includes(cartItem.foodId)}
+                        checked={itemSlt.includes(idx)}
                         onChange={(e) => {
                           if (e.target.checked) {
-                            setItemSlt((prev) => [...prev, cartItem.foodId]);
+                            setItemSlt((prev) => [...prev, idx]);
                           } else {
-                            const newArr = itemSlt.filter((item) => item != cartItem.foodId);
+                            const newArr = itemSlt.filter((item) => item != idx);
                             setItemSlt(newArr);
                           }
                         }}
@@ -137,6 +137,7 @@ export default function CartPage() {
                             {formatCurrency(cartItem.foodDetails.price + 10000)}
                           </p>
                         </div>
+                        <p>Note: {cartItem.note}</p>
                       </div>
                     </div>
                     <div className="basis-[40%] flex items-center">
