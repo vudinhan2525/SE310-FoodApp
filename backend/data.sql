@@ -1,4 +1,4 @@
-
+insert into users (Username,Email,Password,Address,Avatar) value ('Admin','admin@gmail.com','AQAAAAIAAYagAAAAEBiaay58PuSVSTIoh6/fzFD21elgUpHZau1jIXaxxkwAbu/hRpdJb1p2Q3kHpnjfXw==','','');
 
 INSERT INTO foodtypes (TypeId, NameType, ParentId) VALUES
 (1, 'Vietnamese Noodles', false),
