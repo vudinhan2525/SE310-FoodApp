@@ -8,11 +8,10 @@ import billApi from '@/apis/billApi';
 import { formatDate } from '@/lib/utils';
 
 const statuses  = [
-  {id: 1, status: 'Finished'},
-  {id: 2, status: 'Ongoing'},
-  {id: 3, status: 'Failed'},
-  {id: 4, status: 'Pending'},
-  { id: 5, status: 'All' },
+  {id: 1, status: 'Complete'},
+  {id: 2, status: 'Failed'},
+  {id: 3, status: 'Pending'},
+  {id: 5, status: 'All' },
 ]
 
 function BillPage() {
@@ -47,14 +46,14 @@ function BillPage() {
   const handleBillClick = (bill) => {
     // Toggle visibility of the bill content
     if (selectedBill?.billId === bill.billId) {
-      setSelectedBill(null); // Hide the content if the bill is already selected
+      setSelectedBill(null); 
     } else {
-      setSelectedBill(bill); // Show content if the bill is not selected
+      setSelectedBill(bill); 
     }
   };
   const handleStatusClick = (status) => {
     setSelectedStatus(status.status === selectedStatus ? null : status.status);
-    setSelectedBill(null); // Clear selected bill when changing status
+    setSelectedBill(null); 
   };
 
   const getParsedAddress = (addressString) => {
