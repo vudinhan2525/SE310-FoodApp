@@ -8,6 +8,7 @@ import Dialog from "./Dialog";
 import Payment from "./Payment";
 import { Checkbox } from "antd";
 import billApi from "@/apis/billApi";
+import toast from "react-hot-toast";
 export default function CartPage() {
   const { carts, setCarts, userData } = useContext(AuthContext);
   const [deleteId, setDeleteId] = useState(null);
@@ -48,7 +49,7 @@ export default function CartPage() {
     const response = await cartApi.deleteCart(orderId);
 
     if (response?.status === "success") {
-      alert("Food deleted successfully");
+      toast.success("Food deleted successfully");
     }
   };
   const handleAddBill = async (address) => {
@@ -65,6 +66,11 @@ export default function CartPage() {
         nameType: el.foodDetails.nameType,
       };
     });
+
+    if (foodData.length === 0) {
+      toast.error("Vui lòng chọn món ăn cần thanh toán");
+      return;
+    }
     const res = await billApi.addBill({
       totalPrice: total + 12000,
       address: JSON.stringify(address),
@@ -236,8 +242,8 @@ export default function CartPage() {
             setShowDeleteSelect(false);
           }}
           buttonContent={"Xóa"}
-          message={"Bạn có chắc muốn xóa cuốn sách này"}
-          content={"Sách sẽ được xóa khỏi giỏ hàng của bạn!!"}
+          message={"Bạn có chắc muốn xóa món ăn này"}
+          content={"Món ăn sẽ được xóa khỏi giỏ hàng của bạn!!"}
         />
       )}
     </div>
