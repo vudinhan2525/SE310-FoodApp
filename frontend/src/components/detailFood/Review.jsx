@@ -34,10 +34,11 @@ export default function Review({ foodId }) {
 
   const getReviewsByFoodId = async () => {
     const response = await ratingApi.getRatingByFoodId(page, limit, foodId);
-    // console.log(response.data)
+    console.log('response',response.data)
     if (response.status === "success") {
       setReviewList(response.data);
       setTotals(response.pagination.totalItems);
+      console.log('kis',reviewList)
     }
     // console.log("user:", userData)
   };
@@ -150,38 +151,30 @@ export default function Review({ foodId }) {
           </div>
         </div>
         {reviewList.map((item, idx) => {
+            // console.log('Review Item:', item);
           return (
             <div key={`review-${idx}`}>
               <div className="flex max-w-full border-b-[1px] pb-4 mt-5 justify-between" key={item.RatingId}>
                 {/* <img className='rounded-full w-10 h-10 object-cover' src={item.avatar} /> */}
                 <div className="items-center ml-3">
-                  <div className="mb-3">
+                  <div className="">
                     <div className="flex items-center gap-2">
-                      {item.User ? (
-                        <img
-                          className="rounded-full w-10 h-10 object-cover"
-                          src={item.User.Avatar}
-                          alt={`${item.User.Username}'s Avatar`}
-                        />
-                      ) : (
-                        <div className="rounded-full w-10 h-10 bg-gray-300" />
-                      )}
+                    {item.user ? (
+                      <img
+                        className="rounded-full w-10 h-10 object-cover"
+                        src={item.user.avatar} 
+                        alt={`${item.user.username}'s Avatar`} 
+                      />
+                    ) : (
+                      <div className="rounded-full w-10 h-10 bg-gray-300" />
+                    )}
                       <RatingLayout rating={item.ratingValue} no={true} style="w-4 h-4" />
+                      <p className="text-xs mt-[6px]">{convertIsoStringToFormattedDate(item.date)}</p>
                     </div>
-                    <p className="text-xs mt-[6px]">{convertIsoStringToFormattedDate(item.date)}</p>
                   </div>
+                  <h4 className="text-lg text-orange-500 font-semibold">{item.user.username}:</h4>
                   <p className="text-[18px]">{item.content}</p>
-                  {item.reply ? (
-                    <div className=" mt-3  border-[1px] w-fit p-2 border-orange-200">
-                      {/* <a href='' className='flex items-center mb-2 w-fit'>
-                                        <img className='rounded-full w-7 h-7 object-cover border-slate-200 border-[0.2px]' src={props.store.avatar} />
-                                        <h3 className='text-[16px] ml-2 font-semibold text-gray-500'>{props.store.name}</h3>
-                                    </a> */}
-                      <p className="ml-9 text-[18px]">{item.reply}</p>
-                    </div>
-                  ) : (
-                    <div />
-                  )}
+
                 </div>
                 {item.userId === userData.userId && (
                   <div className="flex space-x-2 mt-2">

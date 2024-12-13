@@ -24,6 +24,13 @@ function AuthProvider({ children }) {
 
     setLoading(false);
   };
+  const updateAvatar = (newAvatarUrl) => {
+    setUserData((prevData) => ({
+      ...prevData,
+      avatar: newAvatarUrl,
+    }));
+  };
+
   useEffect(() => {
     // console.log("User data:", userData); 
     ckLogged();
@@ -42,6 +49,7 @@ function AuthProvider({ children }) {
         setShowLogoutModal,
         carts,
         setCarts,
+        updateAvatar, 
       }}
     >
       {loading ? <div></div> : children}
