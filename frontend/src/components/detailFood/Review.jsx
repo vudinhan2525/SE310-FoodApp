@@ -25,7 +25,7 @@ export default function Review({ foodId }) {
   const [rating, setRating] = useState(0);
   const [content, setContent] = useState("");
   const [reviewList, setReviewList] = useState([]);
-  const { userData } = useContext(AuthContext);
+  const { userData, isLoggedIn, setShowLoginModal } = useContext(AuthContext);
   // const [list, setList] = useState([])
   const [page, setPage] = useState(1);
   const [total, setTotals] = useState(1);
@@ -34,11 +34,11 @@ export default function Review({ foodId }) {
 
   const getReviewsByFoodId = async () => {
     const response = await ratingApi.getRatingByFoodId(page, limit, foodId);
-    console.log('response',response.data)
+    console.log("response", response.data);
     if (response.status === "success") {
       setReviewList(response.data);
       setTotals(response.pagination.totalItems);
-      console.log('kis',reviewList)
+      console.log("kis", reviewList);
     }
     // console.log("user:", userData)
   };
@@ -51,6 +51,11 @@ export default function Review({ foodId }) {
   };
 
   const handleRatingSubmit = async () => {
+    if (!isLoggedIn) {
+      setShowLoginModal(true);
+      return;
+    }
+
     if (!rating || !content) {
       toast.error("Vui lòng nhập review và rating");
       return;
@@ -151,7 +156,7 @@ export default function Review({ foodId }) {
           </div>
         </div>
         {reviewList.map((item, idx) => {
-            // console.log('Review Item:', item);
+          // console.log('Review Item:', item);
           return (
             <div key={`review-${idx}`}>
               <div className="flex max-w-full border-b-[1px] pb-4 mt-5 justify-between" key={item.RatingId}>
@@ -159,22 +164,21 @@ export default function Review({ foodId }) {
                 <div className="items-center ml-3">
                   <div className="">
                     <div className="flex items-center gap-2">
-                    {item.user ? (
-                      <img
-                        className="rounded-full w-10 h-10 object-cover"
-                        src={item.user.avatar} 
-                        alt={`${item.user.username}'s Avatar`} 
-                      />
-                    ) : (
-                      <div className="rounded-full w-10 h-10 bg-gray-300" />
-                    )}
+                      {item.user ? (
+                        <img
+                          className="rounded-full w-10 h-10 object-cover"
+                          src={item.user.avatar}
+                          alt={`${item.user.username}'s Avatar`}
+                        />
+                      ) : (
+                        <div className="rounded-full w-10 h-10 bg-gray-300" />
+                      )}
                       <RatingLayout rating={item.ratingValue} no={true} style="w-4 h-4" />
                       <p className="text-xs mt-[6px]">{convertIsoStringToFormattedDate(item.date)}</p>
                     </div>
                   </div>
                   <h4 className="text-lg text-orange-500 font-semibold">{item.user.username}:</h4>
                   <p className="text-[18px]">{item.content}</p>
-
                 </div>
                 {item.userId === userData.userId && (
                   <div className="flex space-x-2 mt-2">

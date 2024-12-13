@@ -63,8 +63,8 @@ namespace backend.Controllers
 
                 // Create a notification for the user
                 await CreateNotificationAsync(
-                    header: "Hóa đơn được chấp nhận",
-                    content: $"Hóa đơn ID {newBill.BillId} đã được tạo.",
+                    header: "Đơn hàng được chấp nhận",
+                    content: $"Đơn hàng #{newBill.BillId} đã được tạo.",
                     userId: body.userId
                 );
 
@@ -190,7 +190,7 @@ namespace backend.Controllers
         {
 
             try
-            {
+            {   
                 var bill = await _context.Bills.FindAsync(Id);
                 if (bill == null)
                 {
@@ -201,7 +201,24 @@ namespace backend.Controllers
                     bill.Status = status;
                 }
                 await _context.SaveChangesAsync();
+                // Create a notification for the user
+                string header = "Đơn hàng được cập nhật";
+                string content = "";
 
+                if(status == "Failed"){
+                    content  = $"Đơn hàng #{bill.BillId} đã bị từ chối.";
+                }
+                if(status == "Pending"){
+                    content  = $"Đơn hàng #{bill.BillId} đang chờ được duyệt.";
+                }
+
+                if(status == "Ongoing"){
+                    content  = $"Đơn hàng #{bill.BillId} đang được giao.";
+                }
+                if(status == "Completed"){
+                    content  = $"Đơn hàng #{bill.BillId} được thanh toán thành công.";
+                }
+                await CreateNotificationAsync(header, content, bill.UserId);
                 return Ok(new
                 {
                     status = "success",
