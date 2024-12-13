@@ -59,7 +59,7 @@ function BillPage() {
   const getParsedAddress = (addressString) => {
     try {
       const addressObj = JSON.parse(addressString);
-      return `${addressObj.address}, City ID: ${addressObj.city}, District ID: ${addressObj.district}, Ward ID: ${addressObj.ward}`;
+      return `${addressObj.address}, ${addressObj.ward}, ${addressObj.district}, ${addressObj.city}`;
     } catch (error) {
       console.error("Failed to parse address:", error);
       return "Address not available";

@@ -11,7 +11,7 @@ import authApi from "@/apis/authApi";
 import billApi from "@/apis/billApi";
 
 export default function ProfilePage() {
-  const {userData} = useContext(AuthContext);
+  const { userData, updateAvatar, setUserData } = useContext(AuthContext);
   const [username, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
@@ -76,31 +76,40 @@ const handleChangeAvatar = () => {
 // Function to handle submitting the new avatar URL
 const handleAvatarSubmit = (e) => {
   e.preventDefault();
-  setAvatarUrl(newAvatarUrl); // Update the avatar URL state
-  setShowAvatarInput(false); // Close the input form
+  updateAvatar(newAvatarUrl || userData.avatar); 
+  setAvatarUpdated(!avatarUpdated);
+  setShowAvatarInput(false); 
 };
 const handleDeleteAvatar = () => {
-  // Set avatarUrl to null or empty string to indicate no avatar
-  setAvatarUrl("https://static.vecteezy.com/system/resources/thumbnails/036/280/651/small_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg");
+  const defaultAvatarUrl = "https://static.vecteezy.com/system/resources/thumbnails/036/280/651/small_2x/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg";
+  updateAvatar(defaultAvatarUrl);
+  setAvatarUrl(defaultAvatarUrl);
 };
 
 
 
 const handleSave = async () => {
-  console.log("User:",userData.userId);
+  console.log("User:", userData.userId);
   try {
     const data = {
       userId: userData.userId,
       username,
       email,
       address,
-
       avatar: newAvatarUrl || avatarUrl,
     };
 
     const response = await authApi.updateUser(data);
     if (response && response.status === "success") {
       console.log("User updated successfully:", response.message);
+
+      setUserData({
+        ...userData,
+        username,
+        email,
+        address,
+        avatar: newAvatarUrl || avatarUrl,
+      });
     } else {
       console.error("Update failed:", response.message || "Unknown error");
     }
@@ -108,6 +117,7 @@ const handleSave = async () => {
     console.error("An error occurred while updating the user:", error);
   }
 };
+
   const breadcrumbItems = [
     { title: 'Home', href: '/' },
     { title: 'Profile', href: '#' }, // Using a hash for the current book

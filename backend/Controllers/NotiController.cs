@@ -87,5 +87,17 @@ namespace backend.Controllers
                 }
             });
         }
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> DeleteNoti(int id)
+        {
+            var notification = await _context.Notis.FindAsync(id);
+            if (notification == null)
+            {
+                return NotFound(new { status = "error", message = "Notification not found." });
+            }
+            _context.Notis.Remove(notification);
+            await _context.SaveChangesAsync();
+            return Ok(new { status = "success", message = "Notification deleted successfully." });
+        }
     }
 }

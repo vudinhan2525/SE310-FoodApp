@@ -3,7 +3,6 @@ import HomePage from "../pages/HomePage/HomePage";
 import ProfilePage from "../pages/User/ProfilePage";
 import CartPage from "@/pages/CartPage/CartPage";
 import DetailFoodPage from "@/pages/DetailPage/DetailFoodPage";
-import AboutPage from "@/pages/AboutPage/AboutPage";
 import FavoritePage from "@/pages/User/FavoritePage";
 import BillPage from "@/pages/BillPage/BillPage";
 import CategoryPage from "@/pages/CategoryPage/CategoryPage";

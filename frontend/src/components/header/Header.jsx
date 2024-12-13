@@ -12,12 +12,14 @@ export default function Header() {
   const [notiopen, setNotiOpen] = useState(false);
   const debounceNotiOpen = useDebounce(notiopen, 300);
   const { setShowLoginModal, isLoggedIn, userData } = useContext(AuthContext);
+
   const handleLogout = async () => {
     const response = await authApi.logout();
     if (response?.status === "success") {
       window.location.reload();
     }
   };
+
   return (
     <div className="flex fixed bg-white/95 z-[99] left-0 right-0 top-0 items-center px-24 justify-between ">
       <Link
@@ -45,7 +47,7 @@ export default function Header() {
             <div
               className="absolute top-full left-1/2 transform -translate-x-1/2  w-[250px] bg-white shadow-md rounded-md z-50"
             >
-              <NotiCard />
+              <NotiCard userId={userData.userId}/>
             </div>
           )}
         </div>
