@@ -2,12 +2,6 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../../authProvider/AuthProvider.jsx";
 import LogIn from "./LogIn.jsx";
 import { FaXmark, FaChevronLeft } from "react-icons/fa6";
-import {
-  FacebookIcons,
-  GoogleIcons,
-  InstagramIcons,
-  TwiterIcons,
-} from "@/utils/IconSVG/icon";
 import ForgotPassword from "./ForgotPassword.jsx";
 import Register from "./Register.jsx";
 
@@ -27,32 +21,12 @@ export default function LoginModal() {
     >
       <div className="fixed px-8 py-8 rounded-2xl top-[50%] translate-y-[-50%] left-[50%] translate-x-[-50%] bg-white w-[500px] ">
         {method === "signin" && <LogIn setMethod={setMethod} />}
-        {method === "forgotPassword" && (
-          <ForgotPassword setMethod={setMethod} />
-        )}
+        {method === "forgotPassword" && <ForgotPassword setMethod={setMethod} />}
         {method === "register" && <Register />}
-        <p className="text-center mt-2">Or sign in with social platforms</p>
-        <div className="flex justify-center mt-2 gap-4">
-          <div className=" dark:border-[0px] border-[1px] cursor-pointer p-1 border-gray-300 shadow-sm rounded-full ">
-            <FacebookIcons height="35px" width="35px" />
-          </div>
-          <div className=" dark:border-[0px] border-[1px] cursor-pointer p-1 border-gray-300 shadow-sm rounded-full ">
-            <GoogleIcons height="35px" width="35px" />
-          </div>
-          <div className=" dark:border-[0px] border-[1px] cursor-pointer p-1 border-gray-300 shadow-sm rounded-full ">
-            <InstagramIcons height="35px" width="35px" />
-          </div>
-          <div className=" dark:border-[0px] border-[1px] cursor-pointer p-1 border-gray-300 shadow-sm rounded-full ">
-            <TwiterIcons height="35px" width="35px" />
-          </div>
-        </div>
         <div className="bg-gray-200 h-[1px] w-full mt-3"></div>
         <div className="flex justify-center pt-3 gap-2">
           <div>You dont have an account?</div>
-          <div
-            onClick={() => setMethod("register")}
-            className="text-[#EF2950] font-semibold underline cursor-pointer"
-          >
+          <div onClick={() => setMethod("register")} className="text-[#EF2950] font-semibold underline cursor-pointer">
             Sign Up
           </div>
         </div>

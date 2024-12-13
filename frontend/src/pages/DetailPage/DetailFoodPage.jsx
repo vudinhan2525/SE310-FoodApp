@@ -5,7 +5,6 @@ import RatingLayout from "@/components/ui/ratingLayout";
 import { TbCurrencyDong } from "react-icons/tb";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import Review from "@/components/detailFood/Review";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
 import foodApi from "@/apis/foodApi";
@@ -17,7 +16,7 @@ import toast from "react-hot-toast";
 
 export default function DetailFoodPage() {
   const [count, setCount] = useState(1);
-  const { userData, setUserData } = useContext(AuthContext);
+  const { userData, setUserData, isLoggedIn, setShowLoginModal } = useContext(AuthContext);
   const { id } = useParams();
   const [note, setNote] = useState("");
   const [food, setFood] = useState(null);
@@ -153,6 +152,10 @@ export default function DetailFoodPage() {
 
             <button
               onClick={() => {
+                if (!isLoggedIn) {
+                  setShowLoginModal(true);
+                  return;
+                }
                 handleAddToCart(id);
               }}
               className="w-auto h-12 bg-primary-color bg-opacity-70 flex p-2 items-center mt-6 "

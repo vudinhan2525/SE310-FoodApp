@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../authProvider/AuthProvider";
 import { Link } from "react-router-dom";
 import SearchBox from "./SearchBox";
-import { FaArrowRightFromBracket, FaBell, FaCartShopping, FaCircleUser, FaMoneyBill, FaMoneyBillTransfer, FaRegRectangleList } from "react-icons/fa6";
+import { FaArrowRightFromBracket, FaBell, FaCartShopping, FaCircleUser, FaRegRectangleList } from "react-icons/fa6";
 import authApi from "@/apis/authApi";
 import Category from "./Category";
 import NotiCard from "../noti/NotiCard";
@@ -29,25 +29,19 @@ export default function Header() {
         }}
         className="h-[60px] w-[100px] bg-no-repeat bg-contain bg-center"
       ></Link>
-      <Category/>
+      <Category />
       <SearchBox />
       <div className="flex items-center gap-4">
-        <Link to={'/about'}>
+        <Link to={"/about"}>
           <p className="font-blackChancery text-2xl">About</p>
         </Link>
-        <div
-          className="relative"
-          onMouseEnter={() => setNotiOpen(true)}
-          onMouseLeave={() => setNotiOpen(false)}
-        >
+        <div className="relative" onMouseEnter={() => setNotiOpen(true)} onMouseLeave={() => setNotiOpen(false)}>
           <div className="px-3 py-3 hover:bg-gray-100 text-gray-400 hover:text-gray-600 rounded-full cursor-pointer transition-all">
             <FaBell />
           </div>
-          {debounceNotiOpen  && (
-            <div
-              className="absolute top-full left-1/2 transform -translate-x-1/2  w-[250px] bg-white shadow-md rounded-md z-50"
-            >
-              <NotiCard userId={userData.userId}/>
+          {debounceNotiOpen && (
+            <div className="absolute top-full left-1/2 transform -translate-x-1/2  w-[250px] bg-white shadow-md rounded-md z-50">
+              <NotiCard userId={userData.userId} />
             </div>
           )}
         </div>
@@ -73,7 +67,7 @@ export default function Header() {
               <p className="text-sm font-bold line-clamp-1 max-w-[100px]">{userData.username}</p>
             </div>
             {open && (
-              <div className="w-[180px] before:w-[120px] before:h-[20px]  before:absolute before:top-[-20px] before:right-[50%] before:translate-x-[50%] h-[300px] mt-[5px] bg-white shadow-md rounded-sm right-[50%] translate-x-[50%] top-[100%] absolute">
+              <div className="w-[180px] before:w-[120px] before:h-[20px]  before:absolute before:top-[-20px] before:right-[50%] before:translate-x-[50%] mt-[5px] bg-white shadow-md rounded-sm right-[50%] translate-x-[50%] top-[100%] absolute">
                 <Link to={"/profile"}>
                   <div className="flex justify-center px-4 transition-all rounded-t-md cursor-pointer hover:bg-gray-100 gap-3 items-center py-2">
                     <p className="text-lg">Profile</p>
