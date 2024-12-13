@@ -21,7 +21,7 @@ namespace backend.Controllers
             _context = context;
             _logger = logger;
         }
-       [HttpPost("addQuantity")]
+        [HttpPost("addQuantity")]
         public async Task<IActionResult> AddQuantity([FromBody] CartRequest request)
         {
             try

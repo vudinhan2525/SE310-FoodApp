@@ -60,6 +60,14 @@ namespace backend.Controllers
                 _context.Bills.Add(newBill);
                 await _context.SaveChangesAsync();
                 
+
+                // Create a notification for the user
+                await CreateNotificationAsync(
+                    header: "Hóa đơn được chấp nhận",
+                    content: $"Hóa đơn ID {newBill.BillId} đã được tạo.",
+                    userId: body.userId
+                );
+
                 await transaction.CommitAsync();  
                 return CreatedAtAction(nameof(AddBill), new { id = newBill.BillId }, newBill);
             }
@@ -282,7 +290,19 @@ namespace backend.Controllers
                 });
             }
         }
-      
+        private async Task CreateNotificationAsync(string header, string content, int userId)
+        {
+            var notification = new Noti
+            {
+                Header = header,
+                Content = content,
+                Date = DateTime.UtcNow,
+                UserId = userId
+            };
+
+            _context.Notis.Add(notification);
+            await _context.SaveChangesAsync();
+        }
         public class BillBodyDto
         {
             public long totalPrice { get; set; }
