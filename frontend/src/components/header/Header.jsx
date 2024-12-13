@@ -5,8 +5,12 @@ import SearchBox from "./SearchBox";
 import { FaArrowRightFromBracket, FaBell, FaCartShopping, FaCircleUser, FaMoneyBill, FaMoneyBillTransfer, FaRegRectangleList } from "react-icons/fa6";
 import authApi from "@/apis/authApi";
 import Category from "./Category";
+import NotiCard from "../noti/NotiCard";
+import useDebounce from "@/hooks/useDebounce";
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const [notiopen, setNotiOpen] = useState(false);
+  const debounceNotiOpen = useDebounce(notiopen, 300);
   const { setShowLoginModal, isLoggedIn, userData } = useContext(AuthContext);
   const handleLogout = async () => {
     const response = await authApi.logout();
@@ -29,8 +33,21 @@ export default function Header() {
         <Link to={'/about'}>
           <p className="font-blackChancery text-2xl">About</p>
         </Link>
-        <div className="px-3 py-3 hover:bg-gray-100 text-gray-400 hover:text-gray-600 rounded-full cursor-pointer transition-all">
-          <FaBell className=" " />
+        <div
+          className="relative"
+          onMouseEnter={() => setNotiOpen(true)}
+          onMouseLeave={() => setNotiOpen(false)}
+        >
+          <div className="px-3 py-3 hover:bg-gray-100 text-gray-400 hover:text-gray-600 rounded-full cursor-pointer transition-all">
+            <FaBell />
+          </div>
+          {debounceNotiOpen  && (
+            <div
+              className="absolute top-full left-1/2 transform -translate-x-1/2  w-[250px] bg-white shadow-md rounded-md z-50"
+            >
+              <NotiCard />
+            </div>
+          )}
         </div>
         {!isLoggedIn && (
           <div

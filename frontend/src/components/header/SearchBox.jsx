@@ -11,6 +11,7 @@ export default function SearchBox() {
   const debounceSearch = useDebounce(searchQuery, 500);
   const searchBoxRef = useRef(null);
   const navigate = useNavigate();
+  
   const getSearchFoods = async () => {
     const response = await foodApi.getSearchedFood(1, 4, debounceSearch);
     console.log(response.data);
