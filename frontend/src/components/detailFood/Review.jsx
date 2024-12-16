@@ -1,34 +1,44 @@
 import { useState, useEffect, useContext } from "react";
 import RatingLayout from "../ui/ratingLayout";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 import ratingApi from "@/apis/ratingApi";
 import { AuthContext } from "../authProvider/AuthProvider";
-import { Button, Dropdown, Menu } from "antd";
+import { Pagination } from "antd";
 import { FaStar } from "react-icons/fa6";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
-
+import toast from "react-hot-toast";
+function convertIsoStringToFormattedDate(isoString) {
+  try {
+    const date = new Date(isoString);
+    if (isNaN(date.getTime())) {
+      throw new Error("Invalid ISO string format");
+    }
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  } catch (error) {
+    console.error("Error converting ISO string to formatted date:", error.message);
+    return null;
+  }
+}
 export default function Review({ foodId }) {
   const [rating, setRating] = useState(0);
   const [content, setContent] = useState("");
   const [reviewList, setReviewList] = useState([]);
-  const { userData } = useContext(AuthContext);
+  const { userData, isLoggedIn, setShowLoginModal } = useContext(AuthContext);
   // const [list, setList] = useState([])
   const [page, setPage] = useState(1);
+  const [total, setTotals] = useState(1);
   const limit = 5;
   const [editingRatingId, setEditingRatingId] = useState(null);
 
   const getReviewsByFoodId = async () => {
     const response = await ratingApi.getRatingByFoodId(page, limit, foodId);
-    // console.log(response.data)
+    console.log("response", response.data);
     if (response.status === "success") {
       setReviewList(response.data);
+      setTotals(response.pagination.totalItems);
+      console.log("kis", reviewList);
     }
     // console.log("user:", userData)
   };
@@ -41,31 +51,36 @@ export default function Review({ foodId }) {
   };
 
   const handleRatingSubmit = async () => {
+    if (!isLoggedIn) {
+      setShowLoginModal(true);
+      return;
+    }
+
     if (!rating || !content) {
-      alert("Please provide both a rating and a comment.");
+      toast.error("Vui lòng nhập review và rating");
       return;
     }
     if (editingRatingId) {
       const response = await ratingApi.updateRating(editingRatingId, content, rating);
       if (response.status === "success") {
-        alert("Rating updated successfully!");
+        toast.success("Cập nhật review thành công !");
         setContent("");
         setRating(0);
         getReviewsByFoodId();
       } else {
-        alert("Failed to submit rating.");
+        toast.error("Lỗi khi cập nhật review.");
       }
       return;
     }
     try {
       const response = await ratingApi.addRating(userData?.userId, foodId, content, rating);
       if (response.status === "success") {
-        alert("Rating submitted successfully!");
+        toast.success("Thêm review thành công!");
         setContent("");
         setRating(0);
         getReviewsByFoodId();
       } else {
-        alert("Failed to submit rating.");
+        toast.error("Lỗi khi cập nhật review.");
       }
     } catch (error) {
       console.error("Error submitting review:", error);
@@ -73,19 +88,19 @@ export default function Review({ foodId }) {
   };
   const handleDelete = async (ratingId) => {
     // console.log("Rate:",ratingId)
-    const confirmDelete = window.confirm("Are you sure you want to delete this review?");
+    const confirmDelete = window.confirm("Bạn có chắc muốn xóa review này ?");
     if (confirmDelete) {
       try {
         const response = await ratingApi.deleteRating(ratingId);
         if (response.status === "success") {
-          alert("Review deleted successfully!");
+          toast.success("Thêm review thành công !");
           getReviewsByFoodId();
         } else {
-          alert("Failed to delete the review.");
+          toast.error("Xóa review thất bại.");
         }
       } catch (error) {
         console.error("Error deleting review:", error);
-        alert("An error occurred while deleting the review. Please try again.");
+        toast.error("Lỗi khi xóa review. Vui lòng thử lại");
       }
     }
   };
@@ -95,17 +110,6 @@ export default function Review({ foodId }) {
       getReviewsByFoodId();
     }
   }, [page, foodId]);
-  const next = () => {
-    if (reviewList.length === limit) {
-      setPage((prevPage) => prevPage + 1);
-    }
-  };
-
-  const previous = () => {
-    if (page > 1) {
-      setPage((prevPage) => prevPage - 1);
-    }
-  };
 
   return (
     <div>
@@ -113,7 +117,7 @@ export default function Review({ foodId }) {
         <div className="comment-form py-3 flex flex-col gap-3">
           <div className="top-comment  flex justify-between items-center">
             <h3>{reviewList.length} Comments</h3>
-            <Dropdown
+            {/* <Dropdown
               overlay={
                 <Menu>
                   <Menu.Item key="1">Most Recent</Menu.Item>
@@ -122,7 +126,7 @@ export default function Review({ foodId }) {
               }
             >
               <Button>Sort by ▼</Button>
-            </Dropdown>
+            </Dropdown> */}
           </div>
           <div className="flex gap-2">
             {[1, 2, 3, 4, 5].map((el, idx) => {
@@ -152,38 +156,29 @@ export default function Review({ foodId }) {
           </div>
         </div>
         {reviewList.map((item, idx) => {
+          // console.log('Review Item:', item);
           return (
-            <div div key={`review-${idx}`}>
+            <div key={`review-${idx}`}>
               <div className="flex max-w-full border-b-[1px] pb-4 mt-5 justify-between" key={item.RatingId}>
                 {/* <img className='rounded-full w-10 h-10 object-cover' src={item.avatar} /> */}
                 <div className="items-center ml-3">
-                  <div className="mb-3">
-                    <div className="flex items-center">
-                      {item.User ? (
+                  <div className="">
+                    <div className="flex items-center gap-2">
+                      {item.user ? (
                         <img
                           className="rounded-full w-10 h-10 object-cover"
-                          src={item.User.Avatar}
-                          alt={`${item.User.Username}'s Avatar`}
+                          src={item.user.avatar}
+                          alt={`${item.user.username}'s Avatar`}
                         />
                       ) : (
-                        <div className="rounded-full w-10 h-10 bg-gray-300" /> // Placeholder if Avatar is missing
+                        <div className="rounded-full w-10 h-10 bg-gray-300" />
                       )}
                       <RatingLayout rating={item.ratingValue} no={true} style="w-4 h-4" />
+                      <p className="text-xs mt-[6px]">{convertIsoStringToFormattedDate(item.date)}</p>
                     </div>
-                    <p className="text-xs mt-[-4px]">{item.date}</p>
                   </div>
+                  <h4 className="text-lg text-orange-500 font-semibold">{item.user.username}:</h4>
                   <p className="text-[18px]">{item.content}</p>
-                  {item.reply ? (
-                    <div className=" mt-3  border-[1px] w-fit p-2 border-orange-200">
-                      {/* <a href='' className='flex items-center mb-2 w-fit'>
-                                        <img className='rounded-full w-7 h-7 object-cover border-slate-200 border-[0.2px]' src={props.store.avatar} />
-                                        <h3 className='text-[16px] ml-2 font-semibold text-gray-500'>{props.store.name}</h3>
-                                    </a> */}
-                      <p className="ml-9 text-[18px]">{item.reply}</p>
-                    </div>
-                  ) : (
-                    <div />
-                  )}
                 </div>
                 {item.userId === userData.userId && (
                   <div className="flex space-x-2 mt-2">
@@ -207,32 +202,9 @@ export default function Review({ foodId }) {
           );
         })}
       </div>
-      <Pagination className={"pt-2 pb-3"}>
-        <PaginationContent>
-          {page > 1 ? (
-            <PaginationItem>
-              <PaginationPrevious className={"cursor-pointer"} onClick={previous} />
-            </PaginationItem>
-          ) : (
-            <div />
-          )}
-
-          <PaginationItem>
-            <PaginationLink className={"font-semibold bg-gray-200 h-7"}>{page}</PaginationLink>
-          </PaginationItem>
-          {/* {(reviewList.length-page*10)>0?(
-                    <PaginationItem>
-                    <PaginationNext className={'cursor-pointer'}
-                    onClick={next} />
-                </PaginationItem>
-                ):(<div/>)} */}
-          {reviewList.length > limit && (
-            <PaginationItem>
-              <PaginationNext className="cursor-pointer" onClick={next} />
-            </PaginationItem>
-          )}
-        </PaginationContent>
-      </Pagination>
+      <div className="flex items-center justify-center mt-[40px]">
+        <Pagination defaultCurrent={1} total={total} pageSize={5} onChange={(e) => setPage(e)} />
+      </div>
     </div>
   );
 }

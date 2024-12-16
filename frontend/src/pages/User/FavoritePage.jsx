@@ -16,12 +16,10 @@ function FavoritePage() {
       const savedFoods = await userApi.getAllFoodSaved(userData.userId);
       // console.log("Fetched savedFoods:", savedFoods);
       if (savedFoods && Array.isArray(savedFoods.data)) {
-        // Assuming savedFoods is an array of food items with FoodId and FoodName
         const foodDetailsPromises = savedFoods.data.map(food => foodApi.getFoodbyId(food.foodId));
         const foodDetails = await Promise.all(foodDetailsPromises);
         setFavorites(foodDetails);
         // console.log("Food details fetched:", foodDetails);
-        
       }
     } catch (error) {
       console.error("Error fetching favorites:", error);
@@ -31,7 +29,7 @@ function FavoritePage() {
 };
 useEffect(() => {
   // console.log("Updated favorites data:", favorites);
-}, [favorites]); // This will run whenever favorites is updated
+}, [favorites]); 
 useEffect(()=>{
   if(userData.userId){
     // console.log("Fetching favorite food for user ID:", userData.userId);
@@ -40,12 +38,12 @@ useEffect(()=>{
 },[userData])
 const breadcrumbItems = [
   { title: 'Profile', href: '/profile' },
-  { title: 'Favorite', href: '#' }, // Using a hash for the current book
+  { title: 'Favorite', href: '#' }, 
 ];
   return (
-    <div>
+    <div className='bg-orange-200 rounded-xl mx-12 h-full'>
       <UserHeading />
-      <div className="px-16 py-5">
+      <div className="px-16 py-5 bg-white">
         <Breadcrumb
           className="font-semibold text-black"
           items={breadcrumbItems.map((item) => ({

@@ -26,9 +26,7 @@ function LogIn({ setMethod }) {
   };
   return (
     <>
-      <header className="text-center text-4xl font-bold text-gray-800 mb-6 ">
-        Sign in
-      </header>
+      <header className="text-center text-4xl font-bold text-gray-800 mb-6 ">Sign in</header>
       <p className="text-base ml-2 font-bold mb-1">Email</p>
       <form>
         <div className="flex items-center relative">
@@ -49,11 +47,7 @@ function LogIn({ setMethod }) {
             }`}
           ></input>
         </div>
-        {showErrorEmail && (
-          <p className="text-xs text-red-600 ml-2 mt-1 font-medium">
-            Please provide an email !!!
-          </p>
-        )}
+        {showErrorEmail && <p className="text-xs text-red-600 ml-2 mt-1 font-medium">Please provide an email !!!</p>}
         <p className="ml-2 font-bold mt-3 mb-1">Password</p>
         <div className="flex items-center relative">
           <div className="absolute top-[50%] translate-y-[-55%] left-[20px]  text-lg text-[#9CA3AF]">
@@ -75,21 +69,17 @@ function LogIn({ setMethod }) {
           ></input>
         </div>
         {showErrorPassword && (
-          <p className="text-xs text-red-600 ml-2 mt-1 font-medium">
-            Please provide a password !!!
-          </p>
+          <p className="text-xs text-red-600 ml-2 mt-1 font-medium">Please provide a password !!!</p>
         )}
         {showError && (
-          <p className="text-xs text-red-600 ml-2 mt-1 font-medium">
-            Email or password is not correct !!!
-          </p>
+          <p className="text-xs text-red-600 ml-2 mt-1 font-medium">Email or password is not correct !!!</p>
         )}
-        <p
+        {/* <p
           onClick={() => setMethod("forgotPassword")}
           className="text-xs font-medium ml-2 inline-block underline mt-1 cursor-pointer"
         >
           Forgot your password ?
-        </p>
+        </p> */}
         <button
           onClick={(e) => handleLogin(e)}
           className={` mt-[15px] block select-none cursor-pointer transition-all  mx-auto text-center bg-primary-color w-[150px] px-6 py-3 rounded-full text-white text-lg font-semibold ${

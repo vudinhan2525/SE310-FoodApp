@@ -13,15 +13,15 @@ namespace backend.Controllers
         public DbSet<UserFoodOrder> UserFoodOrders { get; set; }
         public DbSet<UserFoodSaved> UserFoodSaved { get; set; }
         public DbSet<Bill> Bills { get; set; }
+        public DbSet<Noti> Notis { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<UserFoodSaved>()
                 .HasKey(ufs => new { ufs.UserId, ufs.FoodId });
             modelBuilder.Entity<FoodType>().HasKey(ft => ft.TypeId);
-             modelBuilder.Entity<UserFoodOrder>().HasKey(userOrder => userOrder.OrderId);
-
-              modelBuilder.Entity<Food>()
+            modelBuilder.Entity<UserFoodOrder>().HasKey(userOrder => userOrder.OrderId);
+            modelBuilder.Entity<Food>()
                 .HasOne(f => f.FoodType)
                 .WithMany(ft => ft.Foods)
                 .HasForeignKey(f => f.TypeId)

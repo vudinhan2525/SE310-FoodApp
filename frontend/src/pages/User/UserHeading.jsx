@@ -3,7 +3,7 @@ import React, { useContext } from 'react'
 
 function UserHeading() {
   const {userData} = useContext(AuthContext);
-  console.log(userData);
+  // console.log(userData);
   return (
     <div className='mt-16'>
         {/* UpperPicture */}
@@ -26,8 +26,6 @@ function UserHeading() {
                           <h2>email</h2>
                         </div>
                   </div>
-               
-                
               </div>
           </div>
       </div>

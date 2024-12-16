@@ -60,6 +60,14 @@ namespace backend.Controllers
                 _context.Bills.Add(newBill);
                 await _context.SaveChangesAsync();
                 
+
+                // Create a notification for the user
+                await CreateNotificationAsync(
+                    header: "Đơn hàng được chấp nhận",
+                    content: $"Đơn hàng #{newBill.BillId} đã được tạo.",
+                    userId: body.userId
+                );
+
                 await transaction.CommitAsync();  
                 return CreatedAtAction(nameof(AddBill), new { id = newBill.BillId }, newBill);
             }
@@ -182,7 +190,7 @@ namespace backend.Controllers
         {
 
             try
-            {
+            {   
                 var bill = await _context.Bills.FindAsync(Id);
                 if (bill == null)
                 {
@@ -193,7 +201,24 @@ namespace backend.Controllers
                     bill.Status = status;
                 }
                 await _context.SaveChangesAsync();
+                // Create a notification for the user
+                string header = "Đơn hàng được cập nhật";
+                string content = "";
 
+                if(status == "Failed"){
+                    content  = $"Đơn hàng #{bill.BillId} đã bị từ chối.";
+                }
+                if(status == "Pending"){
+                    content  = $"Đơn hàng #{bill.BillId} đang chờ được duyệt.";
+                }
+
+                if(status == "Ongoing"){
+                    content  = $"Đơn hàng #{bill.BillId} đang được giao.";
+                }
+                if(status == "Completed"){
+                    content  = $"Đơn hàng #{bill.BillId} được thanh toán thành công.";
+                }
+                await CreateNotificationAsync(header, content, bill.UserId);
                 return Ok(new
                 {
                     status = "success",
@@ -282,7 +307,19 @@ namespace backend.Controllers
                 });
             }
         }
-      
+        private async Task CreateNotificationAsync(string header, string content, int userId)
+        {
+            var notification = new Noti
+            {
+                Header = header,
+                Content = content,
+                Date = DateTime.UtcNow,
+                UserId = userId
+            };
+
+            _context.Notis.Add(notification);
+            await _context.SaveChangesAsync();
+        }
         public class BillBodyDto
         {
             public long totalPrice { get; set; }
