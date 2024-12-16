@@ -107,7 +107,7 @@ export default function FoodDetail(props) {
                 <div className="border-b border-stroke py-3 px-6.5 flex items-center justify-center">
                     <h3 className="font-semibold text-xl text-center">
                         <span className="text-red-500 font-bold">{!isEdit?(""):("Edit ")}</span>
-                       Deatail Food Id {food.FoodId}
+                       Deatail Food Id {food.foodId}
                     </h3>
                     <div className="ml-auto">
                         <Button
