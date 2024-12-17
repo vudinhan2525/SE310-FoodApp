@@ -116,7 +116,7 @@ export default function Review({ foodId }) {
       <div>
         <div className="comment-form py-3 flex flex-col gap-3">
           <div className="top-comment  flex justify-between items-center">
-            <h3>{reviewList.length} Comments</h3>
+          <h3>{total} Comments</h3>
             {/* <Dropdown
               overlay={
                 <Menu>
