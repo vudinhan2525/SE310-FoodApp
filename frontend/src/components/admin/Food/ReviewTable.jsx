@@ -24,7 +24,7 @@ export default function ReviewTable(props){
             </Button>
           ), accessor: 'ratingValue' },
         { Header: 'Content', accessor: 'content' },      
-        { Header: 'Reply', accessor: 'reply' }
+
     ], []);
     
     const data = useMemo(() => props.data, [props.data]);
