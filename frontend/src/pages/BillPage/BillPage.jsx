@@ -25,7 +25,7 @@ function BillPage() {
 
   useEffect(() => {
     const fetchUserBills = async () => {
-      try {
+      try { 
         const response = await billApi.getBills(page, 4, userData.userId);
         if (response.status === "success" && Array.isArray(response.data)) {
           setBills(response.data);
