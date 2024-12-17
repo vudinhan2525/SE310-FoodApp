@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import foodApi from '@/apis/foodApi';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import foodApi from "@/apis/foodApi";
+import { Link } from "react-router-dom";
 
 const Category = () => {
   const [foodTypes, setFoodTypes] = useState([]);
@@ -23,7 +23,7 @@ const Category = () => {
   const handleMouseLeave = () => setIsHovered(false);
   return (
     <div
-       className="relative flex flex-col items-center"
+      className="relative flex flex-col items-center"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -34,7 +34,11 @@ const Category = () => {
         <div
           className="absolute top-full border bg-white shadow-lg rounded-md p-3 w-[600px] z-10 grid grid-cols-4 gap-2 text-center transform -translate-x-1/2 left-1/2"
           onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setTimeout(() => { setIsHovered(false) }, 2000)}
+          onMouseLeave={() =>
+            setTimeout(() => {
+              setIsHovered(false);
+            }, 2000)
+          }
         >
           {foodTypes.slice(0, 12).map((foodType) => (
             <Link
