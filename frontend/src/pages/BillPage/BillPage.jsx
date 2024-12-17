@@ -11,6 +11,7 @@ const statuses = [
   { id: 1, status: "Completed" },
   { id: 2, status: "Failed" },
   { id: 3, status: "Pending" },
+  { id: 4, status: "Ongoing" },
   { id: 5, status: "All" },
 ];
 
