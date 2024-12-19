@@ -30,21 +30,21 @@ namespace backend.Controllers
                 return BadRequest(new { status = "error", message = "Page and limit must be greater than zero." });
             }
 
-            // Calculate the number of items to skip based on the current page and limit
+            
             int skip = (page - 1) * limit;
 
-            // Create the queryable for food items
+           
             var query = _context.Foods.AsQueryable();
 
-            // Apply filtering by food type if specified
+
             if (!string.IsNullOrWhiteSpace(type))
             {
                 query = query.Where(f => f.FoodType.NameType == type);
             }
 
-            // Retrieve paginated list of Food items with projected FoodType data
+
             var foods = await query
-                .Include(f => f.FoodType)  // Include related FoodType data if needed
+                .Include(f => f.FoodType)  
                 .Skip(skip)
                 .Take(limit)
                 .Select(f => new
@@ -67,13 +67,13 @@ namespace backend.Controllers
                 })
                 .ToListAsync();
 
-            // Retrieve total count for pagination metadata after filtering
+
             int totalItems = await query.CountAsync();
 
-            // Calculate total pages based on item count and limit
+
             int totalPages = (int)Math.Ceiling(totalItems / (double)limit);
 
-            // Return paginated response
+
             return Ok(new
             {
                 status = "success",
@@ -91,10 +91,10 @@ namespace backend.Controllers
         [HttpGet("newest")]
         public async Task<IActionResult> GetNewestFood(int page = 1, int limit = 10)
         {
-            // Adjust for pagination
+
             var skip = (page - 1) * limit;
 
-            // Fetch and order the newest food items based on FoodId in descending order
+
             var newestFoodItems = await _context.Foods
                 .OrderByDescending(f => f.FoodId)
                 .Skip(skip)
@@ -119,13 +119,13 @@ namespace backend.Controllers
                 })
                 .ToListAsync();
 
-            // Retrieve total count for pagination metadata
+
             int totalItems = await _context.Foods.CountAsync();
 
-            // Calculate total pages based on item count and limit
+
             int totalPages = (int)Math.Ceiling(totalItems / (double)limit);
 
-            // Return the result with pagination metadata
+
             return Ok(new
             {
                 status = "success",
@@ -142,15 +142,15 @@ namespace backend.Controllers
         [HttpGet("getfood")]
         public async Task<IActionResult> GetFoodById(int id)
         {
-            // Fetch the food item by ID, including related data if needed
+
             var food = await _context.Foods
-                .Include(f => f.FoodType)      // Include related FoodType
-                .Include(f => f.Ratings)       // Include Ratings if needed
-                .Include(f => f.Orders)        // Include Orders if needed
-                .Include(f => f.SavedUsers)    // Include SavedUsers if needed
+                .Include(f => f.FoodType)      
+                .Include(f => f.Ratings)      
+                .Include(f => f.Orders)        
+                .Include(f => f.SavedUsers)  
                 .FirstOrDefaultAsync(f => f.FoodId == id);
 
-            // Check if food item exists
+
             if (food == null)
             {
                 return NotFound(new
@@ -160,7 +160,7 @@ namespace backend.Controllers
                 });
             }
 
-            // Return the food item details
+
             return Ok(new
             {
                 status = "success",
@@ -188,21 +188,19 @@ namespace backend.Controllers
         [HttpGet("search")]
         public async Task<IActionResult> SearchFood(int page = 1, int limit = 10, string kw = null)
         {
-            // Adjust pagination parameters
+
             var skip = (page - 1) * limit;
 
-            // Start querying from the Foods context
+
             var query = _context.Foods.AsQueryable();
 
-            // If a keyword is provided, filter by it (e.g., by Name or other fields)
             if (!string.IsNullOrEmpty(kw))
             {
-                query = query.Where(f => f.Name.Contains(kw)); // adjust fields as needed
+                query = query.Where(f => f.Name.Contains(kw)); 
             }
 
-            // Apply ordering, pagination, and projection
             var foodResults = await query
-                .OrderByDescending(f => f.FoodId) // Order by newest (or adjust as necessary)
+                .OrderByDescending(f => f.FoodId) 
                 .Skip(skip)
                 .Take(limit)
                 .Select(f => new
@@ -244,7 +242,7 @@ namespace backend.Controllers
 
             try
             {
-                // Tạo một đối tượng Food mới từ dữ liệu DTO
+
                 var food = new Food
                 {
                     Name = newFood.Name.Trim(),
@@ -257,7 +255,7 @@ namespace backend.Controllers
                     Itemleft = newFood.Itemleft
                 };
 
-                // Thêm sản phẩm vào DbContext
+  
                 _context.Foods.Add(food);
                 await _context.SaveChangesAsync();
 

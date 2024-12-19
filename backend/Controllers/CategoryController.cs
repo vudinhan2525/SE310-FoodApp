@@ -20,7 +20,7 @@ namespace backend.Controllers
             _context = context;
             _logger = logger;
         }
-        // Fetch all categories
+
         [HttpGet("getAllFoodTypes")]
         public async Task<IActionResult> GetAllFoodTypes()
         {
@@ -33,7 +33,7 @@ namespace backend.Controllers
                  ft.NameType,
                  ft.ParentId,
                  totalFood = _context.Foods.Count(f => f.TypeId == ft.TypeId ||
-                 _context.FoodTypes.Count(t => t.TypeId == f.TypeId && t.ParentId == ft.TypeId) != 0) // Đếm số lượng sản phẩm cho mỗi FoodType
+                 _context.FoodTypes.Count(t => t.TypeId == f.TypeId && t.ParentId == ft.TypeId) != 0) 
              })
              .ToListAsync();
 
@@ -90,7 +90,7 @@ namespace backend.Controllers
 
             try
             {
-                // Tạo một FoodType mới từ dữ liệu DTO
+
                 var foodType = new FoodType
                 {
                     NameType = newFoodType.NameType,
@@ -102,7 +102,7 @@ namespace backend.Controllers
                     return Ok(new { status = "error", message = "Parent type is a child type." });
                 }
 
-                // Thêm vào DbContext
+
                 _context.FoodTypes.Add(foodType);
                 await _context.SaveChangesAsync();
 
@@ -129,7 +129,7 @@ namespace backend.Controllers
                     return NotFound(new { status = "error", message = "Food type not found." });
                 }
 
-                // Remove the FoodType
+
                 var childType = _context.FoodTypes.Where(f => f.ParentId == typeId);
                 _context.RemoveRange(childType);
                 _context.FoodTypes.Remove(foodType);
@@ -154,10 +154,10 @@ namespace backend.Controllers
 
             try
             {
-                // Tìm FoodType theo id
+
                 var foodType = await _context.FoodTypes.FindAsync(id);
                 var parent=await _context.FoodTypes.FindAsync(updatedFoodType.ParentId);
-                // Nếu không tìm thấy loại món ăn
+
                 if (foodType == null)
                 {
                     return NotFound("Food type not found.");
@@ -167,11 +167,11 @@ namespace backend.Controllers
                     return Ok(new { status = "error", message = "Parent type is a child type." });
                 }
 
-                // Cập nhật thông tin
+
                 foodType.NameType = updatedFoodType.NameType;
                 foodType.ParentId = updatedFoodType.ParentId;
 
-                // Lưu thay đổi vào cơ sở dữ liệu
+
                 await _context.SaveChangesAsync();
 
                 return Ok(new

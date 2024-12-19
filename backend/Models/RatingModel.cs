@@ -11,8 +11,7 @@ namespace backend.Controllers
         public string? Reply { get; set; }
         public DateTime? DateReply { get; set; }
 
-        // Navigation properties
-        public User User { get; set; }  // FK relationship
-        public Food Food { get; set; }  // FK relationship
+        public User User { get; set; } 
+        public Food Food { get; set; }
     }
 }

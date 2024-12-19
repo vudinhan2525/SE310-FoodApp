@@ -10,8 +10,7 @@ namespace backend.Controllers
         public string Status {get; set;}
         public string FoodInfo {get; set;}
 
-        // Navigation properties
-        public User User { get; set; }  // FK relationship
+        public User User { get; set; }  
     }
 
 }

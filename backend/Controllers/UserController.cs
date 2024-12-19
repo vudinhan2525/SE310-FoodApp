@@ -32,7 +32,7 @@ namespace backend.Controllers
                 return Unauthorized("No token found.");
             }
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]); // Make sure this is set in appsettings.json
+            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]); 
 
             try
             {
@@ -42,10 +42,10 @@ namespace backend.Controllers
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = true,
-                    ValidIssuer = _configuration["Jwt:Issuer"], // Set this in appsettings.json
+                    ValidIssuer = _configuration["Jwt:Issuer"], 
                     ValidateAudience = true,
-                    ValidAudience = _configuration["Jwt:Audience"], // Set this in appsettings.json
-                    ClockSkew = TimeSpan.Zero // Optional: Reduce the time skew to avoid issues
+                    ValidAudience = _configuration["Jwt:Audience"], 
+                    ClockSkew = TimeSpan.Zero 
                 }, out SecurityToken validatedToken);
 
                 // Retrieve the user ID from claims
@@ -102,7 +102,6 @@ namespace backend.Controllers
             }
             catch (Exception ex)
             {
-                // Handle token validation exceptions
                 return Unauthorized("Token validation failed: " + ex.Message);
             }
         }
@@ -139,9 +138,7 @@ namespace backend.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            // Generate the token
             var token = GenerateJwtToken(user);
-            // Set the token as a cookie
             SetJwtCookie(token);
             return Ok(new
             {   
@@ -152,7 +149,6 @@ namespace backend.Controllers
         //POST : api/v1/user/login
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser([FromBody] LoginBodyDto loginBody){
-            // Find the user by email
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginBody.email);
             if (user == null)
             {
@@ -162,8 +158,6 @@ namespace backend.Controllers
                     message = "Invalid email or password."
                 });
             }
-
-            // Verify the password
             var passwordHasher = new PasswordHasher<User>();
             var result = passwordHasher.VerifyHashedPassword(user, user.Password, loginBody.password);
             if (result == PasswordVerificationResult.Failed)
@@ -174,10 +168,7 @@ namespace backend.Controllers
                 });
             }
 
-            // Generate the token
             var token = GenerateJwtToken(user);
-
-            // Set the token as a cookie (optional)
             SetJwtCookie(token);
 
             return Ok(new
@@ -188,7 +179,6 @@ namespace backend.Controllers
         //GET : api/v1/user/logout
         [HttpGet("logout")]
         public IActionResult LogoutUser(){
-            // Clear the JWT token cookie
             Response.Cookies.Delete("jwt"); 
 
             return Ok(new
@@ -201,19 +191,15 @@ namespace backend.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteUser(int id)
         {
-            // In a real scenario, you would delete the user from the database
             return NoContent();
         }
         [HttpPost("removeFoodSaved")]
         public async Task<IActionResult> RemoveFoodSaved([FromBody] UserFoodDto userFood)
         {
-            // Validate the input
             if (userFood == null || userFood.userId <= 0 || userFood.foodId <= 0)
             {
                 return BadRequest("Invalid input.");
             }
-
-            // Find the UserFoodSaved entry to remove
             var userFoodSaved = await _context.UserFoodSaved
                 .FirstOrDefaultAsync(ufs => ufs.UserId == userFood.userId && ufs.FoodId == userFood.foodId );
             
@@ -221,8 +207,6 @@ namespace backend.Controllers
             {
                 return NotFound("Food item not found in user's saved foods.");
             }
-
-            // Remove the entry
             _context.UserFoodSaved.Remove(userFoodSaved);
             await _context.SaveChangesAsync();
 
@@ -235,8 +219,6 @@ namespace backend.Controllers
             {
                 return BadRequest("UserFood data is null.");
             }
-
-            // Check if the user and food already exist in the UserFoodSaved table
             var existingUserFood = await _context.UserFoodSaved.FindAsync(userFood.userId, userFood.foodId);
             if (existingUserFood != null)
             {
@@ -248,8 +230,6 @@ namespace backend.Controllers
                 UserId = userFood.userId,
                 FoodId = userFood.foodId
             };
-
-            // Add the new entry to the UserFoodSaved table
             _context.UserFoodSaved.Add(userFoodSaved);
             await _context.SaveChangesAsync();
 
@@ -258,7 +238,6 @@ namespace backend.Controllers
         [HttpGet("getAllFoodSaved")]
         public async Task<IActionResult> GetAllFoodSaved(int userId, int page = 1, int limit = 10)
         {
-            // Validate input
             if (userId <= 0)
             {
                 return BadRequest(new { status = "error", message = "Invalid user ID." });
@@ -269,15 +248,11 @@ namespace backend.Controllers
                 return BadRequest(new { status = "error", message = "Page and limit must be greater than zero." });
             }
 
-            // Calculate the number of items to skip based on the current page and limit
             int skip = (page - 1) * limit;
-
-            // Retrieve the saved food items for the user with pagination
             var savedFoodsQuery = _context.UserFoodSaved
                 .Where(ufs => ufs.UserId == userId)
-                .Include(ufs => ufs.Food); // Include related Food data if needed
+                .Include(ufs => ufs.Food);
 
-            // Get the paginated list of saved food items
             var savedFoods = await savedFoodsQuery
                 .Skip(skip)
                 .Take(limit)
@@ -296,13 +271,10 @@ namespace backend.Controllers
                 })
                 .ToListAsync();
 
-            // Retrieve total count for pagination metadata
             int totalItems = await savedFoodsQuery.CountAsync();
 
-            // Calculate total pages based on item count and limit
             int totalPages = (int)Math.Ceiling(totalItems / (double)limit);
 
-            // Return paginated response
             return Ok(new
             {
                 status = "success",
@@ -324,21 +296,19 @@ namespace backend.Controllers
                 return BadRequest("Invalid user data.");
             }
 
-            // Find the user in the database
             var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == updatedUser.UserId);
             if (user == null)
             {
                 return NotFound("User not found.");
             }
 
-            // Update the user's information
             user.Username = updatedUser.Username;
             user.Email = updatedUser.Email;
             user.Address = updatedUser.Address;
             
              if (!string.IsNullOrWhiteSpace(updatedUser.Avatar))
                 {
-                    user.Avatar = updatedUser.Avatar; // Update the avatar only if provided
+                    user.Avatar = updatedUser.Avatar; 
                 }
 
             try

@@ -6,7 +6,7 @@ namespace backend.Controllers
         public string NameType { get; set; }
         public int ParentId { get; set; }
 
-        // Navigation properties
+
         public ICollection<Food> Foods { get; set; }
     }
 }

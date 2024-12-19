@@ -20,7 +20,7 @@ namespace backend.Controllers
         [HttpGet]
         public async Task<IActionResult> GetRatingByFoodId(int page, int limit, int foodId)
         {
-            // Validate parameters
+
             if (foodId <= 0)
             {
                 return BadRequest("Invalid food ID.");
@@ -31,13 +31,13 @@ namespace backend.Controllers
                 return BadRequest("Page and limit must be greater than zero.");
             }
 
-            // Calculate total items
+
             var totalItems = await _context.Ratings.CountAsync(r => r.FoodId == foodId);
             var totalPages = (int)Math.Ceiling((double)totalItems / limit);
 
-            // Fetch ratings with pagination and include User data
+
             var ratings = await _context.Ratings
-                .Include(r => r.User) // Include User information
+                .Include(r => r.User) 
                 .Where(r => r.FoodId == foodId)
                 .OrderByDescending(r => r.Date)
                 .Skip((page - 1) * limit)
@@ -62,10 +62,10 @@ namespace backend.Controllers
                     r.RatingValue,
                     r.Reply,
                     r.DateReply,
-                    User = new // Include user data in the response
+                    User = new 
                     {
                         r.User.UserId,
-                        r.User.Username, // Include only the specified user properties
+                        r.User.Username, 
                         r.User.Email,
                         r.User.Avatar
                     }
@@ -83,7 +83,7 @@ namespace backend.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateRating([FromBody] RatingBodyDto ratingBody)
         {
-            // Validate user and food existence
+
             var userExists = await _context.Users.AnyAsync(u => u.UserId == ratingBody.userId);
             var foodExists = await _context.Foods.AnyAsync(f => f.FoodId == ratingBody.foodId);
 
@@ -97,7 +97,7 @@ namespace backend.Controllers
                 return BadRequest("Food item does not exist.");
             }
 
-            // Create a new Rating object
+
             var newRating = new Rating
             {
                 UserId = ratingBody.userId,
@@ -107,13 +107,12 @@ namespace backend.Controllers
                 Date = DateTime.UtcNow
             };
 
-            // Add and save the new rating
             try
             {
                 _context.Ratings.Add(newRating);
                 await _context.SaveChangesAsync();
                 
-                // Update food rating statistics
+
                 await UpdateFoodRatingAndStats(ratingBody.foodId);
 
                 return Ok(new
@@ -133,7 +132,7 @@ namespace backend.Controllers
         [HttpPost("/api/v1/Rating/update")]
         public async Task<IActionResult> UpdateRating([FromBody] UpdateRatingDto ratingBody)
         {
-            // Find the rating by ratingId
+
             var rating = await _context.Ratings
                 .FirstOrDefaultAsync(r => r.RatingId == ratingBody.ratingId);
 
@@ -142,16 +141,15 @@ namespace backend.Controllers
                 return NotFound("Rating not found for the given ID.");
             }
             int originalFoodId = rating.FoodId;
-            // Update the rating properties
+
             rating.Content = ratingBody.content;
             rating.RatingValue = ratingBody.ratingValue;
-            rating.Date = DateTime.UtcNow; // Update the date to the current date/time
+            rating.Date = DateTime.UtcNow; 
 
-            // Save changes to the database
+
             try
             {
                 await _context.SaveChangesAsync();
-                // Update food rating statistics
                 await UpdateFoodRatingAndStats(originalFoodId);
                 return Ok(new
                 {
@@ -171,12 +169,10 @@ namespace backend.Controllers
         {
             try 
             {
-                // Fetch all ratings for this specific food
                 var foodRatings = await _context.Ratings
                     .Where(r => r.FoodId == foodId)
                     .ToListAsync();
 
-                // If no ratings exist, reset to default values
                 if (!foodRatings.Any())
                 {
                     var foodToUpdate = await _context.Foods
@@ -191,11 +187,9 @@ namespace backend.Controllers
                     }
                 }
 
-                // Calculate new average rating
                 decimal averageRating = foodRatings.Average(r => r.RatingValue);
                 int numberOfRatings = foodRatings.Count;
 
-                // Update the food item with new rating statistics
                 var food = await _context.Foods
                     .FirstOrDefaultAsync(f => f.FoodId == foodId);
 
@@ -210,13 +204,13 @@ namespace backend.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error updating food rating for FoodId {foodId}");
-                throw; // Rethrow to allow caller to handle
+                throw;
             }
         }
         [HttpDelete]
         public async Task<IActionResult> DeleteRating(int ratingId)
         {
-            // Find the rating by ratingId
+            
             var rating = await _context.Ratings.FindAsync(ratingId);
 
             if (rating == null)
@@ -225,14 +219,12 @@ namespace backend.Controllers
             }
             int originalFoodId = rating.FoodId;
 
-            // Remove the rating from the database
             _context.Ratings.Remove(rating);
 
             try
             {
                 await _context.SaveChangesAsync();
 
-                // Update food rating statistics
                 await UpdateFoodRatingAndStats(originalFoodId);
                 return Ok(new
                 {
@@ -250,7 +242,6 @@ namespace backend.Controllers
         [HttpGet("user/{userId}")]
         public async Task<IActionResult> GetRatingByUserId(int userId, int page = 1, int limit = 10)
         {
-            // Validate parameters
             if (userId <= 0)
             {
                 return BadRequest("Invalid user ID.");
@@ -261,13 +252,11 @@ namespace backend.Controllers
                 return BadRequest("Page and limit must be greater than zero.");
             }
 
-            // Calculate total items
             var totalItems = await _context.Ratings.CountAsync(r => r.UserId == userId);
             var totalPages = (int)Math.Ceiling((double)totalItems / limit);
 
-            // Fetch ratings with pagination and include Food data
             var ratings = await _context.Ratings
-                .Include(r => r.Food) // Include Food information if needed
+                .Include(r => r.Food) 
                 .Where(r => r.UserId == userId)
                 .OrderByDescending(r => r.Date)
                 .Skip((page - 1) * limit)
@@ -292,11 +281,11 @@ namespace backend.Controllers
                     r.RatingValue,
                     r.Reply,
                     r.DateReply,
-                    Food = new // Include food data in the response if needed
+                    Food = new 
                     {
                         r.Food.FoodId,
-                        r.Food.Name, // Adjust based on your Food model
-                        r.Food.Description // Adjust based on your Food model
+                        r.Food.Name, 
+                        r.Food.Description 
                     }
                 }),
                 pagination = new
