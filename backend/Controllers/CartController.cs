@@ -26,7 +26,7 @@ namespace backend.Controllers
         {
             try
             {
-                // Find the UserFoodOrder entry by orderId
+
                 var order = await _context.UserFoodOrders.FirstOrDefaultAsync(o => o.OrderId == request.orderId);
 
                 if (order == null)
@@ -34,10 +34,10 @@ namespace backend.Controllers
                     return NotFound("Order not found.");
                 }
 
-                // Increment the quantity
+
                 order.Quantity += 1;
 
-                // Save changes to the database
+   
                 await _context.SaveChangesAsync();
 
                 return Ok(new
@@ -63,7 +63,7 @@ namespace backend.Controllers
         {
             try
             {
-                // Find the UserFoodOrder entry by orderId
+
                 var order = await _context.UserFoodOrders.FirstOrDefaultAsync(o => o.OrderId == request.orderId);
 
                 if (order == null)
@@ -71,7 +71,7 @@ namespace backend.Controllers
                     return NotFound("Order not found.");
                 }
 
-                // Decrement the quantity, ensuring it does not go below 1
+
                 if (order.Quantity > 1)
                 {
                     order.Quantity -= 1;
@@ -81,7 +81,7 @@ namespace backend.Controllers
                     return BadRequest("Quantity cannot be less than 1.");
                 }
 
-                // Save changes to the database
+
                 await _context.SaveChangesAsync();
 
                 return Ok(new
@@ -102,7 +102,7 @@ namespace backend.Controllers
         {
             try
             {
-                // Find the UserFoodOrder entry by orderId
+
                 var order = await _context.UserFoodOrders.FirstOrDefaultAsync(o => o.OrderId == request.orderId);
 
                 if (order == null)
@@ -131,55 +131,12 @@ namespace backend.Controllers
         {
             try
             {
-                // Validate the request data
+
                 if (body.userId <= 0 || body.foodId <= 0 || body.quantity <= 0)
                 {
                     return BadRequest("Invalid input data.");
                 }
 
-                // // Check if the UserFoodOrder entry already exists
-                // var existingOrder = await _context.UserFoodOrders
-                //     .FirstOrDefaultAsync(o => o.UserId == body.userId && o.FoodId == body.foodId);
-
-                // if (existingOrder != null)
-                // {
-                //     // If it exists, update the quantity
-                //     existingOrder.Quantity += body.quantity;
-                //     await _context.SaveChangesAsync();
-
-                //     return Ok(new
-                //     {
-                //         status = "success",
-                //         message = "Cart item quantity updated successfully.",
-                //         orderId = existingOrder.OrderId,
-                //         newQuantity = existingOrder.Quantity
-                //     });
-                // }
-                // else
-                // {
-                //     // Create a new UserFoodOrder
-                //     var order = new UserFoodOrder
-                //     {
-                //         UserId = body.userId,
-                //         FoodId = body.foodId,
-                //         Quantity = body.quantity,
-                //         Note = body.note
-                //     };
-
-                //     // Add the new order to the context
-                //     await _context.UserFoodOrders.AddAsync(order);
-
-                //     // Save changes to the database
-                //     await _context.SaveChangesAsync();
-
-                //     return Ok(new
-                //     {
-                //         status = "success",
-                //         message = "Cart item added successfully.",
-                //         orderId = order.OrderId
-                //     });
-                // }
-                // Create a new UserFoodOrder
                     var order = new UserFoodOrder
                     {
                         UserId = body.userId,
@@ -188,10 +145,10 @@ namespace backend.Controllers
                         Note = body.note
                     };
 
-                    // Add the new order to the context
+
                     await _context.UserFoodOrders.AddAsync(order);
 
-                    // Save changes to the database
+
                     await _context.SaveChangesAsync();
 
                     return Ok(new

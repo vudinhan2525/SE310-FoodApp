@@ -34,19 +34,15 @@ namespace backend.Controllers
 
             try
             {
-                // Parse foodInfo
                 var foodInfoList = JsonSerializer.Deserialize<List<OrderInfo>>(body.foodInfo);
                 var orderIds = foodInfoList.Select(f => f.orderId).ToList();
              
-                // Find orders to delete
                 var ordersToDelete = await _context.UserFoodOrders
                     .Where(ufo => orderIds.Contains(ufo.OrderId))
                     .ToListAsync();
 
-                // Remove orders
                 _context.UserFoodOrders.RemoveRange(ordersToDelete);
 
-                // Create new bill
                 var newBill = new Bill
                 {
                     TotalPrice = body.totalPrice,
@@ -56,12 +52,10 @@ namespace backend.Controllers
                     Date = DateTime.UtcNow,
                     Status = "Pending"
                 };
-                // Save to database
                 _context.Bills.Add(newBill);
                 await _context.SaveChangesAsync();
                 
 
-                // Create a notification for the user
                 await CreateNotificationAsync(
                     header: "Đơn hàng được chấp nhận",
                     content: $"Đơn hàng #{newBill.BillId} đã được tạo.",
@@ -87,36 +81,34 @@ namespace backend.Controllers
         [HttpGet]
         public async Task<IActionResult> GetBillByUserId(int page, int limit, int userId)
         {
-            // Calculate the skip value for pagination
             int skip = (page - 1) * limit;
 
-            // Fetch the bills for the specific user, applying pagination
             var bills = await _context.Bills
-                .Where(b => b.UserId == userId)  // Filter by userId
+                .Where(b => b.UserId == userId)  
                 .OrderByDescending(b => b.Date)
-                .Skip(skip)                     // Skip records for pagination
-                .Take(limit)                    // Take the required number of records
-                .ToListAsync();                 // Execute the query asynchronously
+                .Skip(skip)                     
+                .Take(limit)                    
+                .ToListAsync();                 
 
-            // Get the total number of bills for the user (for pagination purposes)
+            
             var totalBills = await _context.Bills
                 .Where(b => b.UserId == userId)
                 .CountAsync();
 
-            // Calculate the total number of pages
+            
             int totalPages = (int)Math.Ceiling((double)totalBills / limit);
 
-            // Return the paginated result along with additional info
+            
             return Ok(new
             {
                 status = "success",
-                data = bills,  // The bills data
+                data = bills,  
                 pagination = new
                 {
-                    currentPage = page,    // Current page number
-                    pageSize = limit,      // Number of items per page
-                    totalItems = totalBills, // Total number of bills
-                    totalPages = totalPages // Total number of pages
+                    currentPage = page,    
+                    pageSize = limit,      
+                    totalItems = totalBills, 
+                    totalPages = totalPages 
                 }
             });
         }
@@ -201,7 +193,8 @@ namespace backend.Controllers
                     bill.Status = status;
                 }
                 await _context.SaveChangesAsync();
-                // Create a notification for the user
+                
+                
                 string header = "Đơn hàng được cập nhật";
                 string content = "";
 
@@ -264,7 +257,7 @@ namespace backend.Controllers
         {
            try
             {
-                // Lấy tất cả người dùng
+                
                 var users = await _context.Users
                     .Select(u => new 
                     {
@@ -274,7 +267,7 @@ namespace backend.Controllers
                     })
                     .ToListAsync();
 
-                // Lấy tất cả hóa đơn đã hoàn thành
+                
                 var bills = await _context.Bills
                     .AsQueryable()
                     .Where(f => f.Status == "Completed")
@@ -283,13 +276,13 @@ namespace backend.Controllers
                 {
                     bill.TotalPrice -= 12000;
                 }
-                // Kết hợp thông tin hóa đơn với thông tin người dùng
+               
                 var result = users.Select(u => new
                 {
                     userId = u.UserId,
                     username = u.Username,
                     email = u.Email,
-                    totalSpend = bills.Where(b => b.UserId == u.UserId).Sum(b => b.TotalPrice), // Tính tổng tiền
+                    totalSpend = bills.Where(b => b.UserId == u.UserId).Sum(b => b.TotalPrice), 
                     totalQuantity = bills.Where(b => b.UserId == u.UserId).Sum(b => b.FoodInfo != null ? JsonSerializer.Deserialize<List<OrderInfo>>(b.FoodInfo).Sum(f => f.quantity) : 0) // Tính tổng số lượng sản phẩm
                 }).ToList();
 

@@ -8,9 +8,9 @@ namespace backend.Controllers
     public int Quantity { get; set; }
     public string? Note { get; set; }
 
-    // Navigation properties
-    public User User { get; set; }  // FK relationship
-    public Food Food { get; set; }  // FK relationship
+
+    public User User { get; set; }  
+    public Food Food { get; set; }  
 }
 
 }

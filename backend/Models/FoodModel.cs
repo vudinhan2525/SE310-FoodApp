@@ -14,8 +14,7 @@ namespace backend.Controllers
         public long Price { get; set; }
         public int Itemleft { get; set; }
 
-        // Navigation properties
-        public FoodType FoodType { get; set; }  // FK relationship
+        public FoodType FoodType { get; set; }  
         public ICollection<Rating> Ratings { get; set; }
         public ICollection<UserFoodOrder> Orders { get; set; }
         public ICollection<UserFoodSaved> SavedUsers { get; set; }
