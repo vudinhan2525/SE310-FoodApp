@@ -19,6 +19,14 @@ const notiApi = {
       console.log('Error deleting notification:', error);
     }
   },
+  getAllNoti: async () => {
+    try {
+      const response = await request.get(`Noti/getAll?page=1&limit=20`);
+      return response.data;
+    } catch (error) {
+      console.log('Error deleting notification:', error);
+    }
+  },
 };
 
 export default notiApi;

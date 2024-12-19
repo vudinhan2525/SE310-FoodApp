@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import DropdownUser from './DropdownUser';
 import { NavLink, useLocation } from 'react-router-dom';
-
-
+import useDebounce from '@/hooks/useDebounce';
+import NotiAdmin from './notiAdmin';
+import { FaBell } from 'react-icons/fa';
 
 const Header = (props) => {
   const location = useLocation();
   const { pathname } = location;
   const [name,setName]=useState('Dashboard')
+  const [notiopen, setNotiOpen] = useState(false);
+  const debounceNotiOpen = useDebounce(notiopen, 300);
   
   useEffect(()=>{
     if(pathname.includes('type'))
@@ -80,6 +83,16 @@ const Header = (props) => {
 
         <div>
           <p className='text-2xl text-[#395aff] font-bold'>{name}</p>
+        </div>
+        <div className="relative ml-auto" onMouseEnter={() => setNotiOpen(true)} onMouseLeave={() => setNotiOpen(false)}>
+          <div className=" px-3 py-3 hover:bg-gray-100 text-gray-400 hover:text-gray-600 rounded-full cursor-pointer transition-all">
+            <FaBell />
+          </div>
+          {debounceNotiOpen && (
+            <div className="absolute top-full left-1/2 transform -translate-x-1/2  w-[250px] bg-white shadow-md rounded-md z-50">
+              <NotiAdmin />
+            </div>
+          )}
         </div>
 
         <div className="flex items-center gap-3 2xsm:gap-7">
