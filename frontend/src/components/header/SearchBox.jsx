@@ -4,6 +4,7 @@ import FoodCardHorizontal from "../food/FoodCartHorizontal";
 import useDebounce from "@/hooks/useDebounce";
 import foodApi from "@/apis/foodApi";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 export default function SearchBox() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
@@ -11,7 +12,7 @@ export default function SearchBox() {
   const debounceSearch = useDebounce(searchQuery, 500);
   const searchBoxRef = useRef(null);
   const navigate = useNavigate();
-  
+
   const getSearchFoods = async () => {
     const response = await foodApi.getSearchedFood(1, 4, debounceSearch);
     console.log(response.data);
@@ -38,6 +39,7 @@ export default function SearchBox() {
   }, []);
   const handleSearchSubmit = () => {
     if (searchQuery.trim()) {
+      toast.success(`Bạn đã tìm kiếm từ khóa ${searchQuery} !`);
       // Navigate to the search results page with the search query
       navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
     }
@@ -55,7 +57,7 @@ export default function SearchBox() {
             setIsSearching(true);
           }}
           onKeyDown={(e) => {
-            if (e.key === 'Enter') {
+            if (e.key === "Enter") {
               handleSearchSubmit(); // Submit on Enter key press
             }
           }}

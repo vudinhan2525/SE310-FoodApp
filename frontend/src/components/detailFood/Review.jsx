@@ -34,11 +34,11 @@ export default function Review({ foodId }) {
 
   const getReviewsByFoodId = async () => {
     const response = await ratingApi.getRatingByFoodId(page, limit, foodId);
-    console.log("response", response.data);
+    // console.log("response", response.data);
     if (response.status === "success") {
       setReviewList(response.data);
       setTotals(response.pagination.totalItems);
-      console.log("kis", reviewList);
+      // console.log("kis", reviewList);
     }
     // console.log("user:", userData)
   };
@@ -52,6 +52,7 @@ export default function Review({ foodId }) {
 
   const handleRatingSubmit = async () => {
     if (!isLoggedIn) {
+      toast.error("Bạn cần đăng nhập để đánh giá");
       setShowLoginModal(true);
       return;
     }
@@ -116,7 +117,7 @@ export default function Review({ foodId }) {
       <div>
         <div className="comment-form py-3 flex flex-col gap-3">
           <div className="top-comment  flex justify-between items-center">
-          <h3>{total} Comments</h3>
+            <h3>{total} Comments</h3>
             {/* <Dropdown
               overlay={
                 <Menu>
