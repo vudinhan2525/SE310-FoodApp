@@ -62,9 +62,12 @@ export default function DetailFoodPage() {
     }
   };
   const handleToggleFoodSaved = async (id) => {
-    // Check if the food ID is already saved
+    if (!isLoggedIn) {
+      toast.error("Bạn cần đăng nhập để thực hiện chức năng yêu thích");
+      setShowLoginModal(true);
+      return;
+    }
     if (userData.userSaved.includes(id)) {
-      // Remove the food ID if it's already in the array
       const updatedUserSaved = userData.userSaved.filter((foodId) => foodId !== id);
       setUserData({
         ...userData,
@@ -72,7 +75,6 @@ export default function DetailFoodPage() {
       });
       await removeFoodSaved(id);
     } else {
-      // Add the food ID to the array if it's not present
       const updatedUserSaved = [...userData.userSaved, id];
       setUserData({
         ...userData,
@@ -82,6 +84,11 @@ export default function DetailFoodPage() {
     }
   };
   const handleAddToCart = async (id) => {
+    if (!isLoggedIn) {
+      toast.error("Bạn cần đăng nhập để thêm vào giỏ hàng");
+      setShowLoginModal(true);
+      return;
+    }
     if (!id || !userData.userId) return;
     const response = await cartApi.addCart(userData.userId, id, count, note);
 
