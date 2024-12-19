@@ -116,7 +116,7 @@ export default function Review({ foodId }) {
       <div>
         <div className="comment-form py-3 flex flex-col gap-3">
           <div className="top-comment  flex justify-between items-center">
-            <h3>{reviewList.length} Comments</h3>
+          <h3>{total} Comments</h3>
             {/* <Dropdown
               overlay={
                 <Menu>
@@ -166,7 +166,7 @@ export default function Review({ foodId }) {
                     <div className="flex items-center gap-2">
                       {item.user ? (
                         <img
-                          className="rounded-full w-10 h-10 object-cover"
+                          className="rounded-full w-10 h-10 object-cover border-[0.5px] border-gray-200"
                           src={item.user.avatar}
                           alt={`${item.user.username}'s Avatar`}
                         />

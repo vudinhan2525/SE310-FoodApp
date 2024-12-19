@@ -225,7 +225,7 @@ namespace backend.Controllers
         }
 
         [HttpDelete("{Id}")]
-        public async Task<IActionResult> UpdateStatusBill(int Id)
+        public async Task<IActionResult> DeleteBill(int Id)
         {
 
             try

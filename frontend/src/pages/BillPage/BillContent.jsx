@@ -1,9 +1,10 @@
-import React from 'react'
+import { formatDate } from "@/lib/utils";
+import React from "react";
 
 const BillContent = ({ bill }) => {
   // Parse the foodInfo JSON string
   const foodInfo = JSON.parse(bill.foodInfo);
-  const address = JSON.parse(bill.address)
+  const address = JSON.parse(bill.address);
 
   return (
     <div className="">
@@ -51,9 +52,7 @@ const BillContent = ({ bill }) => {
                         </div>
                         <div className="price basis-[45%] flex justify-center">
                           <div className="rounded-md text-center items-center justify-center inline-flex">
-                            <div className="px-2 py-2">
-                              {item.foodDetails.price} VND
-                            </div>
+                            <div className="px-2 py-2">{item.foodDetails.price} VND</div>
                           </div>
                         </div>
                         <p className="basis-[45%] text-center select-none text-primary-color font-bold">
@@ -84,37 +83,25 @@ const BillContent = ({ bill }) => {
               <label className="block font-medium text-2xl text-center">Bill no. {bill.billId}</label>
               <div className="name">
                 <label className="block font-medium">Name</label>
-                <div className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg ">
-                  {address.username}
-                </div>
+                <div className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg ">{address.username}</div>
               </div>
               <div>
                 <label className="block font-medium">Address</label>
-                <div
-                  type="text"
-                  name="houseNumber"
-                  className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg"
-                >
-                    {address.address}, {address.ward}, {address.district}, {address.city}
+                <div type="text" name="houseNumber" className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg">
+                  {address.address}, {address.ward}, {address.district}, {address.city}
                 </div>
               </div>
               <div className="date">
                 <label className="block font-medium">Date</label>
-                <div className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg ">
-                  {bill.date}
-                </div>
+                <div className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg ">{formatDate(bill.date)}</div>
               </div>
               <div className="status">
                 <label className="block font-medium">Status</label>
-                <div className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg ">
-                   {bill.status}
-                </div>
+                <div className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg ">{bill.status}</div>
               </div>
               <div className="phone">
                 <label className="block font-medium">Number</label>
-                <div className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg ">
-                  {address.phonenumber}
-                </div>
+                <div className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg ">{address.phonenumber}</div>
               </div>
             </form>
           </div>

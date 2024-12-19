@@ -24,11 +24,11 @@ export default function Register() {
       window.location.reload();
     } else if (
       response?.status === "failed" &&
-      response?.message === "Email has been used!"
+      response?.message === "Email đã được sử dụng!"
     ) {
       setError("email", {
         type: "manual",
-        message: "Email has already been used.",
+        message: "Email đã được sử dụng.",
       });
     }
   };
@@ -51,11 +51,11 @@ export default function Register() {
                 placeholder="First name..."
                 className="w-full bg-[#F1EFF1] outline-none px-12 border-[1px] border-[#F1EFF1] font-semibold py-3 rounded-full "
                 {...register("firstName", {
-                  required: "First name is required",
+                  required: "Vui lòng nhập tên",
                   pattern: {
                     value: /^[A-Za-z]{1,20}$/,
                     message:
-                      "First name must be 1-20 characters and contain only letters",
+                      "Tên chỉ có thể chứa 1-20 ký tự là chữ",
                   },
                 })}
               />
@@ -76,11 +76,11 @@ export default function Register() {
                 placeholder="Last name..."
                 className="w-full bg-[#F1EFF1] outline-none px-12 border-[1px] border-[#F1EFF1] font-semibold py-3 rounded-full "
                 {...register("lastName", {
-                  required: "Last name is required",
+                  required: "Vui lòng nhập họ",
                   pattern: {
                     value: /^[A-Za-z]{1,20}$/,
                     message:
-                      "Last name must be 1-20 characters and contain only letters",
+                      "Họ chỉ có thể chứa 1-20 ký tự là chữ",
                   },
                 })}
               />
@@ -102,10 +102,10 @@ export default function Register() {
             type="email"
             className="w-full bg-[#F1EFF1] outline-none px-12 border-[1px] border-[#F1EFF1] font-semibold py-3 rounded-full "
             {...register("email", {
-              required: "Email is required",
+              required: "Vui lòng nhập vào email của bạn",
               pattern: {
                 value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: "Invalid email address",
+                message: "Email không đúng",
               },
             })}
           />
@@ -123,10 +123,10 @@ export default function Register() {
             placeholder="Password"
             className="w-full bg-[#F1EFF1] outline-none px-12 border-[1px] border-[#F1EFF1] font-semibold py-3 rounded-full "
             {...register("password", {
-              required: "Password is required",
+              required: "Vui lòng nhập vào mật khẩu",
               minLength: {
                 value: 6,
-                message: "Password must be at least 6 characters",
+                message: "Mật khẩu cần phải lớn hơn 6 kí tự",
               },
             })}
           />
@@ -141,12 +141,12 @@ export default function Register() {
         <div className="relative">
           <input
             type="password"
-            placeholder="Password Confirm"
+            placeholder="Xác nhận mật khẩu của bạn"
             className="w-full bg-[#F1EFF1] outline-none px-12 border-[1px] border-[#F1EFF1] font-semibold py-3 rounded-full "
             {...register("passwordConfirm", {
-              required: "Please confirm your password",
+              required: "Hãy xác nhận mật khẩu của bạn ",
               validate: (value) =>
-                value === password || "Passwords do not match",
+                value === password || "Mật khẩu không trùng khớp",
             })}
           />
           <div className="absolute top-[50%] translate-y-[-55%] left-[20px]  text-lg text-[#9CA3AF]">

@@ -72,7 +72,7 @@ function LogIn({ setMethod }) {
           <p className="text-xs text-red-600 ml-2 mt-1 font-medium">Please provide a password !!!</p>
         )}
         {showError && (
-          <p className="text-xs text-red-600 ml-2 mt-1 font-medium">Email or password is not correct !!!</p>
+          <p className="text-xs text-red-600 ml-2 mt-1 font-medium">Email hoặc mật khẩu không đúng !!!</p>
         )}
         {/* <p
           onClick={() => setMethod("forgotPassword")}

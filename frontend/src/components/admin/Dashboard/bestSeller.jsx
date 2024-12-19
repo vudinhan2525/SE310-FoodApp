@@ -109,7 +109,7 @@ export default function BestSeller(props) {
                                                 </div>
                                                 <div className="ml-4 w-[400px]">
                                                       <p className="text-lg font-semibold line-clamp-1">{item.name}</p>
-                                                      <p className="text-gray-500 ">{item.totalQuantity} item</p>
+                                                      <p className="text-gray-500 ">{item.totalQuantity} sold</p>
                                                 </div>
                                           </div>
                                     </Link>

@@ -1,4 +1,4 @@
-
+insert into users (Username,Email,Password,Address,Avatar) value ('Admin','admin@gmail.com','AQAAAAIAAYagAAAAEBiaay58PuSVSTIoh6/fzFD21elgUpHZau1jIXaxxkwAbu/hRpdJb1p2Q3kHpnjfXw==','','');
 
 INSERT INTO foodtypes (TypeId, NameType, ParentId) VALUES
 (1, 'Vietnamese Noodles', false),
@@ -25,6 +25,30 @@ INSERT INTO foods (FoodId, Name, Image1, Image2, Image3, TypeId, Rating, NumberR
 (9, 'Canh chua cá', 'https://i.ytimg.com/vi/zNhazi2P4yI/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLCGDf9GlJVxCRR7KD0LBzoFAwEO-Q', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQldivONiT8mdxnMuWY5m3dyCYjMPToTjWKDg&s', 'https://static-images.vnncdn.net/files/publish/2023/3/14/canh-ca-a-1024.jpg', 5, 0, 0, 55000, 32,'Canh chua cá là món ăn truyền thống với nước dùng chua ngọt từ me và thơm, kết hợp cùng cá tươi. Món canh có vị chua nhẹ, thơm ngon, là lựa chọn lý tưởng cho bữa cơm gia đình.'),
 (10, 'Bò Kho', 'https://i-giadinh.vnecdn.net/2021/03/15/1-1615818742-7067-1615818945.jpg', 'https://i-giadinh.vnecdn.net/2021/03/15/1-1615818742-7067-1615818945.jpg', 'https://i.ytimg.com/vi/FXSTfjiEA0M/maxresdefault.jpg', 5, 0, 0, 60000, 12,'Bò kho là món ăn đậm đà với thịt bò được hầm mềm cùng các loại gia vị như quế, hồi, sả, tạo hương thơm nồng nàn. Món ăn có thể ăn kèm bánh mì hoặc cơm, thích hợp cho những bữa ăn ấm áp.');
 
+-- cập nhật lại data cho foods khi thêm rating từ sql
+DELIMITER $$
+
+CREATE TRIGGER UpdateFoodRating AFTER INSERT ON Ratings
+FOR EACH ROW
+BEGIN
+    DECLARE new_avg_rating FLOAT;
+    DECLARE total_ratings INT;
+
+    SELECT COUNT(*) INTO total_ratings
+    FROM Ratings
+    WHERE FoodId = NEW.FoodId;
+
+    SELECT AVG(RatingValue) INTO new_avg_rating
+    FROM Ratings
+    WHERE FoodId = NEW.FoodId;
+
+    UPDATE foods
+    SET Rating = new_avg_rating,
+        NumberRating = total_ratings
+    WHERE FoodId = NEW.FoodId;
+END$$
+
+DELIMITER ;
 
 INSERT INTO Ratings (UserId, FoodId, Content, Date, RatingValue, Reply, DateReply) VALUES
 (1, 1, 'Delicious food, would recommend!', '2024-10-01 12:30:00', 5, NULL, NULL),
@@ -57,6 +81,8 @@ INSERT INTO Ratings (UserId, FoodId, Content, Date, RatingValue, Reply, DateRepl
 (1, 8, 'Best pasta I’ve ever had!', '2024-10-28 11:00:00', 5, NULL, NULL),
 (1, 9, 'Very disappointing.', '2024-10-29 12:15:00', 1, NULL, NULL),
 (1, 10, 'Excellent service and food!', '2024-10-30 13:30:00', 5, NULL, NULL);
+
+
 
 
 INSERT INTO userfoodsaved (UserId,FoodId) VALUES
