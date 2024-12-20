@@ -13,6 +13,7 @@ import { AuthContext } from "@/components/authProvider/AuthProvider";
 import userApi from "@/apis/userApi";
 import cartApi from "@/apis/cartApi";
 import toast from "react-hot-toast";
+import { formatPoint } from "@/lib/utils";
 
 export default function DetailFoodPage() {
   const [count, setCount] = useState(1);
@@ -117,7 +118,7 @@ export default function DetailFoodPage() {
           <div className="flex items-center">
             <h2 className="font-extrabold text-4xl/[45px] mr-[4%] ">{food.name} </h2>
             <div>
-              <RatingLayout rating={food.rating} />
+              <RatingLayout rating={formatPoint(food.rating)} />
             </div>
             <button onClick={() => handleToggleFoodSaved(id)} className="ml-auto  w-fit mr-8">
               {userData?.userSaved?.includes(id) ? <FaHeart size={25} color="red" /> : <FaRegHeart size={25} />}
