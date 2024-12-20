@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import axios from "axios";
-import { AuthContext } from "../../AuthProvider/AuthProvider";
+import { AuthContext } from "../../authProvider/AuthProvider.jsx";
 import { FaUser, FaKey, FaCircleNotch } from "react-icons/fa6";
 import authApi from "@/apis/authApi";
 function LogIn({ setMethod }) {
