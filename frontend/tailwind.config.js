@@ -1,6 +1,6 @@
+import colors from 'tailwindcss/colors'
+import defaultTheme from 'tailwindcss/colors'
 /** @type {import('tailwindcss').Config} */
-const colors = require('tailwindcss/colors');
-const defaultTheme = require('tailwindcss/defaultTheme');
 export default {
   darkMode: ["class"],
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
