@@ -9,12 +9,14 @@ import Payment from "./Payment";
 import { Checkbox } from "antd";
 import billApi from "@/apis/billApi";
 import toast from "react-hot-toast";
+import foodApi from "@/apis/foodApi";
 export default function CartPage() {
   const { carts, setCarts, userData } = useContext(AuthContext);
   const [deleteId, setDeleteId] = useState(null);
   const [showDeleteSelect, setShowDeleteSelect] = useState(false);
   const [itemSlt, setItemSlt] = useState([]);
   const [total, setTotal] = useState(0);
+  const [food, setFood] = useState();
   useEffect(() => {
     let sum = 0;
     carts.forEach((cart, idx) => {
@@ -54,33 +56,60 @@ export default function CartPage() {
   };
   const handleAddBill = async (address) => {
     let foodData = [];
-    carts.forEach((cart, idx) => {
-      if (itemSlt.includes(idx)) {
-        foodData.push(cart);
+    for (const idx of itemSlt) {
+      const cart = carts[idx];
+      try {
+        console.log("cart", cart);
+        const response = await foodApi.getFoodbyId(cart.foodId);
+        const foodDetails = response?.data;
+        console.log("food", foodDetails);
+        if (!foodDetails) {
+          toast.error(`Failed to fetch details for ${cart.foodDetails.nameType}.`);
+          return;
+        }
+        if (foodDetails.itemleft < cart.quantity) {
+          toast.error(`Không đủ số lượng cho món ${foodDetails.name}.`);
+          return;
+        }
+
+        foodData.push({
+          ...cart,
+          foodDetails,
+          typeId: foodDetails.typeId,
+          nameType: foodDetails.nameType,
+        });
+      } catch (error) {
+        console.error(`Error fetching food details for ID: ${cart.foodDetails.foodId}`, error);
+        toast.error("An error occurred while fetching food details.");
+        return;
       }
-    });
-    foodData = foodData.map((el, idx) => {
-      return {
-        ...el,
-        typeId: el.foodDetails.typeId,
-        nameType: el.foodDetails.nameType,
-      };
-    });
+    }
 
     if (foodData.length === 0) {
       toast.error("Vui lòng chọn món ăn cần thanh toán");
       return;
     }
-    const res = await billApi.addBill({
-      totalPrice: total + 12000,
-      address: JSON.stringify(address),
-      foodInfo: JSON.stringify(foodData),
-      userId: userData.userId,
-    });
-    if (res.billId) {
-      window.location.reload();
+    console.log("data", foodData);
+    try {
+      const res = await billApi.addBill({
+        totalPrice: total + 12000,
+        address: JSON.stringify(address),
+        foodInfo: JSON.stringify(foodData),
+        userId: userData.userId,
+      });
+
+      if (res.billId) {
+        toast.success("Order placed successfully");
+        window.location.reload();
+      } else {
+        toast.error("Failed to place the order");
+      }
+    } catch (error) {
+      console.error("Error placing the order", error);
+      toast.error("An error occurred while placing the order.");
     }
   };
+
   return (
     <div className="px-24 bg-gray-100 pb-24 mt-14">
       <h2 className="pt-6 text-xl mb-4">{`GIỎ HÀNG (${carts.length} sản phẩm)`}</h2>
