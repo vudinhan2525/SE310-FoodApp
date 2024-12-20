@@ -29,14 +29,41 @@ namespace backend.Controllers
                 
                 return BadRequest("Invalid bill data.");
             }
-
+            
             using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
             {
                 var foodInfoList = JsonSerializer.Deserialize<List<OrderInfo>>(body.foodInfo);
+
+                if (foodInfoList == null || !foodInfoList.Any())
+                {
+                    return BadRequest("No food items provided.");
+                }
+
+                // Loop through each food item and update its quantity
+                foreach (var order in foodInfoList)
+                {
+                    var food = await _context.Foods.FindAsync(order.foodId);
+                    if (food == null)
+                    {
+                        await transaction.RollbackAsync();
+                        return BadRequest($"Food with ID {order.foodId} does not exist.");
+                    }
+
+                    if (food.Itemleft < order.quantity)
+                    {
+                        await transaction.RollbackAsync();
+                        return BadRequest($"Not enough quantity for food ID {order.foodId}. Available: {food.Itemleft}");
+                    }
+
+                    // Subtract the ordered quantity from the available quantity
+                    food.Itemleft -= order.quantity;
+
+                    // Update the food record
+                    _context.Foods.Update(food);
+                }
                 var orderIds = foodInfoList.Select(f => f.orderId).ToList();
-             
                 var ordersToDelete = await _context.UserFoodOrders
                     .Where(ufo => orderIds.Contains(ufo.OrderId))
                     .ToListAsync();

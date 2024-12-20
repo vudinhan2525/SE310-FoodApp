@@ -52,9 +52,22 @@ builder.Services.AddAuthentication(options =>
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigins", policy =>
+    {
+        policy.WithOrigins(
+            "http://localhost:3000", // Local development
+            "https://foodapp-five-xi.vercel.app" // Deployed frontend
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials();
+    });
+});
 var app = builder.Build();
-app.UseCors("AllowLocalhost");
-
+app.UseCors("AllowSpecificOrigins");
+//app.UseCors("AllowLocalhost");
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
