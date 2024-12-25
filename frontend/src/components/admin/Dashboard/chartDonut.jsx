@@ -77,7 +77,8 @@ const getTopType = (bills, filterBy = "week") => {
 
   const categorySales = filteredBills.reduce((acc, bill) => {
     bill.foodInfo.forEach(item => {
-      const { typeId, nameType, quantity } = item;
+      const {quantity } = item;
+      const {nameType,typeId}=item.foodDetails.foodType;
       if (!acc[typeId]) {
         acc[typeId] = {nameType, quantity: 0 };
       }
@@ -133,6 +134,7 @@ export default function ChartDonut(props) {
   const [selectedFilter, setSelectedFilter] = useState('week')
 
   useEffect(() => {
+    console.log(props)
     const temp = getTopType(props.bills, selectedFilter)
     setTop(temp)
     setColors(temp.map(item => item.color))

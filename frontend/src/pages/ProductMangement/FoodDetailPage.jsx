@@ -20,8 +20,9 @@ export default function FoodDetailPgae() {
             const response3= await ratingApi.getRatingByFoodId(1,1000,id);
             if(response1.status=='success')
             {
-                console.log(response1.data)
-                setFood(response1.data)
+                
+                const foodFetch={...response1.data, rating: response1.data.rating ? Math.round(response1.data.rating * 100) / 100 :0}
+                setFood(foodFetch)
             }
             if(response1.status=='success')
             {

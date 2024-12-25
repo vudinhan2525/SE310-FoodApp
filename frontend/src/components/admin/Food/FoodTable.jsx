@@ -47,8 +47,14 @@ export default function FoodTable() {
       const foodResponse = await foodApi.getAllFood(1, 1000, null)
 
       if (foodResponse.status == 'success') {
-        setFoods(foodResponse.data)
-        setData(foodResponse.data);
+        const list = foodResponse.data.map((item) => {
+          return {
+            ...item, // Giữ lại tất cả các thuộc tính khác
+            rating: item.rating ? Math.round(item.rating * 100) / 100 :0, // Làm tròn `rating`
+          };
+        });
+        setFoods(list)
+        setData(list);
       }
     }
     fetchData()
@@ -123,7 +129,7 @@ export default function FoodTable() {
       {
         Header: ({ column }) => (
           <Button variant="ghost" {...column.getSortByToggleProps()}>
-            NoR
+            Number of Rating
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         ),
