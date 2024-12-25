@@ -12,7 +12,7 @@ export default function Header() {
   const [notiopen, setNotiOpen] = useState(false);
   const debounceNotiOpen = useDebounce(notiopen, 300);
   const { setShowLoginModal, isLoggedIn, userData } = useContext(AuthContext);
-
+  
   const handleLogout = async () => {
     const response = await authApi.logout();
     if (response?.status === "success") {
