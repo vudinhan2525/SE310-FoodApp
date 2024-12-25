@@ -1,6 +1,7 @@
-insert into users (Username,Email,Password,Address,Avatar) value ('Admin','admin@gmail.com','AQAAAAIAAYagAAAAEBiaay58PuSVSTIoh6/fzFD21elgUpHZau1jIXaxxkwAbu/hRpdJb1p2Q3kHpnjfXw==','','');
+insert into Users (Username,Email,Password,Address,Avatar) value ('User','user@gmail.com','AQAAAAIAAYagAAAAEBiaay58PuSVSTIoh6/fzFD21elgUpHZau1jIXaxxkwAbu/hRpdJb1p2Q3kHpnjfXw==','','');
+insert into Users (Username,Email,Password,Address,Avatar) value ('Admin','admin@gmail.com','AQAAAAIAAYagAAAAEBiaay58PuSVSTIoh6/fzFD21elgUpHZau1jIXaxxkwAbu/hRpdJb1p2Q3kHpnjfXw==','','');
 
-INSERT INTO foodtypes (TypeId, NameType, ParentId) VALUES
+INSERT INTO FoodTypes (TypeId, NameType, ParentId) VALUES
 (1, 'Vietnamese Noodles', false),
 (2, 'Grilled Dishes', false),
 (3, 'Rice Dishes', false),
@@ -13,7 +14,7 @@ INSERT INTO foodtypes (TypeId, NameType, ParentId) VALUES
 (10, 'Salads', false);
 
 
-INSERT INTO foods (FoodId, Name, Image1, Image2, Image3, TypeId, Rating, NumberRating, Price, Itemleft,Description) VALUES
+INSERT INTO Foods (FoodId, Name, Image1, Image2, Image3, TypeId, Rating, NumberRating, Price, Itemleft,Description) VALUES
 (1, 'Phở bò', 'https://fohlafood.vn/cdn/shop/articles/bi-quyet-nau-phi-bo-ngon-tuyet-dinh.jpg?v=1712213789', 'https://tiki.vn/blog/wp-content/uploads/2023/07/thumb-12.jpg', 'https://amivietnam.com/wp-content/uploads/2024/03/image-242-1150x800.png', 1, 0, 0, 50000, 12 , 'Phở bò là món ăn truyền thống nổi tiếng của Việt Nam. Với nước dùng đậm đà từ xương hầm, hương vị thịt bò mềm ngọt hòa quyện cùng bánh phở dai ngon. Món ăn còn được bổ sung hành lá, ngò gai và các loại gia vị tạo nên hương thơm quyến rũ.'),
 (2, 'Phở gà', 'https://cdn.tgdd.vn/2021/09/CookProduct/1200(3)-1200x676-2.jpg', 'https://noiphodien123.vn/wp-content/uploads/2023/08/cach-nau-pho-ga-ha-noi.jpg', 'https://cachnau.vn/wp-content/uploads/2022/02/pho-ga-ga-noi.jpg', 1, 0, 0, 45000, 23,'Phở gà với nước dùng thanh nhẹ, được ninh từ xương gà, mang lại vị ngọt tự nhiên. Thịt gà tươi được thái lát mỏng, ăn kèm bánh phở mềm dai và rau thơm, tạo nên món ăn bổ dưỡng và hấp dẫn.'),
 (3, 'Bún chả', 'https://cachnau.vn/wp-content/uploads/2022/02/pho-ga-ga-noi.jpg', 'https://kipor.vn//upload/images/lam-bun-cha-bang-noi-chien-khong-dau-6.jpg', 'https://top10tphcm.com/wp-content/uploads/2021/01/Quan-bun-cha-ha-noi-o-TPHCM.jpg', 2, 0, 0, 70000, 10,'Bún chả là món ăn dân dã, với chả thịt heo nướng trên than hồng, kết hợp với bún tươi, nước mắm pha chua ngọt, và rau sống. Món ăn đậm vị, thơm ngon và mang đậm hương vị truyền thống Hà Nội.'),
@@ -42,7 +43,7 @@ BEGIN
     FROM Ratings
     WHERE FoodId = NEW.FoodId;
 
-    UPDATE foods
+    UPDATE Foods
     SET Rating = new_avg_rating,
         NumberRating = total_ratings
     WHERE FoodId = NEW.FoodId;
@@ -83,58 +84,8 @@ INSERT INTO Ratings (UserId, FoodId, Content, Date, RatingValue, Reply, DateRepl
 (1, 10, 'Excellent service and food!', '2024-10-30 13:30:00', 5, NULL, NULL);
 
 
-
-
-INSERT INTO userfoodsaved (UserId,FoodId) VALUES
-(1,1),
-(1,2),
-(1,3),
-(1,4);
-
-INSERT INTO userfoodorders(OrderId,UserId,FoodId,Quantity,Note) VALUES
-(1, 1,2,4,"Nhiều tương ớt"),
-(2, 1,3,1,''),
-(3, 1,4,5,'');
-
-INSERT INTO bills (BillId, date, totalPrice, UserId, address, status, FoodInfo)
-VALUES 
-(11, '2024-12-13', 22.97, 2, 
-    '{
-        "username": "1",
-        "phonenumber": "1",
-        "city": 12,
-        "district": 106,
-        "ward": 3415,
-        "address": "123 Elm Street"
-    }',
-    'Failed',
-    '[
-        {
-            "orderId": 5,
-            "foodId": 2,
-            "quantity": 1,
-            "note": "",
-            "foodDetails": {
-                "typeId": 1,
-                "name": "Phở gà",
-                "nameType": "Vietnamese Noodles",
-                "description": "Phở gà với nước dùng thanh nhẹ, được ninh từ xương gà, mang lại vị ngọt tự nhiên. Thịt gà tươi được thái lát mỏng, ăn kèm bánh phở mềm dai và rau thơm, tạo nên món ăn bổ dưỡng và hấp dẫn.",
-                "image1": "https://cdn.tgdd.vn/2021/09/CookProduct/1200(3)-1200x676-2.jpg",
-                "price": 45000
-            }
-        }
-    ]'
-);
-
--- Inserting into BillItem table
-INSERT INTO billitems (ItemId, BillId, price, quantity, name)
-VALUES (1, 1, 9.99, 2, 'Burger'),
-       (2, 2, 2.99, 1, 'Coffee');
-       
-       SELECT * FROM users;
-	
     
-INSERT INTO foods (FoodId, Name, Image1, Image2, Image3, TypeId, Rating, NumberRating, Price, Itemleft, Description) VALUES
+INSERT INTO Foods (FoodId, Name, Image1, Image2, Image3, TypeId, Rating, NumberRating, Price, Itemleft, Description) VALUES
 -- Vietnamese Noodles
 (11, 'Bánh canh cua', 'https://dienmaythiennamhoa.vn/static/images/Hinh%20Bai%20Ve%20Tinh/VAO%20BEP/3(14).PNG', 'https://dienmaythiennamhoa.vn/static/images/Hinh%20Bai%20Ve%20Tinh/VAO%20BEP/3(14).PNG', 'https://cdn.tgdd.vn/2021/05/CookRecipe/GalleryStep/thanh-pham-239.jpg', 1, 0, 0, 60000, 20, 'Bánh canh cua với nước dùng đậm đà từ cua và tôm, sợi bánh canh dai mềm và thịt cua tươi ngon.'),
 (12, 'Mì Quảng', 'https://cdn.tgdd.vn/2021/02/CookProduct/1200-1200x676-16.jpg', 'https://hapinut.com/wp-content/uploads/2022/03/mi-quang-quang-nam.jpg', 'https://daubepgiadinh.vn/wp-content/uploads/2017/12/mi-quang-thit-heo.jpg', 1, 0, 0, 55000, 15, 'Mì Quảng với nước dùng sánh mịn, thịt gà, tôm, trứng, và rau sống. Món ăn mang đậm hương vị miền Trung.'),

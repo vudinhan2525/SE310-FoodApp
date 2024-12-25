@@ -59,10 +59,8 @@ export default function CartPage() {
     for (const idx of itemSlt) {
       const cart = carts[idx];
       try {
-        console.log("cart", cart);
         const response = await foodApi.getFoodbyId(cart.foodId);
         const foodDetails = response?.data;
-        console.log("food", foodDetails);
         if (!foodDetails) {
           toast.error(`Failed to fetch details for ${cart.foodDetails.nameType}.`);
           return;
@@ -71,7 +69,8 @@ export default function CartPage() {
           toast.error(`Không đủ số lượng cho món ${foodDetails.name}.`);
           return;
         }
-
+        
+     
         foodData.push({
           ...cart,
           foodDetails,
@@ -84,7 +83,8 @@ export default function CartPage() {
         return;
       }
     }
-
+    console.log(JSON.stringify(foodData))
+    
     if (foodData.length === 0) {
       toast.error("Vui lòng chọn món ăn cần thanh toán");
       return;
