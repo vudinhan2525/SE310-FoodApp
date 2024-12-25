@@ -35,5 +35,7 @@ dotnet watch
 https://foodapp-five-xi.vercel.app/
 
 Account admin url : https://foodapp-five-xi.vercel.app/admin
+
 Email: admin@gmail.com
+
 Password: admin123456
