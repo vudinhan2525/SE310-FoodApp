@@ -19,12 +19,8 @@ function UserHeading() {
                       <div className="information px-8 items-center">
                         <h1 className="text-orange-600 text-semibold">{userData.username}</h1>
                         <h2>Địa chỉ: {userData.address}</h2>
+                        <h2>Email: {userData.email}</h2>
                       </div>
-                        <div className="jobs">
-                          <h1>Ui/Ux Designer</h1>
-                          <h2>{userData.email}</h2>
-                          <h2>email</h2>
-                        </div>
                   </div>
               </div>
           </div>
