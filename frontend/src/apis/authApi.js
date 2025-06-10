@@ -2,7 +2,7 @@ import { authRequest } from "./request";
 
 const authApi = {
   register: async (data) => {
-    const response = await authRequest.post(`/user`, data);
+    const response = await authRequest.post(`/user/register`, data);
     return response.data;
   },
   isLoggedIn: async () => {
@@ -33,7 +33,7 @@ const authApi = {
     try {
       const { userId, ...updateData } = data;
       console.log("Updating user with ID:", userId, "Data:", updateData);
-      const response = await authRequest.put(`/user/updateUser`, data);// Assuming `UserId` is included in data
+      const response = await authRequest.put(`/user/updateUser`, data); // Assuming `UserId` is included in data
       return response.data;
     } catch (error) {
       console.log(error);
